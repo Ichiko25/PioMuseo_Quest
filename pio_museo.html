@@ -1,0 +1,2368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dr. Pio valenzuela Museum — Historical Art Museum</title>
+    <link rel="icon" type="image/png" href="images/qqq.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        /* Modern Feedback Card */
+        .feedback-pill {
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+            border: 1px solid #f1f5f9;
+            border-radius: 12px;
+            padding: 16px;
+            color: #334155;
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+            gap: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feedback-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .feedback-pill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent);
+            transform: skewX(-20deg);
+            animation: shimmer 3s infinite 1s;
+            pointer-events: none;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 200%;
+            }
+        }
+
+        /* Create sequence delay effect for lists */
+        .feedback-pill:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .feedback-pill:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .feedback-pill:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .feedback-pill:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .feedback-pill:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .feedback-pill-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .feedback-pill-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+            flex-grow: 1;
+        }
+
+        .feedback-pill-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #90191B;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(144, 25, 27, 0.2);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .feedback-pill-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .feedback-pill-name {
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            color: #0f172a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .feedback-pill-subtitle {
+            font-size: 12px;
+            color: #64748b;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .feedback-pill-stars {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+        }
+
+        .feedback-pill-rating-num {
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 14px;
+            margin-left: 4px;
+        }
+
+        .feedback-pill-quote {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ea580c;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+            margin-left: 8px;
+        }
+
+        .feedback-pill-message {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #64748b;
+            font-family: 'Inter', sans-serif;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Adjusting right container to match pill styling container */
+        .approved-feedbacks {
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+
+        .approved-feedbacks h3 {
+            color: #1e293b !important;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.5px;
+            margin-bottom: 30px !important;
+        }
+
+        :root {
+            --font-display: "Cormorant Garamond", Georgia, serif;
+            --font-body: "Libre Baskerville", Georgia, serif;
+
+            --red: #d62828;
+            --red-soft: #ffe5e5;
+            --red-soft-alt: #ffecec;
+            --black: #111111;
+            --white: #ffffff;
+            --gray-light: #f5f5f5;
+            --gray-mid: #767676;
+            --accent-yellow: #ffcf33;
+            --accent-blue: #118ab2;
+            --accent-soft: #f1f5ff;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 10px;
+            --shadow-soft: 0 14px 35px rgba(0, 0, 0, 0.08);
+            --shadow-subtle: 0 8px 20px rgba(0, 0, 0, 0.04);
+            --transition-fast: 0.18s ease-out;
+            --transition-med: 0.25s ease-out;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            font-family: 'Georgia', serif;
+            line-height: 1.5;
+            color: #222;
+            background-color: #fff;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            line-height: 3.4rem;
+        }
+
+        nav {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+        }
+
+        button {
+            font-family: 'Inter', serif;
+            font-size: 18px;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .btn {
+            display: inline-block;
+            font-family: var(--font-display);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 0.9rem 1.8rem;
+        }
+
+        .sr-only {
+            border: 0;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+
+        .site-header {
+            position: relative;
+            z-index: 30;
+            background: white;
+            color: var(--black);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+        }
+
+        .navbar {
+            max-width: 2120px;
+            margin: 0 auto;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            background-color: darkred;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+
+        .logo-mark {
+            width: 34px;
+            height: 34px;
+            border-radius: 40% 60% 45% 55%;
+            background: var(--white);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-text {
+            font-size: 1.05rem;
+            color: white;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-display);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .nav-links a {
+            position: relative;
+            display: inline-flex;
+            font-family: var(--font-display);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            align-items: center;
+            justify-content: center;
+            padding: 0.4rem 0.85rem;
+            border-radius: 999px;
+            font-size: 18px;
+            color: var(--white);
+            transition: color var(--transition-fast), background-color var(--transition-fast),
+                transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            inset: 2px;
+            font-family: var(--font-display);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            border-radius: inherit;
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .nav-links a:hover,
+        .nav-links a:focus-visible {
+            background-color: var(--white);
+            color: var(--black);
+            font-family: var(--font-display);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a:focus-visible::after {
+            opacity: 1;
+        }
+
+        .nav-toggle {
+            display: none;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            padding: 0.4rem 0.55rem;
+            cursor: pointer;
+        }
+
+        .nav-toggle span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background: var(--white);
+            border-radius: 999px;
+        }
+
+        .nav-toggle span+span {
+            margin-top: 4px;
+        }
+
+        .hero {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 2.4rem .5rem 2.75rem;
+            display: grid;
+            grid-template-columns: minmax(0, 3fr) minmax(0, 2.6fr);
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.3rem, 3.2vw + 1.4rem, 3.1rem);
+            margin: 0 0 0.75rem;
+        }
+
+        .hero-tagline {
+            max-width: 34rem;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 28px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.3rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.6rem 1.25rem;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.98rem;
+            border: none;
+            cursor: pointer;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+                background-color var(--transition-fast), color var(--transition-fast);
+        }
+
+        .btn-primary {
+            background-color: var(--white);
+            color: var(--black);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.28);
+        }
+
+        .btn-secondary {
+            background-color: var(--black);
+            color: var(--white);
+            box-shadow: var(--shadow-subtle);
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #90191B;
+            transform: translateY(-1px);
+            margin-top: 10px;
+        }
+
+        .btn-ghost {
+            background-color: #90191B;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            color: var(--white);
+        }
+
+        .btn-ghost:hover {
+            background-color: #d62828;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+            transform: translateY(-1px);
+        }
+
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card.active {
+            transform: scale(1.2);
+        }
+
+        .card.prev,
+        .card.next {
+            transform: scale(0.85);
+        }
+
+        .prev-btn,
+        .next-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 50%;
+            z-index: 5;
+        }
+
+        .prev-btn {
+            left: 5px;
+        }
+
+        .next-btn {
+            right: 5px;
+        }
+
+        .hero-orbit {
+            position: relative;
+            height: 260px;
+            border-radius: 40px;
+            background: radial-gradient(circle at 15% 20%, #ffe2b3, var(--red-soft-alt));
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .hero-orbit-dot {
+            position: absolute;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .hero-orbit-dot--big {
+            width: 120px;
+            height: 24px;
+            top: 18%;
+            left: -15%;
+            transform: rotate(-18deg);
+        }
+
+        .hero-orbit-dot--small {
+            width: 80px;
+            height: 16px;
+            bottom: 12%;
+            right: -10%;
+            transform: rotate(18deg);
+        }
+
+        .hero-card {
+            position: absolute;
+            background: var(--white);
+            border-radius: 1.2rem;
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+            min-width: 140px;
+            box-shadow: var(--shadow-soft);
+            display: inline-flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .hero-orbit::before {
+            content: "";
+            position: absolute;
+            inset: 12% 6%;
+            border: 2px dashed rgba(0, 0, 0, 0.08);
+            border-radius: 34px;
+        }
+
+        .photoshop {
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .carousel-row {
+            display: flex;
+            gap: 40px;
+            width: max-content;
+            margin-top: 50px;
+        }
+
+        .carousel-row img {
+            width: 300px;
+            height: 190px;
+            object-fit: cover;
+        }
+
+        .row-left {
+            animation: scrollLeft 65s linear infinite;
+        }
+
+        .row-right {
+            animation: scrollRight 65s linear infinite;
+            margin: 30px;
+        }
+
+        @keyframes scrollLeft {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes scrollRight {
+            from {
+                transform: translateX(-50%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .carousel {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .carousel .track {
+            display: flex;
+            align-items: center;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            will-change: transform;
+        }
+
+        .card {
+            flex: 0 0 auto;
+            width: 280px;
+            margin: 0 12.5px;
+            border-radius: 25px;
+            overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.6s ease;
+            opacity: 0.5;
+            transform: scale(0.8);
+        }
+
+        .cards {
+            flex: 0 0 auto;
+            width: 280px;
+            border-radius: 25px;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.6s ease;
+            transform: scale(0.8);
+        }
+
+        .card carousel {
+            flex: 0 0 auto;
+            width: 280px;
+            margin: 0 12.5px;
+            border-radius: 25px;
+            overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.6s ease;
+            opacity: 0.5;
+            transform: scale(0.8);
+        }
+
+        .card img {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+            border-radius: 25px;
+        }
+
+        .card.active {
+            transform: scale(1.2);
+            opacity: 1;
+            z-index: 2;
+            border-radius: 30px;
+        }
+
+        .card.prev,
+        .card.next {
+            transform: scale(0.85);
+            opacity: 0.7;
+            z-index: 1;
+        }
+
+        .card,
+        .card img {
+            backface-visibility: hidden;
+            will-change: transform, opacity;
+        }
+
+        main {
+            background-color: var(--white);
+        }
+
+        .section--alt {
+            background: linear-gradient(180deg,
+                    var(--red-soft) 0%,
+                    var(--white) 60%,
+                    var(--white) 100%);
+        }
+
+        .section-header {
+            max-width: 720px;
+            margin: 0 auto 2.1rem;
+            text-align: center;
+        }
+
+        .section-header h2 {
+            margin: 0 0 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .section-header p {
+            margin: 0;
+            color: var(--gray-mid);
+        }
+
+        .about-grid {
+            max-width: 1000px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 50px;
+            align-items: start;
+        }
+
+        .side-box p {
+            text-align: justify;
+            color: #90191b;
+            font-size: 15px;
+        }
+
+        .side-box img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .caption {
+            font-size: 13px;
+            margin-top: 6px;
+            color: var(--gray-mid);
+        }
+
+        @media (max-width:768px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .side-box {
+                order: -1;
+            }
+        }
+
+        .read-btn {
+            margin-top: 15px;
+            padding: 10px 22px;
+            font-size: 15px;
+            font-weight: 600;
+            border: 2px solid #8b0000;
+            /* deep red accent */
+            background-color: transparent;
+            color: #8b0000;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* Hover effect */
+        .read-btn:hover {
+            background-color: #8b0000;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        /* Click effect */
+        .read-btn:active {
+            transform: translateY(0);
+        }
+
+        .about-text .read-btn {
+            display: block;
+            margin: 20px auto 15px;
+        }
+
+        .blog-card .read-btn {
+            display: block;
+            margin: auto auto 15px;
+            /* margin-top: auto pushes it to the bottom */
+        }
+
+        /* ===================================
+	    DESIGN & ARCHITECTURE STYLES
+	   =================================== */
+
+        .design {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 55px;
+        }
+
+        .side-box-design {
+            flex: 0 0 auto;
+        }
+
+        .side-box-design img {
+            max-width: 350px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .design p {
+            color: var(--charcoal-mid);
+            text-align: justify;
+            flex: 1;
+            padding: 0;
+        }
+
+        .design h2 {
+            font-size: 1.5rem;
+            color: var(--charcoal-deep);
+            margin-left: 580px;
+        }
+
+        .about-text,
+        .design {
+            border-radius: var(--radius-lg);
+        }
+
+        .about-text p {
+            margin-top: 0;
+        }
+
+        .about-list {
+            padding-left: 1.1rem;
+            margin: 0.8rem 0 0;
+        }
+
+        .about-list li+li {
+            margin-top: 0.25rem;
+        }
+
+        /* ===================================
+	               GALLERY STYLES
+	   =================================== */
+        .gallery {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .gallery-carousel {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            background-color: #000;
+        }
+
+        .carousel-row {
+            will-change: transform;
+        }
+
+        .carousel-row:has(img:hover) {
+            animation-play-state: paused;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            position: relative;
+            color: var(--white);
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+        }
+
+        .carousel-caption {
+            position: absolute;
+            left: 0.85rem;
+            right: 0.85rem;
+            bottom: 0.7rem;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.9rem;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--black);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+        }
+
+        .gallery-thumbs {
+            gap: 0.4rem;
+            margin: 50px;
+        }
+
+        /* ===================================
+	               VISIT STYLES
+	   =================================== */
+
+        .visit-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .visit-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease;
+            transform: translateY(-5px);
+        }
+
+        .visit-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 18px;
+            color: #90191B;
+        }
+
+        .visit-main {
+            font-size: 1.05rem;
+            font-weight: 500;
+            margin-bottom: 0.8rem;
+        }
+
+        .visit-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        .visit-list li {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 0.6rem;
+            color: #444;
+        }
+
+        .small-note {
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 0.5rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 900px) {
+            .visit-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .map-placeholder {
+            margin-top: 0.9rem;
+            border-radius: 0.9rem;
+            background-image: repeating-linear-gradient(45deg,
+                    rgba(214, 40, 40, 0.04),
+                    rgba(214, 40, 40, 0.04) 10px,
+                    rgba(0, 0, 0, 0.02) 10px,
+                    rgba(0, 0, 0, 0.02) 20px);
+            padding: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: var(--gray-mid);
+        }
+
+        /* ===================================
+	               GAME STYLES
+	   =================================== */
+        .play-grid {
+            width: 100%;
+        }
+
+        .game-card {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+            gap: 2.5rem;
+            align-items: center;
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: .5rem;
+            margin-right: 10px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .game-media {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .game-screen {
+            overflow: hidden;
+            width: 100%;
+            border-radius: 1.2rem;
+        }
+
+        #game .track {
+            display: flex;
+            transition: transform 0.4s ease;
+        }
+
+        #game .card {
+            min-width: 250px;
+            overflow: hidden;
+            flex-shrink: 0;
+            opacity: 1;
+            margin: 0 10px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #game .card img {
+            width: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            font-size: 28px;
+            padding: 10px 14px;
+            cursor: pointer;
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        .carousel-btn.left {
+            left: -10px;
+        }
+
+        .carousel-btn.right {
+            right: -10px;
+        }
+
+        .carousel-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .game-caption {
+            position: absolute;
+            left: 1rem;
+            right: 1rem;
+            bottom: 0.7rem;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.35rem 0.65rem;
+            border-radius: 999px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
+        }
+
+        .game-info h3 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-info p {
+            margin-top: 0;
+            margin-bottom: 0.65rem;
+        }
+
+        .game-list {
+            padding-left: 1rem;
+            margin-top: 0;
+            margin-bottom: 0.9rem;
+        }
+
+        /* ===================================
+	          BLOG SECTION
+	   =================================== */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .blog-card {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            padding-bottom: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            color: #90191B;
+        }
+
+        .blog-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .blog-card h3 {
+            padding: 15px 15px 5px;
+        }
+
+        .blog-card p {
+            padding: 0 15px;
+        }
+
+        .blog-meta {
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        .blog-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+        }
+
+        .blog-modal-content {
+            background: white;
+            width: 100%;
+            max-width: 900px;
+            margin: 8% auto;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        #closeBlog {
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        /* .link-button {
+            margin-left: 15px;
+            margin-top: 10px;
+            background: none;
+            border: none;
+            color: #90191B;
+            font-weight: 600;
+            cursor: pointer;
+        }*/
+
+        .blog-tag {
+            align-self: flex-start;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            background-color: rgba(214, 40, 40, 0.1);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .blog-tag--alt {
+            background-color: rgba(17, 138, 178, 0.14);
+        }
+
+        .blog-tag--soft {
+            background-color: rgba(176, 137, 255, 0.16);
+        }
+
+        .blog-meta {
+            font-size: 0.86rem;
+            color: var(--gray-mid);
+        }
+
+        /*.link-button {
+            margin-top: 0.3rem;
+            align-self: flex-start;
+            border: none;
+            background: none;
+            padding: 0;
+            color: var(--black);
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .link-button::after {
+            content: "→";
+            font-size: 0.9rem;
+        }*/
+
+        .feedback-form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .form-row {
+            margin-bottom: 1.2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feedback-form label,
+        .form-row legend {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--black);
+            justify-content: center;
+        }
+
+        .feedback-form input,
+        .feedback-form select,
+        .feedback-form textarea {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(0, 0, 0, 0.18);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s, outline 0.3s;
+        }
+
+        .feedback-form input:focus,
+        .feedback-form select:focus,
+        .feedback-form textarea:focus {
+            outline: 2px solid var(--red);
+            outline-offset: 1px;
+            border-color: var(--red);
+        }
+
+        .star-rating {
+            font-size: 2rem;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            cursor: pointer;
+            color: #ccc;
+            transition: color 0.2s;
+        }
+
+        .star-rating input:checked~label,
+        .star-rating label:hover,
+        .star-rating label:hover~label {
+            color: gold;
+        }
+
+        .feedback-form .btn-primary {
+            display: block;
+            width: 50%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            background-color: #2d2d2d;
+            color: var(--white);
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            text-align: center;
+            margin: 0 auto 0;
+        }
+
+        .feedback-form .btn-primary:hover {
+            background-color: #b71c1f;
+            transform: translateY(-1px);
+        }
+
+        .section {
+            padding: 3rem 1.5rem;
+        }
+
+        .feedback-side {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 2rem 2.2rem;
+            box-shadow: var(--shadow-soft);
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        .feedback-side details {
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            padding-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .feedback-side summary {
+            font-weight: 600;
+            font-family: var(--font-display);
+            cursor: pointer;
+            position: relative;
+            padding-right: 2rem;
+            font-size: 1.2rem;
+            color: var(--black);
+            transition: color 0.3s ease;
+            list-style: none;
+        }
+
+        .feedback-side summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .feedback-side summary:hover {
+            color: #90191B;
+        }
+
+        .feedback-side details[open] summary {
+            color: #90191B;
+        }
+
+        .feedback-side summary::after {
+            content: '+';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: #90191B;
+            transition: transform 0.3s ease;
+        }
+
+        .feedback-side details[open] summary::after {
+            content: '−';
+        }
+
+        .feedback-side details p,
+        .feedback-side details ul {
+            margin: 0;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===================================
+	   FOOTER STYLES
+	   =================================== */
+
+        footer {
+            background-color: #1a1a1a;
+            border-top: 1px solid rgba(144, 25, 27, 0.2);
+            color: #B8B8B8;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .footer-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .footer-container {
+                padding: 0 3rem;
+            }
+        }
+
+        /* ===================================
+        MAIN FOOTER
+        =================================== */
+
+        .footer-main {
+            display: grid;
+            gap: 3rem;
+            padding: 4rem 0;
+        }
+
+        @media (min-width: 768px) {
+            .footer-main {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .footer-main {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .footer-brand h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            line-height: 2rem;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 1024px) {
+            .footer-brand h3 {
+                font-size: 1.875rem;
+                line-height: 2.25rem;
+            }
+        }
+
+        .footer-column-contact {
+            margin-left: 2.3rem;
+        }
+
+        .footer-logo-light {
+            color: #F5F5F5;
+        }
+
+        .logo-light {
+            color: #111111;
+        }
+
+        .footer-logo-accent {
+            color: #90191B;
+        }
+
+        .footer-description {
+            max-width: 28rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.75;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-social-link {
+            padding: 0.75rem;
+            background-color: #2D2D2D;
+            color: #D4AF37;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social-link:hover {
+            background-color: #90191B;
+            color: #F5F5F5;
+        }
+
+        .footer-links-section h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.125rem;
+            line-height: 1 rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+            color: #F5F5F5;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            font-size: 17px;
+            transition: 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+            padding-left: 4px;
+        }
+
+        .footer-links-list a:hover {
+            color: #D4AF37;
+        }
+
+        .footer-column h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.125rem;
+            line-height: 1 rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+            color: #F5F5F5;
+        }
+
+        .footer-newsletter {
+            padding: 3rem 0;
+            border-top: 1px solid rgba(144, 25, 27, 0.2);
+        }
+
+        .footer-newsletter-container {
+            max-width: 42rem;
+        }
+
+        .footer-newsletter h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-newsletter p {
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-newsletter-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .footer-newsletter-form {
+                flex-direction: row;
+            }
+        }
+
+        .footer-newsletter-input {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            background-color: #2D2D2D;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #F5F5F5;
+            outline: none;
+        }
+
+
+        .footer-newsletter-input::placeholder {
+            color: rgba(184, 184, 184, 0.5);
+        }
+
+        .footer-newsletter-input:focus {
+            border-color: #D4AF37;
+        }
+
+        .footer-newsletter-button {
+            padding: 0.75rem 2rem;
+            background-color: #90191B;
+            color: #F5F5F5;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            letter-spacing: 1.5px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .footer-newsletter-button:hover {
+            background-color: #D4AF37;
+            color: #1a1a1a;
+        }
+
+        .footer-bottom {
+            padding: 2rem 0;
+            border-top: 1px solid rgba(144, 25, 27, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-bottom {
+                flex-direction: row;
+            }
+        }
+
+        .footer {
+            background-color: #1c1c1c;
+            color: #ffffff;
+            padding-top: 4rem;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-main {
+            display: grid;
+            gap: 3rem;
+            padding-bottom: 3rem;
+        }
+
+        .footer-left h3 {
+            margin-bottom: 1rem;
+        }
+
+        .footer-left p {
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        .footer-right h4 {
+            margin-bottom: 1rem;
+        }
+
+        .footer-right ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-right ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-right ul li a {
+            text-decoration: none;
+            color: #ffffff;
+            opacity: 0.8;
+            transition: 0.3s;
+        }
+
+        .footer-right ul li a:hover {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding: 1.5rem 0;
+            background-color: 1a1a1a;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-left: 400px;
+        }
+
+        @media (max-width: 768px) {
+            .footer-main {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .navbar {
+                padding-inline: 1.1rem;
+            }
+
+            .nav-toggle {
+                display: inline-flex;
+                gap: 0.1rem;
+            }
+
+            .nav-links {
+                position: fixed;
+                inset: 56px 0 auto;
+                background: var(--red);
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 0.7rem 1.4rem 1rem;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height var(--transition-med);
+            }
+
+            .nav-links.open {
+                max-height: 260px;
+            }
+        }
+
+        /* Modal Styles */
+        .blog-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .blog-modal-content {
+            background-color: var(--white);
+            margin: 5% auto;
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        #closeBlog {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            transition: color 0.3s ease;
+        }
+
+        #closeBlog:hover,
+        #closeBlog:focus {
+            color: var(--text-dark);
+            text-decoration: none;
+        }
+
+        #blogContent {
+            color: var(--charcoal-mid);
+            line-height: 1.6;
+        }
+
+        #blogContent h2 {
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            font-size: 2rem;
+            border-bottom: 2px solid var(--red-soft);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        #blogContent p {
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+
+        @keyframes scrollLeft {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes scrollRight {
+            0% {
+                transform: translateX(-50%);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            padding: 20px 0;
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+
+        .marquee-track {
+            display: flex;
+            gap: 25px;
+            width: max-content;
+        }
+
+        .marquee-track.left {
+            animation: scrollLeft 60s linear infinite;
+        }
+
+        .marquee-track.right {
+            animation: scrollRight 60s linear infinite;
+        }
+
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        .marquee-row {
+            margin-bottom: 25px;
+        }
+
+        .marquee-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .feedback-pill-marquee {
+            width: 400px;
+            flex-shrink: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .feedback-pill-marquee {
+                width: 320px;
+            }
+
+            .marquee-track.left {
+                animation-duration: 40s;
+            }
+
+            .marquee-track.right {
+                animation-duration: 40s;
+            }
+        }
+    </style>
+
+</head>
+
+<div id="blogModal" class="blog-modal">
+    <div class="blog-modal-content">
+        <span id="closeBlog">&times;</span>
+        <div id="blogContent"></div>
+    </div>
+</div>
+
+<body>
+    <header class="site-header">
+        <nav class="navbar" aria-label="Main">
+            <img src="images/qqq.png" alt="Dr. Pio Valenzuela Museum Logo" height="70"></img>
+            <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false">
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#game">Game</a></li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="#feedback">Feedback</a></li>
+            </ul>
+        </nav>
+        <div id="home" class="hero">
+            <div class="hero-content">
+                <h3 class="footer-logo" style=" font-size: 35px;">
+                    <span class="logo-light">MUSEO NI</span><br>
+                    <span class="footer-logo-accent">DR. PIO VALENZUELA</span>
+                </h3>
+                <p class="hero-tagline">
+                    Step into the home of Pío Valenzuela and discover the story of a doctor who played a vital role in
+                    the fight for Philippine freedom. The museum invites visitors to explore his life, his contributions
+                    to the Katipunan, and the legacy he left to what is now Valenzuela City.
+                </p>
+                <div class="hero-actions">
+                    <a href="#visit" class="btn btn-primary">How To Visit</a>
+                    <a href="#game" class="btn btn-ghost">About Game</a>
+                </div>
+
+            </div>
+            <div class="hero-visual" aria-hidden="true">
+                <div class="carousel">
+                    <div class="track">
+                        <div class="card"><img src="images/garden.jpeg"></div>
+                        <div class="card"><img src="images/night.jpg"></div>
+                        <div class="card"><img src="images/Right.jpeg"></div>
+                        <div class="card"><img src="images/Gazebo.jpg"></div>
+                        <div class="card"><img src="images/front.jpeg"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- ABOUT -->
+        <section id="about" class="section section--alt">
+            <div class="about-grid">
+
+                <div class="about-text" style="text-align: justify;">
+                    <span style="font-size: 25px; line-height: 55px;"> ABOUT </span>
+                    <p>
+                        Welcome to the Museo ni Dr. Pío Valenzuela, a sanctuary of history built upon the very ground
+                        where one of our nation's greatest healers and patriots once lived. Born in 1869 in the town of
+                        Polo, Dr. Valenzuela was a man of remarkable duality: a physician dedicated to saving lives and
+                        a revolutionary leader committed to the birth of a free Philippines. As a key member of the
+                        Katipunan and a trusted confidant of Andrés Bonifacio, his life was a whirlwind of secret
+                        missions, clandestine publications, and a relentless pursuit of sovereignty. When you walk
+                        through these halls, you aren't just looking at artifacts; you are tracing the footsteps of a
+                        man who transitioned from the frontlines of a revolution to the halls of public service as the
+                        first Mayor of Polo and Governor of Bulacan.
+                        <br>
+                        <br>
+                        This museum, officially opened in 2023, is the fulfillment of a long-held vision to preserve the
+                        'bahay na bato' (stone house) legacy of the Valenzuela family. Though the original structure was
+                        lost during the ravages of World War II, this meticulous reconstruction serves as a living
+                        tribute to his 86 years of selfless service. Accredited by the Department of Tourism, our
+                        mission is to ensure that the flame of Dr. Valenzuela’s heroism his 'buhay at paglilingkod'
+                        continues to inspire every Filipino who passes through our doors. We invite you to explore the
+                        corridors of the past and discover the heart of the man whose name our city proudly bears.
+
+                    </p>
+                    </span>
+
+                </div>
+
+
+                <div class="side-box">
+                    <img src="images/pio-landscape.png" alt="Dr. Pío Valenzuela">
+                    <p class="caption" style="text-align: center; font-weight: bold; margin-top: 15px;">Dr. Pío
+                        Valenzuela (1869–1956)</p>
+                    <p style="text-align: justify;">
+                        Dr. Pío Valenzuela was born on July 11, 1869 in Polo, Bulacan (now Valenzuela City). He was a
+                        physician-patriot and one of the “Big Three” leaders of the Katipunan alongside Andrés Bonifacio
+                        and Emilio Jacinto. A medical student at the University of Santo Tomas, he joined the secret
+                        revolutionary movement, served in the Camara Negra (Black Chamber). His legacy is honored today
+                        as Polo was later renamed Valenzuela City after him.
+                    </p>
+                </div>
+
+            </div>
+
+            <section id="gallery" class="section">
+                <div class="carousel-row row-left">
+                    <img src="images/Second-Floor.jpeg">
+                    <img src="images/table.jpeg">
+                    <img src="images/study-table.jpeg">
+                    <img src="images/museo-pic.png">
+                    <img src="images/front.jpeg">
+                    <img src="images/Right.jpeg">
+                    <img src="images/fam.jpeg">
+                    <img src="images/Gazebo.jpg">
+
+                    <img src="images/cinematic-table.jpg">
+                    <img src="images/nnews.jpg">
+                    <img src="images/sala.jpeg">
+                    <img src="images/guho.jpg">
+                    <img src="images/tools.jpg">
+                    <img src="images/pictures.jpg">
+                    <img src="images/cinematic.jpg">
+                    <img src="images/first-sloor.jpg">
+                </div>
+
+                <div class="carousel-row row-right">
+                    <img src="images/bookshelf.jpeg">
+                    <img src="images/dining.png">
+                    <img src="images/salaa.png">
+                    <img src="images/guho at.png">
+                    <img src="images/dio.png">
+                    <img src="images/kitchen.png">
+                    <img src="images/clinica.png">
+
+                    <img src="images/dioramas.png">
+                    <img src="images/exit.png">
+                    <img src="images/haligingtahanan.png">
+                    <img src="images/timeline.png">
+                    <img src="images/tv.png">
+                    <img src="images/jail.png">
+                    <img src="images/history.png">
+                </div>
+            </section>
+        </section>
+
+        <!-- <div class="design">
+            <section id="design">
+                <h2>Design & Architecture</h2>
+                <div class="content-wrapper">
+                    <div class="side-box-design">
+                        <img src="images/construction.jpeg" alt="Museo ni Dr. Pio Valenzuela">
+                        <img src="images/Second-Floor.jpeg" alt="Museo ni Dr. Pio Valenzuela">
+                    </div>
+                    <p>
+                        The architecture of the Museo ni Dr. Pío Valenzuela represents a sophisticated harmony between
+                        heritage conservation and modern functionality. The restored bahay na bato serves as a tribute
+                        to
+                        traditional Filipino-Spanish design, incorporating authentic features such as broad wooden
+                        windows,
+                        ventanillas (small ventilation slats), and the characteristic elevated structure adapted to
+                        local
+                        conditions.
+                        <br> <br>
+                        The original house was converted into a museum following the layout plan prepared by Arturo
+                        Valenzuela. ARC LICO evaluated the spatial needs to create a design that preserves the
+                        authenticity of the original structure while meeting modern museum requirements.
+                        <br> <br>
+                        While the visible materials like wood and stone maintain an authentic historical atmosphere, the
+                        building is reinforced with contemporary structural elements. The use of steel framing and
+                        concrete
+                        foundations ensures the museum adheres to current safety and accessibility standards.
+                        Internally, the
+                        layout is designed for a modern visitor experience, integrating exhibition halls, audio-visual
+                        rooms,
+                        and specialized storage areas to protect and showcase historical artifacts.
+                    </p>
+                </div>
+            </section>
+        </div> -->
+
+        <div class="feedback-side faq-section" id="faq-section-container">
+            <h3>FAQ's</h3>
+            <p style="color: var(--text-muted); font-size: 14px; text-align: center;">Loading FAQs...</p>
+        </div>
+
+        <!-- Blog / News -->
+        <section id="blog" class="section">
+            <div class="section-header">
+                <h2>Blog</h2>
+                <p>Short reads about the Museo ni Dr. Pío Valenzuela.</p>
+            </div>
+
+            <div class="blog-grid">
+                <!-- Blog cards are dynamically rendered here from feedback.js -->
+            </div>
+        </section>
+
+        <!-- Play & Explore -->
+        <section id="game" class="section section--alt">
+            <div class="section-header">
+                <h2>Pio Museo Quest</h2>
+                <p>
+                    A quick peek of our digital web-based game before you visit the real gallery.
+                </p>
+            </div>
+            <div class="play-grid">
+                <article class="game-card">
+
+                    <div class="game-media">
+                        <button class="carousel-btn left">&#10094;</button>
+
+                        <div class="game-screen">
+                            <div class="track">
+                                <div class="card"><img src="images/1.png"></div>
+                                <div class="card"><img src="images/2.png"></div>
+                                <div class="card"><img src="images/3.png"></div>
+                                <div class="card"><img src="images/4.png"></div>
+                                <div class="card"><img src="images/5.png"></div>
+                                <div class="card"><img src="images/6.png"></div>
+                                <div class="card"><img src="images/7.png"></div>
+                                <div class="card"><img src="images/8.png"></div>
+                                <div class="card"><img src="images/9.png"></div>
+                                <div class="card"><img src="images/10.png"></div>
+                            </div>
+                        </div>
+
+                        <button class="carousel-btn right">&#10095;</button>
+                    </div>
+
+                    <div class="game-info">
+                        <h3>Play and Experience</h3>
+                        <p>
+                            Pio Museo Quest is an interactive museum game where learning meets adventure.
+                            Explore Dr. Pio Valenzuela’s Museo, solve challenges, and uncover the stories
+                            behind his life and legacy.
+                        </p>
+                        <ul class="game-list">
+                            <li>Combines tech with real exhibits for fast, fun learning</li>
+                            <li>Play the short missions and mini-games while exploring history</li>
+                            <li>Face interactive challenges at every station</li>
+                        </ul>
+                        <strong>
+                            <p>To play: Visit the Museo and scan the QR code at the entrance.</p>
+                        </strong>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Visit Info -->
+        <section id="visit" class="section">
+            <div class="section-header">
+                <h2>Plan Your Visit</h2>
+            </div>
+            <div class="visit-grid">
+                <!-- Location -->
+                <div class="visit-card">
+                    <h3>Address</h3>
+                    <p class="visit-main">
+                        Barangay Pariancillo Villa, <br>
+                        Valenzuela City, Philippines
+                    </p>
+
+                    <p class="small-note">
+                        Built the history at the site of Dr. Pío Valenzuela’s original residence and discover
+                        the
+                        stories that shaped Valenzuela City. <br></p>
+
+                    <ul class="visit-list">
+                        <li><strong>Opening Hours:</strong> Monday – Sunday</li>
+                        <li><strong>Time:</strong> 9:00 AM – 4:00 PM</li>
+                        <li><strong>Last Entry:</strong> 3:00 PM</li>
+                        <br>
+                        <li><strong>Note:</strong> Requests submitted after 5:00 PM are processed the next day
+                            at 8:00
+                            AM.</li>
+                    </ul>
+
+                    <a href="https://www.waze.com/live-map/directions/ph/ncr/valenzuela/dr.-pio-valenzuela-museum?to=place.ChIJ30T0JYOzlzMRIbWCPKJbUog"
+                        class="btn btn-secondary" target="_blank" rel="noopener">
+                        Get Directions
+                    </a>
+                </div>
+                <!-- Photo Shoots -->
+                <div class="visit-card">
+                    <h3>Photo Shoots</h3>
+                    <ul class="visit-list">
+                        <ul>
+                            <li>Do not block visitors; the museum remains open to the public.</li>
+                            <li>Adjust to visitor flow and coordinate with staff for tours.</li>
+                            <li>No props; do not move or alter exhibits.</li>
+                            <li>Dress, poses, and speech must respect the museum’s history.</li>
+                            <li>Do not use museum electricity.</li>
+                            <li>Register at the reception before entering.</li>
+                        </ul>
+                    </ul>
+
+                    </ul>
+                    <a href="https://forms.gle/3XDygMrpk5aspWxn6" class="btn btn-secondary" target="_blank"
+                        rel="noopener">
+                        Proceed &rarr;
+                    </a>
+                </div>
+
+                <!-- Admission -->
+                <div class="visit-card">
+                    <h3>Group Tours</h3>
+                    <ul class="visit-list">
+                        <li><strong>Walk-in Visitors (20+):</strong> Free entry. No reservation required.</li>
+                        <li>
+
+                            <ul>
+                                <li>Reserve at least 3 days in advance.</li>
+                                <li>Confirmation email will be sent once approved.</li>
+                                <li>Missed schedules are forfeited.</li>
+                                <li>Maximum 50 visitors per time slot.</li>
+                                <li>Schedule changes must be made at least 1 day prior.</li>
+                                <li>One representative registers for group visits.</li>
+
+                                <a href=" https://forms.gle/s4FW1wRm64HCPsyC6" class="btn btn-secondary" target="_blank"
+                                    rel="noopener">
+                                    Procced &rarr;
+                                </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Feedback -->
+        <!-- <section id="feedback" class="section section--alt">
+            <div class="section-header">
+                <h2>Share Us Your Thoughts</h2>
+                <p>
+                    Tell us what you enjoyed and what we can make even better next time.
+                </p>
+            </div>
+            <div class="feedback-grid"
+                style="display: grid; grid-template-columns: 0.9fr 1.15fr; gap: 50px; max-width: 1600px; margin: 0 auto; align-items: start; padding: 0 40px;">
+                <form class="feedback-form" aria-label="Feedback form"
+                    style="background: white; padding: 40px; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%;">
+                    <div class="form-row">
+                        <label for="name">Name</label>
+                        <input id="name" name="name" type="text" placeholder="Enter your name" required />
+                    </div>
+                    <div class="form-row">
+                        <label for="email">Email</label>
+                        <input id="email" name="email" type="email" placeholder="Enter your email" required />
+                    </div>
+                    <div class="form-row">
+                        <label for="age-group">Age group</label>
+                        <select id="age-group" name="age-group" required>
+                            <option value="">Choose one</option>
+                            <option>Child (under 12)</option>
+                            <option>Teen (13–17)</option>
+                            <option>Adult (18–64)</option>
+                            <option>Senior (65+)</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label for="address">Address</label>
+                        <input id="address" name="address" type="text" placeholder="Enter your city" required />
+                    </div>
+                    <div class="form-row">
+                        <label for="message">Anything you’d like to tell us?</label>
+                        <textarea id="message" name="message" rows="4"
+                            placeholder="Share your thoughts, concerns, or recommendations with us."
+                            required></textarea>
+                    </div>
+                    <label>Rate Your Experience:</label>
+                    <div class="star-rating">
+                        <input type="radio" name="rating" id="star5" value="5">
+                        <label for="star5">★</label>
+
+                        <input type="radio" name="rating" id="star4" value="4">
+                        <label for="star4">★</label>
+
+                        <input type="radio" name="rating" id="star3" value="3">
+                        <label for="star3">★</label>
+
+                        <input type="radio" name="rating" id="star2" value="2">
+                        <label for="star2">★</label>
+
+                        <input type="radio" name="rating" id="star1" value="1">
+                        <label for="star1">★</label>
+                    </div>
+                    <button class="btn btn-primary" type="submit">
+                        Send feedback
+                    </button>
+                </form> -->
+
+        <section id="feedback" class="section section--alt">
+            <div class="approved-feedbacks" style="background: transparent; 
+            padding: 0 10px; 
+            height: 100%; max-width: 1400px;
+             margin: 0 auto;">
+                <h3 style="margin-top: 0; 
+                    color: #90191B; 
+                    font-size: 28px; 
+                    font-family: 'Cinzel', serif; 
+                    margin-bottom: 25px; 
+                    text-align: center;">
+                    What our visitors say</h3>
+                <div id="total-star-rating" style="margin-bottom: 35px; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 15px; font-family: 'Inter',sans-serif; 
+                     min-height: 45px;">
+                </div>
+                <div id="approved-feedbacks-list" style="width: 100%; min-height: 200px;">
+                    <!-- Content will be dynamically inserted here by feedback.js -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="footer-newsletter-container">
+        <div class="footer-container">
+
+            <div class="footer-main">
+
+                <div class="footer-brand">
+                    <h3 class="footer-logo">
+                        <span class="footer-logo-light">MUSEO NI</span><br>
+                        <span class="footer-logo-accent">DR. PIO VALENZUELA</span>
+                    </h3>
+
+                    <p class="footer-description">
+                        The Museo ni Dr. Pio Valenzuela now represents the city's commitment to preserving its cultural,
+                        heritage, and historical roots.
+                    </p>
+
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/PioValMuseum/" class="footer-social-link"
+                            aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/piovalmuseum/" class="footer-social-link"
+                            aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://x.com/pio_valenzuela?lang=en" class="footer-social-link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@piovalmuseum" class="footer-social-link" aria-label="Tiktok">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <div class="footer-column-contact">
+                        <h3>Contact</h3>
+
+                        <p>Email: piovalmuseum@gmail.com</p>
+                        <p>Phone: (02) 82945699</p>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#gallery">Gallery</a></li>
+                        <li><a href="#game">Game</a></li>
+                        <li><a href="#blog">Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p style="text-align: center;">
+                    © 2026 Museo ni Dr. Pio Valenzuela. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="supabaseClient.js"></script>
+    <script src="feedback.js"></script>
+    <script src="pio_museo.js" defer></script>
+</body>
+
+</html>

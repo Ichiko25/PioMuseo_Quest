@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Login | Museum Management Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="admin.css" />
+
+  <style>
+    :root {
+      --bg: #0b111b;
+      --card: #161d2a;
+      --input: #1f2937;
+      --accent-orange: #ff4d4d;
+      --accent-yellow: #f97316;
+      --text: #ffffff;
+      --muted: #94a3b8;
+      --border: #2d3748;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: Inter, system-ui, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #111827, #020617);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+    }
+
+    /* ===== CONTAINER ===== */
+    .container {
+      width: 100%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ===== CARD ===== */
+    .card {
+      background: var(--card);
+      width: 100%;
+      max-width: 420px;
+      padding: 36px 32px;
+      border-radius: 20px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      animation: fadeUp 0.6s ease;
+    }
+
+    /* ===== ICON ===== */
+    .icon {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-yellow));
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+
+    /* ===== TITLES ===== */
+    .card h1 {
+      margin: 12px 0 4px;
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 26px;
+    }
+
+    /* ===== FORM ===== */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* INPUT GROUP */
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      transition: border 0.3s ease;
+    }
+
+    .input-group span {
+      font-size: 18px;
+    }
+
+    .input-group input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 15px;
+      width: 100%;
+    }
+
+    .input-group:focus-within {
+      border-color: var(--accent-yellow);
+    }
+
+    /* ===== BUTTON ===== */
+    button[type="submit"] {
+      margin-top: 10px;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(90deg,
+          var(--accent-orange),
+          var(--accent-yellow));
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 10px 25px rgba(255, 77, 77, 0.35);
+    }
+
+    button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(255, 77, 77, 0.45);
+    }
+
+    /* ===== ERROR MESSAGE ===== */
+    #loginError {
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    /* ===== NOTICE ===== */
+    .notice {
+      margin-top: 26px;
+      padding: 16px;
+      background: #0f172a;
+      border-radius: 14px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 13px;
+      color: var(--muted);
+      align-items: baseline;
+    }
+
+    .notice span {
+      font-size: 18px;
+    }
+
+    /* ===== ANIMATION ===== */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="card">
+
+      <div class="icon">🛡️</div>
+
+      <h1>Admin Access</h1>
+      <p class="subtitle">Museum Management Portal</p>
+
+      <form id="loginForm">
+        <div class="input-group">
+          <input type="email" id="email" placeholder="Admin Email" required />
+        </div>
+
+        <div class="input-group">
+          <input type="password" id="password" placeholder="Password" required />
+        </div>
+
+        <button type="submit">Login to Admin Dashboard</button>
+        <p id="loginError" style="color:red; display:none;">Invalid credentials</p>
+      </form>
+
+      <div class="notice">
+        <span>🛡️</span>
+        <p>
+          This area is restricted to authorized museum administrators only.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabaseClient.js"></script>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      // DEMO ADMIN LOGIN
+      if (email === "admin@museo.ph" && password === "piomuseo_123") {
+
+        try {
+          // Log admin login to audit_logs
+          await supabaseClient.from('audit_logs').insert([{
+            admin_email: email,
+            action: 'Logged In',
+            details: 'Admin Dashboard Access'
+          }]);
+        } catch (err) {
+          console.error("Failed to log admin login:", err);
+        }
+
+        localStorage.setItem("isAdmin", "true");
+        window.location.href = "admin.html";
+      } else {
+        document.getElementById("loginError").style.display = "block";
+      }
+    });
+  </script>
+
+</body>
+
+</html>

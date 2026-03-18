@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pio Museo - Admin Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* =========================
+       ROOT VARIABLES (Deep Dark Theme)
+    ========================= */
+    :root {
+      --bg-dark: #0f172a;
+      --sidebar-bg: #1e293b;
+      --card-bg: #1e293b;
+      --input-bg: #334155;
+      --border-color: #334155;
+
+      --accent-primary: #f97316;
+      --accent-secondary: #ef4444;
+      --green: #10b981;
+      --red: #ef4444;
+      --blue: #3b82f6;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius-lg: 16px;
+      --radius-md: 10px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      overflow: hidden;
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border-color);
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 24px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo-box {
+      width: 42px;
+      height: 42px;
+      background: #ef4444;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-text b {
+      font-size: 18px;
+      letter-spacing: 0.5px;
+    }
+
+    .logo-text small {
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .nav {
+      flex: 1;
+      list-style: none;
+      padding: 15px 10px;
+      overflow-y: auto;
+    }
+
+    .nav li {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      font-weight: 500;
+      transition: var(--transition);
+      margin-bottom: 5px;
+    }
+
+    .nav li i {
+      font-size: 18px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .nav li:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      transform: translateX(4px);
+    }
+
+    .nav li.active {
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.15), transparent);
+      color: #ef4444;
+      border-right: 4px solid #ef4444;
+    }
+
+    .logout {
+      padding: 20px;
+      border-top: 1px solid var(--border-color);
+      cursor: pointer;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .logout:hover {
+      color: var(--red);
+    }
+
+    /* =========================
+       MAIN CONTENT AREA
+    ========================= */
+    .main {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 40px;
+    }
+
+    .header-text h2 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .header-text p {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .notification {
+      position: relative;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 20px;
+      transition: var(--transition);
+    }
+
+    .notification:hover {
+      color: var(--text-main);
+    }
+
+    .badge-dot {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--red);
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--bg-dark);
+      color: white;
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-info b {
+      display: block;
+      font-size: 15px;
+    }
+
+    .user-info small {
+      color: var(--text-muted);
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), #2563eb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* =========================
+       PAGE SWITCHING & ANIMATION
+    ========================= */
+    .page {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* =========================
+       DASHBOARD CARDS
+    ========================= */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      position: relative;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .card .icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+
+    .card:nth-child(1) .icon-wrapper {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--blue);
+    }
+
+    .card:nth-child(2) .icon-wrapper {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green);
+    }
+
+    .card:nth-child(3) .icon-wrapper {
+      background: rgba(249, 115, 22, 0.15);
+      color: var(--accent-primary);
+    }
+
+    .card:nth-child(4) .icon-wrapper {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--red);
+    }
+
+    .card h3 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .card p {
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .trend {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .trend.up {
+      color: var(--green);
+    }
+
+    .trend.down {
+      color: var(--red);
+    }
+
+    /* =========================
+       TABLES (Users & Content)
+    ========================= */
+    .table-container {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: left;
+    }
+
+    th {
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    td {
+      font-size: 15px;
+      color: var(--text-main);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr {
+      transition: var(--transition);
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .user-cell {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--input-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* =========================
+       BADGES & BUTTONS
+    ========================= */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-badge.active {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green);
+    }
+
+    .status-badge.inactive {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--red);
+    }
+
+    .status-badge.pending {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: white;
+      box-shadow: 0 4px 10px rgba(249, 115, 22, 0.2);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(249, 115, 22, 0.3);
+    }
+
+    .btn-icon {
+      background: transparent;
+      color: var(--text-muted);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .btn-icon:hover {
+      background: var(--input-bg);
+      color: var(--text-main);
+    }
+
+    .btn-icon.edit:hover {
+      color: var(--blue);
+    }
+
+    .btn-icon.delete:hover {
+      color: var(--red);
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    /* =========================
+       CHARTS
+    ========================= */
+    .charts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 24px;
+    }
+
+    .chart-card {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-header {
+      margin-bottom: 20px;
+    }
+
+    .chart-header h3 {
+      font-size: 18px;
+    }
+
+    .canvas-container {
+      flex: 1;
+      position: relative;
+    }
+
+    /* =========================
+       SETTINGS
+    ========================= */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .settings-card {
+      background: var(--card-bg);
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .settings-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .settings-header .icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--blue);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .settings-header .icon.security {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green);
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: white;
+      font-size: 15px;
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .input-group input:focus,
+    .input-group select:focus,
+    .input-group textarea:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+    }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .toggle-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .toggle-info b {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .toggle-info small {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--input-bg);
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    input:checked+.slider {
+      background-color: var(--green);
+    }
+
+    input:checked+.slider:before {
+      transform: translateX(24px);
+    }
+
+    .save-btn {
+      width: auto;
+      padding: 14px 32px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: white;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+      margin-top: 10px;
+    }
+
+    .save-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(249, 115, 22, 0.3);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .content-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-card:hover {
+      border-color: rgba(255, 255, 255, 0.08);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .content-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .content-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .content-card-desc {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      flex: 1;
+    }
+
+    .content-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .content-stats {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 12px;
+    }
+
+    .content-stats i {
+      margin-right: 4px;
+    }
+    /* =========================
+       EVALUATION PROGRESS BARS
+    ========================= */
+    .evaluation-card {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .evaluation-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .evaluation-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+
+    .evaluation-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .evaluation-meta {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .evaluation-meta b {
+      color: var(--accent-primary);
+    }
+
+    .evaluation-bar-container {
+      background: rgba(255, 255, 255, 0.05);
+      height: 12px;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .evaluation-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    }
+
+    .evaluation-score-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .evaluation-percent {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent-primary);
+    }
+
+    .evaluation-status {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .status-worst { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+    .status-bad { background: rgba(249, 115, 22, 0.1); color: #f97316; }
+    .status-soso { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
+    .status-good { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .status-great { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+
+    /* =========================
+       GENDER ANALYTICS LEGEND
+    ========================= */
+    .gender-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      justify-content: center;
+      padding-left: 20px;
+    }
+
+    .gender-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .gender-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .gender-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .gender-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .gender-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    .gender-chart-wrapper {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      flex-shrink: 0;
+    }
+
+    .gender-center-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .gender-total-num {
+      font-size: 20px;
+      font-weight: 800;
+      color: white;
+      display: block;
+    }
+
+    .gender-total-text {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+    /* =========================
+       ANALYTICS FILTERS
+    ========================= */
+    .analytics-filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end; /* Ensure top-right */
+      gap: 15px;
+      margin-bottom: 25px;
+      padding: 15px 20px;
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .filter-group label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .filter-select {
+      background: #0f172a;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      cursor: pointer;
+      min-width: 120px;
+    }
+    .filter-select:focus {
+      border-color: var(--accent-primary);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-box">
+        <i class="fas fa-landmark"></i>
+      </div>
+      <div class="logo-text">
+        <b>Pio Museo</b>
+        <small>Admin Portal</small>
+      </div>
+    </div>
+
+    <ul class="nav">
+      <li class="active" onclick="openPage('dashboard', this)">
+        <i class="fas fa-th-large"></i> Dashboard
+      </li>
+      <li onclick="openPage('content', this)">
+        <i class="fas fa-layer-group"></i> Content Manager
+      </li>
+      <li onclick="openPage('users', this)">
+        <i class="fas fa-users"></i> Users Management
+      </li>
+      <li onclick="openPage('feedbacks', this)">
+        <i class="fas fa-comment-dots"></i> Feedbacks
+      </li>
+      <li onclick="openPage('auditlog', this)">
+        <i class="fas fa-history"></i> Audit Log
+      </li>
+      <li onclick="openPage('analytics', this)">
+        <i class="fas fa-chart-line"></i> Analytics
+      </li>
+      <li onclick="openPage('settings', this)">
+        <i class="fas fa-cog"></i> Settings
+      </li>
+    </ul>
+
+    <div class="logout" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </div>
+  </div>
+
+  <!-- MAIN AREA -->
+  <div class="main">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-text">
+        <h2 id="title">Dashboard Overview</h2>
+        <p>Monitor museum activity, manage content, and adjust system settings.</p>
+      </div>
+
+      <div class="user-profile">
+        <div class="user-info">
+          <b>Admin User</b>
+          <small>admin@museo.ph</small>
+        </div>
+        <div class="avatar">A</div>
+      </div>
+    </div>
+
+    <!-- PAGE: DASHBOARD -->
+    <div id="dashboard" class="page active">
+      <!-- Website Dashboard Section -->
+      <h3
+        style="font-size: 20px; margin-bottom: 20px; color: var(--text-main); display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+        <i class="fas fa-globe" style="color: var(--blue);"></i> Website Overview
+      </h3>
+      <div class="stats"
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
+        <div class="card">
+          <div class="trend up"><i class="fas fa-arrow-up"></i></div>
+          <div class="icon-wrapper"><i class="fas fa-users"></i></div>
+          <h3 id="stat-users">...</h3>
+          <p>Total Registered Users</p>
+        </div>
+        <div class="card">
+          <div class="trend up"><i class="fas fa-arrow-up"></i></div>
+          <div class="icon-wrapper"><i class="fas fa-eye"></i></div>
+          <h3 id="stat-visitors">...</h3>
+          <p>Total Website Visitors</p>
+        </div>
+        <div class="card">
+          <div class="trend up"><i class="fas fa-arrow-up"></i></div>
+          <div class="icon-wrapper"><i class="fas fa-camera"></i></div>
+          <h3 id="stat-photoshoots">...</h3>
+          <p>Photoshoot Bookings</p>
+        </div>
+        <div class="card">
+          <div class="trend up"><i class="fas fa-arrow-up"></i></div>
+          <div class="icon-wrapper"><i class="fas fa-map-marked-alt"></i></div>
+          <h3 id="stat-tours">...</h3>
+          <p>Tour Group Bookings</p>
+        </div>
+      </div>
+
+      <!-- Game Dashboard Section -->
+      <h3
+        style="font-size: 20px; margin-bottom: 20px; color: var(--text-main); display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-gamepad" style="color: var(--accent-primary);"></i> Game Overview
+      </h3>
+      <div class="stats"
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
+        <div class="card">
+          <div class="trend up"><i class="fas fa-arrow-up"></i></div>
+          <div class="icon-wrapper"><i class="fas fa-gamepad"></i></div>
+          <h3 id="stat-game-players">...</h3>
+          <p>Total No. Players</p>
+        </div>
+        <div class="card">
+          <div class="icon-wrapper"><i class="fas fa-star"></i></div>
+          <h3 id="stat-game-rating">...</h3>
+          <p>Game Rating</p>
+        </div>
+        <div class="card">
+          <div class="trend up"><i class="fas fa-arrow-up"></i></div>
+          <div class="icon-wrapper"><i class="fas fa-comment-dots"></i></div>
+          <h3 id="stat-feedbacks">...</h3>
+          <p>Feedbacks</p>
+        </div>
+        <div class="card">
+          <div class="icon-wrapper"><i class="fas fa-certificate"></i></div>
+          <h3 id="stat-game-certs">0</h3>
+          <p>Sended E-certificate</p>
+        </div>
+      </div>
+
+      <!-- Quick Recent Users Table -->
+      <div class="table-container">
+        <div class="table-header">
+          <h3>Recent Player Activity</h3>
+          <button class="btn btn-primary" onclick="openPage('users', document.querySelectorAll('.nav li')[2])">View
+            All</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Player Info</th>
+              <th>Location</th>
+              <th>Time Registered</th>
+            </tr>
+          </thead>
+          <tbody id="recent-users-tbody">
+            <!-- Dynamic Content -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="content" class="page">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h3 style="font-size: 20px;">Museum Exhibits</h3>
+      </div>
+
+      <!-- Quick Access Jumps -->
+      <div style="display: flex; gap: 12px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 8px;">
+        <button class="btn" style="background: var(--input-bg); color: white;"
+          onclick="document.getElementById('section-blogs').scrollIntoView({behavior: 'smooth', block: 'start'})"><i
+            class="fas fa-file-alt" style="margin-right: 6px;"></i> Blogs & Stories</button>
+        <button class="btn" style="background: var(--input-bg); color: white;"
+          onclick="document.getElementById('section-gallery').scrollIntoView({behavior: 'smooth', block: 'start'})"><i
+            class="fas fa-images" style="margin-right: 6px;"></i> Gallery Images</button>
+        <button class="btn" style="background: var(--input-bg); color: white;"
+          onclick="document.getElementById('section-faqs').scrollIntoView({behavior: 'smooth', block: 'start'})"><i
+            class="fas fa-question-circle" style="margin-right: 6px;"></i> FAQs</button>
+      </div>
+
+      <h4 id="section-blogs" style="margin-bottom: 16px; 
+        color: var(--text-muted); 
+        border-bottom: 1px solid var(--border-color); 
+        padding-bottom: 8px; scroll-margin-top: 20px;
+        display: flex; justify-content: space-between; align-items: center;">
+        <span>
+          Blogs & Stories <span id="blog-count" style="font-size: 12px; 
+          background: rgba(255,255,255,0.1); 
+          padding: 2px 8px; border-radius: 12px; 
+          margin-left: 8px; 
+          font-weight: normal;">0
+            Published</span>
+        </span>
+        <button class="btn btn-sm"
+          style="background: var(--accent-primary); color: white; border: none; border-radius: 6px; font-size: 12px; padding: 6px 14px; cursor: pointer;"
+          onclick="openAddContentModal('blog')"><i class="fas fa-plus"></i> Add Blog</button>
+      </h4>
+      <div class="content-grid" id="blog-grid-container" style="margin-bottom: 40px;">
+        <!-- Dynamic Content -->
+      </div>
+
+      <h4 id="section-gallery" style="margin-bottom: 16px; color: var(--text-muted); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; scroll-margin-top: 20px;
+        display: flex; justify-content: space-between; align-items: center;">
+        <span>
+          Gallery Images <span id="gallery-count"
+            style="font-size: 12px; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 12px; margin-left: 8px; font-weight: normal;">0
+            Published</span>
+        </span>
+        <button class="btn btn-sm"
+          style="background: var(--accent-primary); color: white; border: none; border-radius: 6px; font-size: 12px; padding: 6px 14px; cursor: pointer;"
+          onclick="openAddContentModal('gallery')"><i class="fas fa-plus"></i> Add Gallery Image</button>
+      </h4>
+      <div class="content-grid" id="gallery-grid-container" style="margin-bottom: 40px;">
+        <!-- Dynamic Content -->
+      </div>
+
+      <h4 id="section-faqs" style="margin-bottom: 16px; color: var(--text-muted); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; scroll-margin-top: 20px;
+        display: flex; justify-content: space-between; align-items: center;">
+        <span>
+          Frequently Asked Questions (FAQs) <span id="faq-count"
+            style="font-size: 12px; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 12px; margin-left: 8px; font-weight: normal;">0
+            Published</span>
+        </span>
+        <button class="btn btn-sm"
+          style="background: var(--accent-primary); color: white; border: none; border-radius: 6px; font-size: 12px; padding: 6px 14px; cursor: pointer;"
+          onclick="openAddContentModal('faq')"><i class="fas fa-plus"></i> Add FAQ</button>
+      </h4>
+      <div class="content-grid" id="faq-grid-container">
+        <!-- Dynamic Content -->
+      </div>
+    </div>
+
+    <!-- PAGE: USERS -->
+    <div id="users" class="page">
+      <div class="table-container">
+        <div class="table-header">
+          <div class="input-group" style="margin-bottom: 0; width: 250px;">
+            <input type="text" id="user-search" placeholder="Search users by name, email..." style="padding-left: 36px;">
+          </div>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <select id="user-filter-age"
+              style="padding: 10px; border-radius: 8px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); outline: none;">
+              <option value="" style="background: var(--card-bg); color: var(--text-color);">All Ages</option>
+              <option value="Child (under 12)">Child (under 12)</option>
+              <option value="Teen (13–17)">Teen (13–17)</option>
+              <option value="Adult (18–64)">Adult (18–64)</option>
+              <option value="Senior (65+)">Senior (65+)</option>
+            </select>
+            <input type="date" id="user-filter-date"
+              style="padding: 10px; border-radius: 8px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); outline: none;">
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>User Info</th>
+              <th>Age Group</th>
+              <th>Location</th>
+              <th>Time Registered</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="all-users-tbody">
+            <!-- Dynamic Users -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PAGE: FEEDBACKS -->
+    <div id="feedbacks" class="page">
+      <div class="table-container">
+        <div class="table-header">
+          <div class="input-group" style="margin-bottom: 0; width: 250px;">
+            <input type="text" id="feedback-search" placeholder="Search by name or message..." style="padding-left: 36px;">
+          </div>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <select id="feedback-filter-stars"
+              style="padding: 10px; border-radius: 8px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); outline: none;">
+              <option value="" style="background: var(--card-bg); color: var(--text-color);">All Ratings</option>
+              <option value="5">5 Stars</option>
+              <option value="4">4 Stars</option>
+              <option value="3">3 Stars</option>
+              <option value="2">2 Stars</option>
+              <option value="1">1 Star</option>
+            </select>
+            <input type="date" id="feedback-filter-date"
+              style="padding: 10px; border-radius: 8px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); outline: none;">
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Visitor Info</th>
+              <th style="min-width: 120px;">Rating</th>
+              <th>Message</th>
+              <th>Time Submitted</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="all-feedbacks-tbody">
+            <!-- Dynamic Feedbacks -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PAGE: AUDIT LOG -->
+    <div id="auditlog" class="page">
+      <div class="table-container">
+        <div class="table-header" style="flex-wrap: wrap; gap: 15px;">
+          <div class="input-group" style="margin-bottom: 0; width: 250px;">
+            <input type="text" id="audit-search" placeholder="Search logs..." style="padding-left: 36px;">
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <input type="date" id="audit-filter-date"
+              style="padding: 10px; border-radius: 8px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); outline: none;">
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Admin Identity</th>
+              <th>Action</th>
+              <th>Details</th>
+              <th style="text-align: right;">Manage</th>
+            </tr>
+          </thead>
+          <tbody id="audit-log-tbody">
+            <!-- Dynamic Audit Logs -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PAGE: ANALYTICS -->
+    <div id="analytics" class="page">
+      <div class="analytics-filter-bar" style="display: flex; align-items: center; justify-content: flex-end; gap: 15px; margin-bottom: 25px; padding: 15px 20px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05);">
+        <div class="filter-group">
+          <label>Filter by Year:</label>
+          <select id="filter-year" class="filter-select"></select>
+        </div>
+        <div class="filter-group">
+          <label>Filter by Month:</label>
+          <select id="filter-month" class="filter-select">
+            <option value="all">All Months</option>
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="charts"
+        style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+
+        <!-- ROW 1, COL 1: EVALUATION (Refined) -->
+        <div class="chart-card" style="height: 400px; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+          <div class="chart-header" style="margin-bottom: 5px;">
+            <h3 style="font-size: 16px; font-weight: 700; color: white; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-star" style="color: #ef4444; font-size: 14px;"></i>
+              Museum Experience
+            </h3>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 20px; flex: 1; justify-content: space-between;">
+            <div class="evaluation-row">
+              <div class="evaluation-header">
+                <span class="evaluation-label">Overall Experience</span>
+                <span class="evaluation-meta">Average: <b id="label-overall">...</b></span>
+              </div>
+              <div class="evaluation-percent" id="percent-overall">0%</div>
+              <div class="evaluation-bar-container">
+                <div class="evaluation-bar-fill" id="bar-overall" style="width: 0%; background: linear-gradient(90deg, #3b82f6, #60a5fa);"></div>
+              </div>
+            </div>
+            <div class="evaluation-row">
+              <div class="evaluation-header">
+                <span class="evaluation-label">Exhibit / Display</span>
+                <span class="evaluation-meta">Average: <b id="label-exhibit">...</b></span>
+              </div>
+              <div class="evaluation-percent" id="percent-exhibit">0%</div>
+              <div class="evaluation-bar-container">
+                <div class="evaluation-bar-fill" id="bar-exhibit" style="width: 0%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
+              </div>
+            </div>
+            <div class="evaluation-row">
+              <div class="evaluation-header">
+                <span class="evaluation-label">Information</span>
+                <span class="evaluation-meta">Average: <b id="label-info">...</b></span>
+              </div>
+              <div class="evaluation-percent" id="percent-info">0%</div>
+              <div class="evaluation-bar-container">
+                <div class="evaluation-bar-fill" id="bar-info" style="width: 0%; background: linear-gradient(90deg, #a855f7, #c084fc);"></div>
+              </div>
+            </div>
+            <div class="evaluation-row">
+              <div class="evaluation-header">
+                <span class="evaluation-label">Game Application</span>
+                <span class="evaluation-meta">Average: <b id="label-game">...</b></span>
+              </div>
+              <div class="evaluation-percent" id="percent-game">0%</div>
+              <div class="evaluation-bar-container">
+                <div class="evaluation-bar-fill" id="bar-game" style="width: 0%; background: linear-gradient(90deg, #f97316, #fb923c);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 1, COL 2: STAR RATINGS -->
+        <div class="chart-card" style="height: 400px;">
+          <div class="chart-header">
+            <h3>Star Ratings Breakdown</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Distribution of user ratings.</p>
+          </div>
+          <div class="canvas-container" style="height: 300px;">
+            <canvas id="chart4"></canvas>
+          </div>
+        </div>
+
+        <!-- ROW 2, FULL WIDTH: PLATFORM ENGAGEMENT -->
+        <div class="chart-card" style="grid-column: span 2;">
+          <div class="chart-header">
+            <h3>Platform Engagement Overview</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Consolidated metrics for accounts, visitors, and players.</p>
+          </div>
+          <div class="canvas-container" style="height: 350px;">
+            <canvas id="chartEngagement"></canvas>
+          </div>
+        </div>
+
+        <!-- ROW 3, COL 1: GENDER -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Gender Distribution</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Visitor distribution by gender.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 30px; padding: 10px 0;">
+            <div class="gender-chart-wrapper">
+              <canvas id="chartGender"></canvas>
+              <div class="gender-center-label">
+                <span class="gender-total-num" id="gender-total-count">0</span>
+                <span class="gender-total-text">Visitors</span>
+              </div>
+            </div>
+            <div class="gender-legend" style="flex: 1; padding-left: 0;">
+              <div class="gender-item">
+                <div class="gender-icon-box" style="background: rgba(244, 114, 182, 0.1); color: #f472b6;">
+                  <i class="fas fa-venus"></i>
+                </div>
+                <div class="gender-info">
+                  <span class="gender-name">Female</span>
+                  <span class="gender-value" id="gender-female-val">0%</span>
+                </div>
+              </div>
+              <div class="gender-item">
+                <div class="gender-icon-box" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                  <i class="fas fa-mars"></i>
+                </div>
+                <div class="gender-info">
+                  <span class="gender-name">Male</span>
+                  <span class="gender-value" id="gender-male-val">0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 3, COL 2: AGE GROUPS -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Age Groups</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Age demographics of registered visitors.</p>
+          </div>
+          <div class="canvas-container" style="height: 300px;">
+            <canvas id="chart7"></canvas>
+          </div>
+        </div>
+
+        <!-- ROW 4: OTHER -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Locations</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Where your registered visitors are from.</p>
+          </div>
+          <div class="canvas-container" style="height: 300px;">
+            <canvas id="chart6"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Booking Comparison</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Photoshoot vs Group Tour distribution.</p>
+          </div>
+          <div class="canvas-container" style="height: 300px;">
+            <canvas id="chart5"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PAGE: SETTINGS -->
+    <div id="settings" class="page">
+      <div class="settings-grid">
+
+        <!-- General Info -->
+        <div>
+          <div class="settings-card">
+            <div class="settings-header">
+              <div class="icon"><i class="fas fa-globe"></i></div>
+              <div>
+                <h3 style="font-size: 18px;">General Platform Settings</h3>
+                <p style="color: var(--text-muted); font-size: 13px;">Manage core information about the portal.</p>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label>Site Name</label>
+              <input type="text" value="Pio Museo Quest Admin">
+            </div>
+
+            <div class="input-group">
+              <label>Admin Support Email</label>
+              <input type="email" value="admin@piomuseo.quest">
+            </div>
+          </div>
+        </div>
+
+        <!-- System & Security preferences -->
+        <div>
+          <div class="settings-card">
+            <div class="settings-header">
+              <div class="icon security"><i class="fas fa-shield-alt"></i></div>
+              <div>
+                <h3 style="font-size: 18px;">Security & Features</h3>
+                <p style="color: var(--text-muted); font-size: 13px;">Configure feature flags and access.</p>
+              </div>
+            </div>
+
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <b>User Registration</b>
+                <small>Allow new players to create accounts.</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <b>Maintenance Mode</b>
+                <small>Disable public access while pushing updates.</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end;">
+            <button class="save-btn" onclick="saveSettings()">
+              <i class="fas fa-save" style="margin-right: 8px;"></i> Save All Settings
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Add Content Modal -->
+  <div id="addContentModal" class="modal-overlay"
+    style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;">
+    <div class="modal-content"
+      style="background: #111827; width: 700px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white;">
+      <h3 id="modal-title" style="margin-top: 0; margin-bottom: 20px;">Add New Content</h3>
+      <input type="hidden" id="edit-content-id" value="">
+      <div class="input-group" style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Content Type</label>
+        <select id="new-content-type"
+          style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
+          <option value="blog">Blog / Story</option>
+          <option value="gallery">Gallery Image</option>
+          <option value="faq">FAQ</option>
+        </select>
+      </div>
+      <div class="input-group" style="margin-bottom: 15px;">
+        <label id="title-label" style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Title /
+          Question</label>
+        <input type="text" id="new-content-title" placeholder="Enter title or question..."
+          style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
+      </div>
+      <div class="input-group" id="group-description" style="margin-bottom: 15px;">
+        <label id="desc-label" style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Description
+          / Answer</label>
+        <textarea id="new-content-desc" rows="12" placeholder="Enter story or answer..."
+          style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
+      </div>
+      <div class="input-group" id="group-image" style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Image URL</label>
+        <input type="text" id="new-content-image" placeholder="https://example.com/image.jpg"
+          style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn" onclick="closeAddContentModal()"
+          style="background: transparent; color: #9ca3af; border: 1px solid #374151;">Cancel</button>
+        <button class="btn btn-primary" onclick="submitNewContent()">Save Content</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabaseClient.js"></script>
+  <script src="admin.js"></script>
+  <script>
+    /* AUTH CHECK */
+    if (localStorage.getItem("isAdmin") !== "true") {
+      window.location.href = "admin login.html";
+    }
+
+    /* PAGE SWITCHING LOGIC */
+    function openPage(pageId, el) {
+      // Manage Active Pages
+      document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+      });
+      document.getElementById(pageId).classList.add("active");
+
+      // Manage Active Nav Items
+      document.querySelectorAll(".nav li").forEach(navItem => {
+        navItem.classList.remove("active");
+      });
+      el.classList.add("active");
+
+      // Update Header Title dynamically mapping to the label
+      let pageTitle = el.innerText.trim();
+      document.getElementById("title").innerText = pageTitle + " Overview";
+
+      if (pageId === "analytics") {
+        if (typeof renderCharts === "function") {
+          renderCharts();
+          renderEvaluationStats();
+          renderGenderChart();
+          renderPlatformEngagementChart();
+        }
+      }
+    }
+
+    // Render charts logic is now handled in admin.js using renderCharts()
+
+    // Logout Function
+    function logout() {
+      localStorage.removeItem("isAdmin");
+      window.location.href = "admin login.html";
+    }
+
+  </script>
+</body>
+
+</html>
