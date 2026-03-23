@@ -6,7 +6,36 @@ const SUPABASE_URL = 'https://brsoehxzpqhzgnsqivrq.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_pg9IZUYCihI7NiaS0NDHxQ_i7WqmCv6';
 
 // Initialize Supabase Client
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+ const supabaseClient = window.supabase.createClient(
+    "https://brsoehxzpqhzgnsqivrq.supabase.co",
+    "sb_publishable_pg9IZUYCihI7NiaS0NDHxQ_i7WqmCv6"
+  );
+
+  async function testInsert() {
+    const { data, error } = await supabaseClient
+      .from('visitor_logs')
+      .insert([{
+        player_name: 'Test Player',
+        location: 'Browser Test',
+        total_visitors: 1,
+        total_male: 1,
+        total_female: 0,
+        age_11_below: 0,
+        age_18_group: 1,
+        age_30_above: 0,
+        game_finishes: 1
+      }]);
+
+    if (error) {
+      console.error("Insert failed:", error);
+      document.body.innerHTML += "<p style='color:red;'>Insert Failed</p>";
+    } else {
+      console.log("Insert succeeded:", data);
+      document.body.innerHTML += "<p style='color:green;'>Insert Succeeded</p>";
+    }
+  }
+
+  testInsert();
 
 // --- Helper Functions ---
 
