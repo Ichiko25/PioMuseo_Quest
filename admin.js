@@ -1,3 +1,10 @@
+console.log("Supabase client:", supabaseClient);
+
+(async () => {
+    const { data, error } = await supabaseClient.from('analytics').select('*').limit(1);
+    console.log("Test analytics:", data, error);
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
     // Initial fetches
     fetchAnalytics();
