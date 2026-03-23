@@ -11,10 +11,13 @@ const SUPABASE_KEY = 'sb_publishable_pg9IZUYCihI7NiaS0NDHxQ_i7WqmCv6';
 document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize Supabase Client
-    window.supabaseClient = window.supabase.createClient(
-  'https://brsoehxzpqhzgnsqivrq.supabase.co',
-  'sb_publishable_pg9IZUYCihI7NiaS0NDHxQ_i7WqmCv6'
-);
+   // supabaseClient.js
+
+const SUPABASE_URL = 'https://brsoehxzpqhzgnsqivrq.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_pg9IZUYCihI7NiaS0NDHxQ_i7WqmCv6';
+
+// VERY IMPORTANT: this must be GLOBAL
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     // ===============================
     // TEST INSERT FUNCTION
     // ===============================
