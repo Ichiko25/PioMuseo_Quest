@@ -5,22 +5,6 @@
 const SUPABASE_URL = 'https://brsoehxzpqhzgnsqivrq.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_pg9IZUYCihI7NiaS0NDHxQ_i7WqmCv6';
 
-  const supabase = supabase.createClient(
-    "https://brsoehxzpqhzgnsqivrq.supabase.co",
-    "sb_publishable_pg9IZUYCihI7NiaS0NDHxQ_i7WqmCv6"
-  );
-
-  async function testInsert() {
-    const { data, error } = await supabase
-      .from('visitor_logs')
-      .insert([{ player_name: 'Test Player', location: 'Browser Test', total_visitors: 1 }]);
-    
-    if (error) console.error("Insert failed:", error);
-    else console.log("Insert succeeded:", data);
-  }
-
-  testInsert();
-
 // Initialize Supabase Client
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
