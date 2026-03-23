@@ -1,40 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Supabase Test Insert</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+  <title>Supabase Test</title>
 </head>
 <body>
+
+<h1>Testing Supabase...</h1>
+
+<!-- ✅ Correct Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
 <script>
-  // Initialize Supabase
-  const supabase = supabase.createClient(
-    "https://brsoehxzpqhzgnsqivrq.supabase.co",
-    "sb_publishable_pg9IZUYCihI7NiaS0NDHxQ_i7WqmCv6"
-  );
+  // Wait until everything is loaded
+  window.onload = async function () {
 
-  // Test insert function
-  async function testInsert() {
-    const { data, error } = await supabase
-      .from('visitor_logs')
-      .insert([{
-        player_name: 'Test Player',
-        location: 'Browser Test',
-        total_visitors: 1,
-        total_male: 1,
-        total_female: 0,
-        age_11_below: 0,
-        age_18_group: 1,
-        age_30_above: 0,
-        game_finishes: 1
-      }]);
+    const SUPABASE_URL = 'https://brsoehxzpqhzgnsqivrq.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_pg9IZUYCihI7NiaS0NDHxQ_i7WqmCv6';
 
-    if (error) console.error("Insert failed:", error);
-    else console.log("Insert succeeded:", data);
-  }
+    // ✅ Correct initialization
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // Run test
-  testInsert();
+    async function testInsert() {
+      const { data, error } = await supabaseClient
+        .from('visitor_logs')
+        .insert([{
+          player_name: 'Test Player',
+          location: 'Browser Test',
+          total_visitors: 1
+        }]);
+
+      if (error) {
+        console.error("Insert failed:", error);
+        document.body.innerHTML += "<p style='color:red;'>❌ Insert Failed</p>";
+      } else {
+        console.log("Insert succeeded:", data);
+        document.body.innerHTML += "<p style='color:green;'>✅ Insert Succeeded</p>";
+      }
+    }
+
+    testInsert();
+  };
 </script>
+
 </body>
 </html>
