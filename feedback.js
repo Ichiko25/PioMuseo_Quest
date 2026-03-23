@@ -170,11 +170,11 @@ function obfuscateName(fullName) {
 
 function escapeHtml(unsafe) {
     return unsafe
-         .replace(/&/g, "&amp;")
-         .replace(/</g, "&lt;")
-         .replace(/>/g, "&gt;")
-         .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;");
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 async function fetchApprovedFeedbacks() {
@@ -202,7 +202,7 @@ async function fetchApprovedFeedbacks() {
 
         const container = document.getElementById('approved-feedbacks-list');
         const totalContainer = document.getElementById('total-star-rating');
-        
+
         if (!container) return;
 
         if (!feedbacks || feedbacks.length === 0) {
@@ -210,7 +210,7 @@ async function fetchApprovedFeedbacks() {
             if (totalContainer) totalContainer.innerHTML = '';
             return;
         }
-        
+
         if (totalContainer) {
             let sum = 0;
             let count = 0;
@@ -220,7 +220,7 @@ async function fetchApprovedFeedbacks() {
                     count++;
                 }
             });
-            
+
             if (count > 0) {
                 const avg = (sum / count).toFixed(1);
                 let avgStarsHTML = '';
@@ -228,7 +228,7 @@ async function fetchApprovedFeedbacks() {
                     if (i <= Math.round(avg)) avgStarsHTML += '<i class="fas fa-star" style="color:#fbbf24; font-size: 20px;"></i>';
                     else avgStarsHTML += '<i class="far fa-star" style="color:#d1d5db; font-size: 20px;"></i>';
                 }
-                
+
                 totalContainer.innerHTML = `
                     <div style="font-size: 38px; font-weight: 700; color: #1e293b; line-height: 1; letter-spacing: -1px;">${avg}</div>
                     <div style="display: flex; flex-direction: column; justify-content: center;">
@@ -401,8 +401,11 @@ async function fetchPublicContent() {
                 leftRow.innerHTML = '';
                 rightRow.innerHTML = '';
                 galleries.forEach((gal, index) => {
-                    const img = gal.image_url || 'images/default-gallery.jpg';
-                    const imgTag = `<img src="${img}" alt="${gal.title}" onerror="this.src='images/logo.png'">`;
+                    let img = gal.image_url || 'web-images/qqq.jpg';
+                    if (img.startsWith('images/')) {
+                        img = img.replace('images/', 'web-images/').replace(/\.(jpeg|png)$/i, '.jpg').toLowerCase();
+                    }
+                    const imgTag = `<img src="${img}" alt="${gal.title}" onerror="this.src='web-images/qqq.jpg'">`;
                     if (index % 2 === 0) leftRow.innerHTML += imgTag;
                     else rightRow.innerHTML += imgTag;
                 });
@@ -439,39 +442,39 @@ async function autoSeedContent() {
         { type: 'blog', title: 'Museum Updates', description: '<h2>Museum Updates</h2>\n<p>\nThe Museo ni Dr. Pío Valenzuela continues to improve its exhibits\nto provide visitors with a deeper understanding of Philippine history.\n</p>\n<p>\nRecent updates include improved artifact displays, new educational\npanels, and guided tours for students and tourists.\n</p>', status: 'published' },
         { type: 'blog', title: 'Educational Discoveries', description: '<h2>Educational Discoveries</h2>\n<p>\nInside the museum are many artifacts that tell the story of the\nPhilippine Revolution and the life of Dr. Pío Valenzuela.\n</p>\n<p>\nVisitors can learn about historical documents, personal belongings,\nand photographs that highlight the contributions of Filipino heroes.\n</p>', status: 'published' },
 
-      // Gallery Left
-{ type: 'gallery', title: 'Second Floor', image_url: 'web-images/second-floor.jpg', status: 'published' },
-{ type: 'gallery', title: 'Table', image_url: 'web-images/table.jpg', status: 'published' },
-{ type: 'gallery', title: 'Study Table', image_url: 'web-images/study-table.jpg', status: 'published' },
-{ type: 'gallery', title: 'Museo Pic', image_url: 'web-images/museo-pic.jpg', status: 'published' },
-{ type: 'gallery', title: 'Front', image_url: 'web-images/front.jpg', status: 'published' },
-{ type: 'gallery', title: 'Right', image_url: 'web-images/right.jpg', status: 'published' },
-{ type: 'gallery', title: 'Family', image_url: 'web-images/fam.jpg', status: 'published' },
-{ type: 'gallery', title: 'Gazebo', image_url: 'web-images/gazebo.jpg', status: 'published' },
-{ type: 'gallery', title: 'Cinematic Table', image_url: 'web-images/cinematic-table.jpg', status: 'published' },
-{ type: 'gallery', title: 'News', image_url: 'web-images/news.jpg', status: 'published' },
-{ type: 'gallery', title: 'Sala', image_url: 'web-images/sala.jpg', status: 'published' },
-{ type: 'gallery', title: 'Guho', image_url: 'web-images/guho.jpg', status: 'published' },
-{ type: 'gallery', title: 'Tools', image_url: 'web-images/tools.jpg', status: 'published' },
-{ type: 'gallery', title: 'Pictures', image_url: 'web-images/pic.jpg', status: 'published' },
-{ type: 'gallery', title: 'Cinematic', image_url: 'web-images/cinematic.jpg', status: 'published' },
-{ type: 'gallery', title: 'First Floor', image_url: 'web-images/first-floor.jpg', status: 'published' },
+        // Gallery Left
+        { type: 'gallery', title: 'Second Floor', image_url: 'web-images/second-floor.jpg', status: 'published' },
+        { type: 'gallery', title: 'Table', image_url: 'web-images/table.jpg', status: 'published' },
+        { type: 'gallery', title: 'Study Table', image_url: 'web-images/study-table.jpg', status: 'published' },
+        { type: 'gallery', title: 'Museo Pic', image_url: 'web-images/museo-pic.jpg', status: 'published' },
+        { type: 'gallery', title: 'Front', image_url: 'web-images/front.jpg', status: 'published' },
+        { type: 'gallery', title: 'Right', image_url: 'web-images/right.jpg', status: 'published' },
+        { type: 'gallery', title: 'Family', image_url: 'web-images/fam.jpg', status: 'published' },
+        { type: 'gallery', title: 'Gazebo', image_url: 'web-images/gazebo.jpg', status: 'published' },
+        { type: 'gallery', title: 'Cinematic Table', image_url: 'web-images/cinematic-table.jpg', status: 'published' },
+        { type: 'gallery', title: 'News', image_url: 'web-images/news.jpg', status: 'published' },
+        { type: 'gallery', title: 'Sala', image_url: 'web-images/sala.jpg', status: 'published' },
+        { type: 'gallery', title: 'Guho', image_url: 'web-images/guho.jpg', status: 'published' },
+        { type: 'gallery', title: 'Tools', image_url: 'web-images/tools.jpg', status: 'published' },
+        { type: 'gallery', title: 'Pictures', image_url: 'web-images/pic.jpg', status: 'published' },
+        { type: 'gallery', title: 'Cinematic', image_url: 'web-images/cinematic.jpg', status: 'published' },
+        { type: 'gallery', title: 'First Floor', image_url: 'web-images/first-floor.jpg', status: 'published' },
 
-// Gallery Right
-{ type: 'gallery', title: 'Bookshelf', image_url: 'web-images/bookshelf.jpg', status: 'published' },
-{ type: 'gallery', title: 'Dining', image_url: 'web-images/dining.jpg', status: 'published' },
-{ type: 'gallery', title: 'Salaa', image_url: 'web-images/salaa.jpg', status: 'published' },
-{ type: 'gallery', title: 'Guho At', image_url: 'web-images/guhoat.jpg', status: 'published' },
-{ type: 'gallery', title: 'Dio', image_url: 'web-images/dio.jpg', status: 'published' },
-{ type: 'gallery', title: 'Kitchen', image_url: 'web-images/kitchen.jpg', status: 'published' },
-{ type: 'gallery', title: 'Clinica', image_url: 'web-images/clinica.jpg', status: 'published' },
-{ type: 'gallery', title: 'Dioramas', image_url: 'web-images/dioramas.jpg', status: 'published' },
-{ type: 'gallery', title: 'Exit', image_url: 'web-images/exit.jpg', status: 'published' },
-{ type: 'gallery', title: 'Haligi ng Tahanan', image_url: 'web-images/haligingtahanan.jpg', status: 'published' },
-{ type: 'gallery', title: 'Timeline', image_url: 'web-images/timeline.jpg', status: 'published' },
-{ type: 'gallery', title: 'TV', image_url: 'web-images/tv.jpg', status: 'published' },
-{ type: 'gallery', title: 'Jail', image_url: 'web-images/jail.jpg', status: 'published' },
-{ type: 'gallery', title: 'History', image_url: 'web-images/history.jpg', status: 'published' }
+        // Gallery Right
+        { type: 'gallery', title: 'Bookshelf', image_url: 'web-images/bookshelf.jpg', status: 'published' },
+        { type: 'gallery', title: 'Dining', image_url: 'web-images/dining.jpg', status: 'published' },
+        { type: 'gallery', title: 'Salaa', image_url: 'web-images/salaa.jpg', status: 'published' },
+        { type: 'gallery', title: 'Guho At', image_url: 'web-images/guhoat.jpg', status: 'published' },
+        { type: 'gallery', title: 'Dio', image_url: 'web-images/dio.jpg', status: 'published' },
+        { type: 'gallery', title: 'Kitchen', image_url: 'web-images/kitchen.jpg', status: 'published' },
+        { type: 'gallery', title: 'Clinica', image_url: 'web-images/clinica.jpg', status: 'published' },
+        { type: 'gallery', title: 'Dioramas', image_url: 'web-images/dioramas.jpg', status: 'published' },
+        { type: 'gallery', title: 'Exit', image_url: 'web-images/exit.jpg', status: 'published' },
+        { type: 'gallery', title: 'Haligi ng Tahanan', image_url: 'web-images/haligingtahanan.jpg', status: 'published' },
+        { type: 'gallery', title: 'Timeline', image_url: 'web-images/timeline.jpg', status: 'published' },
+        { type: 'gallery', title: 'TV', image_url: 'web-images/tv.jpg', status: 'published' },
+        { type: 'gallery', title: 'Jail', image_url: 'web-images/jail.jpg', status: 'published' },
+        { type: 'gallery', title: 'History', image_url: 'web-images/history.jpg', status: 'published' }
     ];
 
     try {
