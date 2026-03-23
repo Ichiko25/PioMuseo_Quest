@@ -1,4 +1,3 @@
-// admin.js
 document.addEventListener('DOMContentLoaded', () => {
     // Initial fetches
     fetchAnalytics();
