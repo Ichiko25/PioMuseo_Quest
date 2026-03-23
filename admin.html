@@ -144,6 +144,95 @@
       border-right: 4px solid #ef4444;
     }
 
+    /* Sub-navigation styles */
+    .nav li.has-submenu {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 0;
+      gap: 0;
+      background: transparent;
+    }
+
+    .nav li.has-submenu:hover {
+      background: transparent;
+      transform: none;
+    }
+
+    .submenu-title {
+      width: 100%;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      transition: var(--transition);
+      color: var(--text-muted);
+    }
+
+    .submenu-title:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+    .title-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .title-left i {
+      font-size: 18px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .chevron {
+      font-size: 12px !important;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      width: auto !important;
+    }
+
+    .submenu {
+      list-style: none;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: var(--radius-md);
+      margin-top: 2px;
+    }
+
+    .submenu li {
+      padding: 12px 20px 12px 50px !important;
+      font-size: 14px;
+      margin-bottom: 0 !important;
+      border-radius: 0 !important;
+      transform: none !important;
+    }
+
+    .submenu li:first-child {
+      margin-top: 4px !important;
+    }
+
+    .submenu li:last-child {
+      margin-bottom: 4px !important;
+    }
+
+    .has-submenu.open .submenu {
+      max-height: 300px;
+    }
+
+    .has-submenu.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    .has-submenu.open .submenu-title {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
     .logout {
       padding: 20px;
       border-top: 1px solid var(--border-color);
@@ -158,6 +247,95 @@
 
     .logout:hover {
       color: var(--red);
+    }
+
+    /* Responsive Sidebar */
+    .sidebar {
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        width: 80px;
+      }
+
+      .logo-text,
+      .nav span,
+      .logout span,
+      .chevron {
+        display: none;
+      }
+
+      .nav li {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      .submenu-title {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      .title-left {
+        justify-content: center;
+      }
+
+      .submenu li {
+        padding: 14px 0 !important;
+        justify-content: center;
+      }
+
+      .logo {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      /* Expand on hover */
+      .sidebar:hover {
+        width: 260px;
+      }
+
+      .sidebar:hover .logo-text,
+      .sidebar:hover .nav span,
+      .sidebar:hover .logout span,
+      .sidebar:hover .chevron {
+        display: flex;
+      }
+
+      .sidebar:hover .nav span,
+      .sidebar:hover .logout span {
+        display: block;
+      }
+
+      .sidebar:hover .nav li {
+        justify-content: flex-start;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .sidebar:hover .submenu-title {
+        justify-content: space-between;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .sidebar:hover .title-left {
+        justify-content: flex-start;
+      }
+
+      .sidebar:hover .submenu li {
+        padding-left: 50px !important;
+        justify-content: flex-start;
+      }
+
+      .sidebar:hover .logo {
+        justify-content: flex-start;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
     }
 
     /* =========================
@@ -241,7 +419,7 @@
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--blue), #2563eb);
+      background: linear-gradient(135deg, #ef4444, #ef4444);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -776,6 +954,7 @@
     .content-stats i {
       margin-right: 4px;
     }
+
     /* =========================
        EVALUATION PROGRESS BARS
     ========================= */
@@ -856,11 +1035,30 @@
       border-radius: 4px;
     }
 
-    .status-worst { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
-    .status-bad { background: rgba(249, 115, 22, 0.1); color: #f97316; }
-    .status-soso { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
-    .status-good { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-    .status-great { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .status-worst {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    .status-bad {
+      background: rgba(249, 115, 22, 0.1);
+      color: #f97316;
+    }
+
+    .status-soso {
+      background: rgba(168, 85, 247, 0.1);
+      color: #a855f7;
+    }
+
+    .status-good {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+
+    .status-great {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
 
     /* =========================
        GENDER ANALYTICS LEGEND
@@ -939,13 +1137,15 @@
       color: var(--text-muted);
       letter-spacing: 1px;
     }
+
     /* =========================
        ANALYTICS FILTERS
     ========================= */
     .analytics-filter-bar {
       display: flex;
       align-items: center;
-      justify-content: flex-end; /* Ensure top-right */
+      justify-content: flex-end;
+      /* Ensure top-right */
       gap: 15px;
       margin-bottom: 25px;
       padding: 15px 20px;
@@ -953,19 +1153,22 @@
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
+
     .filter-group {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
     .filter-group label {
       font-size: 13px;
       color: var(--text-muted);
       font-weight: 500;
     }
+
     .filter-select {
       background: #0f172a;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       color: white;
       padding: 8px 12px;
       border-radius: 8px;
@@ -974,6 +1177,7 @@
       cursor: pointer;
       min-width: 120px;
     }
+
     .filter-select:focus {
       border-color: var(--accent-primary);
     }
@@ -985,9 +1189,8 @@
   <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="logo">
-      <div class="logo-box">
-        <i class="fas fa-landmark"></i>
-      </div>
+      <img src="images/qqq.png" alt="Pio Museo Logo"
+        style=" width: 45px; object-fit: contain; border-radius: 10px; background: white; padding: 2px;">
       <div class="logo-text">
         <b>Pio Museo</b>
         <small>Admin Portal</small>
@@ -995,31 +1198,52 @@
     </div>
 
     <ul class="nav">
-      <li class="active" onclick="openPage('dashboard', this)">
-        <i class="fas fa-th-large"></i> Dashboard
+      <li class="active" onclick="openPage('dashboard', this, event)">
+        <i class="fas fa-th-large"></i> <span>Dashboard</span>
       </li>
-      <li onclick="openPage('content', this)">
-        <i class="fas fa-layer-group"></i> Content Manager
+
+      <li class="has-submenu" onclick="toggleSubmenu(this)">
+        <div class="submenu-title">
+          <div class="title-left"><i class="fas fa-layer-group"></i> <span>Content</span></div>
+          <i class="fas fa-chevron-down chevron"></i>
+        </div>
+        <ul class="submenu">
+          <li onclick="openPage('content', this, event)"><i class="fas fa-file-alt"></i> <span>Content Manager</span>
+          </li>
+          <li onclick="openPage('feedbacks', this, event)"><i class="fas fa-comment-dots"></i> <span>Feedbacks</span>
+          </li>
+        </ul>
       </li>
-      <li onclick="openPage('users', this)">
-        <i class="fas fa-users"></i> Users Management
+
+      <li class="has-submenu" onclick="toggleSubmenu(this)">
+        <div class="submenu-title">
+          <div class="title-left"><i class="fas fa-users"></i> <span>Users</span></div>
+          <i class="fas fa-chevron-down chevron"></i>
+        </div>
+        <ul class="submenu">
+          <li onclick="openPage('users', this, event)"><i class="fas fa-user-cog"></i> <span>Users Management</span>
+          </li>
+        </ul>
       </li>
-      <li onclick="openPage('feedbacks', this)">
-        <i class="fas fa-comment-dots"></i> Feedbacks
+
+      <li class="has-submenu" onclick="toggleSubmenu(this)">
+        <div class="submenu-title">
+          <div class="title-left"><i class="fas fa-chart-bar"></i> <span>Reports</span></div>
+          <i class="fas fa-chevron-down chevron"></i>
+        </div>
+        <ul class="submenu">
+          <li onclick="openPage('auditlog', this, event)"><i class="fas fa-history"></i> <span>Audit Log</span></li>
+          <li onclick="openPage('analytics', this, event)"><i class="fas fa-chart-line"></i> <span>Analytics</span></li>
+        </ul>
       </li>
-      <li onclick="openPage('auditlog', this)">
-        <i class="fas fa-history"></i> Audit Log
-      </li>
-      <li onclick="openPage('analytics', this)">
-        <i class="fas fa-chart-line"></i> Analytics
-      </li>
-      <li onclick="openPage('settings', this)">
-        <i class="fas fa-cog"></i> Settings
+
+      <li onclick="openPage('settings', this, event)">
+        <i class="fas fa-cog"></i> <span>Settings</span>
       </li>
     </ul>
 
     <div class="logout" onclick="logout()">
-      <i class="fas fa-sign-out-alt"></i> Logout
+      <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
     </div>
   </div>
 
@@ -1205,7 +1429,8 @@
       <div class="table-container">
         <div class="table-header">
           <div class="input-group" style="margin-bottom: 0; width: 250px;">
-            <input type="text" id="user-search" placeholder="Search users by name, email..." style="padding-left: 36px;">
+            <input type="text" id="user-search" placeholder="Search users by name, email..."
+              style="padding-left: 36px;">
           </div>
           <div style="display: flex; gap: 12px; align-items: center;">
             <select id="user-filter-age"
@@ -1242,7 +1467,8 @@
       <div class="table-container">
         <div class="table-header">
           <div class="input-group" style="margin-bottom: 0; width: 250px;">
-            <input type="text" id="feedback-search" placeholder="Search by name or message..." style="padding-left: 36px;">
+            <input type="text" id="feedback-search" placeholder="Search by name or message..."
+              style="padding-left: 36px;">
           </div>
           <div style="display: flex; gap: 12px; align-items: center;">
             <select id="feedback-filter-stars"
@@ -1307,341 +1533,376 @@
 
     <!-- PAGE: ANALYTICS -->
     <div id="analytics" class="page">
-      <div class="analytics-filter-bar" style="display: flex; align-items: center; justify-content: flex-end; gap: 15px; margin-bottom: 25px; padding: 15px 20px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05);">
-        <div class="filter-group">
-          <label>Filter by Year:</label>
-          <select id="filter-year" class="filter-select"></select>
+      <div class="analytics-filter-bar"
+        style="display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 25px; padding: 15px 20px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); flex-wrap: wrap;">
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-primary" onclick="alert('Exporting CSV data...')"
+            style="padding: 10px 16px; font-size: 13px; background: #10b981; border: none; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);"><i
+              class="fas fa-file-csv" style="margin-right: 6px;"></i> Export CSV</button>
+          <button class="btn btn-primary" onclick="alert('Exporting PDF report...')"
+            style="padding: 10px 16px; font-size: 13px; background: #ef4444; border: none; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);"><i
+              class="fas fa-file-pdf" style="margin-right: 6px;"></i> Export PDF</button>
         </div>
-        <div class="filter-group">
-          <label>Filter by Month:</label>
-          <select id="filter-month" class="filter-select">
-            <option value="all">All Months</option>
-            <option value="0">January</option>
-            <option value="1">February</option>
-            <option value="2">March</option>
-            <option value="3">April</option>
-            <option value="4">May</option>
-            <option value="5">June</option>
-            <option value="6">July</option>
-            <option value="7">August</option>
-            <option value="8">September</option>
-            <option value="9">October</option>
-            <option value="10">November</option>
-            <option value="11">December</option>
+
+        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+          <div class="filter-group">
+            <label>Filter by Year:</label>
+            <select id="filter-year" class="filter-select"></select>
+          </div>
+          <div class="filter-group">
+            <label>Filter by Month:</label>
+            <select id="filter-month" class="filter-select">
+              <option value="all">All Months</option>
+              <option value="0">January</option>
+              <option value="1">February</option>
+              <option value="2">March</option>
+              <option value="3">April</option>
+              <option value="4">May</option>
+              <option value="5">June</option>
+              <option value="6">July</option>
+              <option value="7">August</option>
+              <option value="8">September</option>
+              <option value="9">October</option>
+              <option value="10">November</option>
+              <option value="11">December</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+        <div class="charts" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+
+          <!-- ROW 1, COL 1: EVALUATION (Refined) -->
+          <div class="chart-card"
+            style="height: 400px; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+            <div class="chart-header" style="margin-bottom: 5px;">
+              <h3
+                style="font-size: 16px; font-weight: 700; color: white; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-star" style="color: #ef4444; font-size: 14px;"></i>
+                Museum Experience
+              </h3>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 20px; flex: 1; justify-content: space-between;">
+              <div class="evaluation-row">
+                <div class="evaluation-header">
+                  <span class="evaluation-label">Overall Experience</span>
+                  <span class="evaluation-meta">Average: <b id="label-overall">...</b></span>
+                </div>
+                <div class="evaluation-percent" id="percent-overall">0%</div>
+                <div class="evaluation-bar-container">
+                  <div class="evaluation-bar-fill" id="bar-overall"
+                    style="width: 0%; background: linear-gradient(90deg, #3b82f6, #60a5fa);"></div>
+                </div>
+              </div>
+              <div class="evaluation-row">
+                <div class="evaluation-header">
+                  <span class="evaluation-label">Exhibit / Display</span>
+                  <span class="evaluation-meta">Average: <b id="label-exhibit">...</b></span>
+                </div>
+                <div class="evaluation-percent" id="percent-exhibit">0%</div>
+                <div class="evaluation-bar-container">
+                  <div class="evaluation-bar-fill" id="bar-exhibit"
+                    style="width: 0%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
+                </div>
+              </div>
+              <div class="evaluation-row">
+                <div class="evaluation-header">
+                  <span class="evaluation-label">Information</span>
+                  <span class="evaluation-meta">Average: <b id="label-info">...</b></span>
+                </div>
+                <div class="evaluation-percent" id="percent-info">0%</div>
+                <div class="evaluation-bar-container">
+                  <div class="evaluation-bar-fill" id="bar-info"
+                    style="width: 0%; background: linear-gradient(90deg, #a855f7, #c084fc);"></div>
+                </div>
+              </div>
+              <div class="evaluation-row">
+                <div class="evaluation-header">
+                  <span class="evaluation-label">Game Application</span>
+                  <span class="evaluation-meta">Average: <b id="label-game">...</b></span>
+                </div>
+                <div class="evaluation-percent" id="percent-game">0%</div>
+                <div class="evaluation-bar-container">
+                  <div class="evaluation-bar-fill" id="bar-game"
+                    style="width: 0%; background: linear-gradient(90deg, #f97316, #fb923c);"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ROW 1, COL 2: STAR RATINGS -->
+          <div class="chart-card" style="height: 400px;">
+            <div class="chart-header">
+              <h3>Star Ratings Breakdown</h3>
+              <p style="color: var(--text-muted); font-size: 13px;">Distribution of user ratings.</p>
+            </div>
+            <div class="canvas-container" style="height: 300px;">
+              <canvas id="chart4"></canvas>
+            </div>
+          </div>
+
+          <!-- ROW 2, FULL WIDTH: PLATFORM ENGAGEMENT -->
+          <div class="chart-card" style="grid-column: span 2;">
+            <div class="chart-header">
+              <h3>Platform Engagement Overview</h3>
+              <p style="color: var(--text-muted); font-size: 13px;">Consolidated metrics for accounts, visitors, and
+                players.</p>
+            </div>
+            <div class="canvas-container" style="height: 350px;">
+              <canvas id="chartEngagement"></canvas>
+            </div>
+          </div>
+
+          <!-- ROW 3, COL 1: GENDER -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Gender Distribution</h3>
+              <p style="color: var(--text-muted); font-size: 13px;">Visitor distribution by gender.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 30px; padding: 10px 0;">
+              <div class="gender-chart-wrapper">
+                <canvas id="chartGender"></canvas>
+                <div class="gender-center-label">
+                  <span class="gender-total-num" id="gender-total-count">0</span>
+                  <span class="gender-total-text">Visitors</span>
+                </div>
+              </div>
+              <div class="gender-legend" style="flex: 1; padding-left: 0;">
+                <div class="gender-item">
+                  <div class="gender-icon-box" style="background: rgba(244, 114, 182, 0.1); color: #f472b6;">
+                    <i class="fas fa-venus"></i>
+                  </div>
+                  <div class="gender-info">
+                    <span class="gender-name">Female</span>
+                    <span class="gender-value" id="gender-female-val">0%</span>
+                  </div>
+                </div>
+                <div class="gender-item">
+                  <div class="gender-icon-box" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                    <i class="fas fa-mars"></i>
+                  </div>
+                  <div class="gender-info">
+                    <span class="gender-name">Male</span>
+                    <span class="gender-value" id="gender-male-val">0%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ROW 3, COL 2: AGE GROUPS -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Age Groups</h3>
+              <p style="color: var(--text-muted); font-size: 13px;">Age demographics of registered visitors.</p>
+            </div>
+            <div class="canvas-container" style="height: 300px;">
+              <canvas id="chart7"></canvas>
+            </div>
+          </div>
+
+          <!-- ROW 4: OTHER -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Locations</h3>
+              <p style="color: var(--text-muted); font-size: 13px;">Where your registered visitors are from.</p>
+            </div>
+            <div class="canvas-container" style="height: 300px;">
+              <canvas id="chart6"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Booking Comparison</h3>
+              <p style="color: var(--text-muted); font-size: 13px;">Photoshoot vs Group Tour distribution.</p>
+            </div>
+            <div class="canvas-container" style="height: 300px;">
+              <canvas id="chart5"></canvas>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PAGE: SETTINGS -->
+      <div id="settings" class="page">
+        <div class="settings-grid">
+
+          <!-- General Info -->
+          <div>
+            <div class="settings-card">
+              <div class="settings-header">
+                <div class="icon"><i class="fas fa-globe"></i></div>
+                <div>
+                  <h3 style="font-size: 18px;">General Platform Settings</h3>
+                  <p style="color: var(--text-muted); font-size: 13px;">Manage core information about the portal.</p>
+                </div>
+              </div>
+
+              <div class="input-group">
+                <label>Site Name</label>
+                <input type="text" value="Pio Museo Quest Admin">
+              </div>
+
+              <div class="input-group">
+                <label>Admin Support Email</label>
+                <input type="email" value="admin@piomuseo.quest">
+              </div>
+            </div>
+          </div>
+
+          <!-- System & Security preferences -->
+          <div>
+            <div class="settings-card">
+              <div class="settings-header">
+                <div class="icon security"><i class="fas fa-shield-alt"></i></div>
+                <div>
+                  <h3 style="font-size: 18px;">Security & Features</h3>
+                  <p style="color: var(--text-muted); font-size: 13px;">Configure feature flags and access.</p>
+                </div>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <b>User Registration</b>
+                  <small>Allow new players to create accounts.</small>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <b>Maintenance Mode</b>
+                  <small>Disable public access while pushing updates.</small>
+                </div>
+                <label class="switch">
+                  <input type="checkbox">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="save-btn" onclick="saveSettings()">
+                <i class="fas fa-save" style="margin-right: 8px;"></i> Save All Settings
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Add Content Modal -->
+    <div id="addContentModal" class="modal-overlay"
+      style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;">
+      <div class="modal-content"
+        style="background: #111827; width: 700px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white;">
+        <h3 id="modal-title" style="margin-top: 0; margin-bottom: 20px;">Add New Content</h3>
+        <input type="hidden" id="edit-content-id" value="">
+        <div class="input-group" style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Content Type</label>
+          <select id="new-content-type"
+            style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
+            <option value="blog">Blog / Story</option>
+            <option value="gallery">Gallery Image</option>
+            <option value="faq">FAQ</option>
           </select>
         </div>
-      </div>
-
-      <div class="charts"
-        style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
-
-        <!-- ROW 1, COL 1: EVALUATION (Refined) -->
-        <div class="chart-card" style="height: 400px; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
-          <div class="chart-header" style="margin-bottom: 5px;">
-            <h3 style="font-size: 16px; font-weight: 700; color: white; display: flex; align-items: center; gap: 8px;">
-              <i class="fas fa-star" style="color: #ef4444; font-size: 14px;"></i>
-              Museum Experience
-            </h3>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 20px; flex: 1; justify-content: space-between;">
-            <div class="evaluation-row">
-              <div class="evaluation-header">
-                <span class="evaluation-label">Overall Experience</span>
-                <span class="evaluation-meta">Average: <b id="label-overall">...</b></span>
-              </div>
-              <div class="evaluation-percent" id="percent-overall">0%</div>
-              <div class="evaluation-bar-container">
-                <div class="evaluation-bar-fill" id="bar-overall" style="width: 0%; background: linear-gradient(90deg, #3b82f6, #60a5fa);"></div>
-              </div>
-            </div>
-            <div class="evaluation-row">
-              <div class="evaluation-header">
-                <span class="evaluation-label">Exhibit / Display</span>
-                <span class="evaluation-meta">Average: <b id="label-exhibit">...</b></span>
-              </div>
-              <div class="evaluation-percent" id="percent-exhibit">0%</div>
-              <div class="evaluation-bar-container">
-                <div class="evaluation-bar-fill" id="bar-exhibit" style="width: 0%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
-              </div>
-            </div>
-            <div class="evaluation-row">
-              <div class="evaluation-header">
-                <span class="evaluation-label">Information</span>
-                <span class="evaluation-meta">Average: <b id="label-info">...</b></span>
-              </div>
-              <div class="evaluation-percent" id="percent-info">0%</div>
-              <div class="evaluation-bar-container">
-                <div class="evaluation-bar-fill" id="bar-info" style="width: 0%; background: linear-gradient(90deg, #a855f7, #c084fc);"></div>
-              </div>
-            </div>
-            <div class="evaluation-row">
-              <div class="evaluation-header">
-                <span class="evaluation-label">Game Application</span>
-                <span class="evaluation-meta">Average: <b id="label-game">...</b></span>
-              </div>
-              <div class="evaluation-percent" id="percent-game">0%</div>
-              <div class="evaluation-bar-container">
-                <div class="evaluation-bar-fill" id="bar-game" style="width: 0%; background: linear-gradient(90deg, #f97316, #fb923c);"></div>
-              </div>
-            </div>
-          </div>
+        <div class="input-group" style="margin-bottom: 15px;">
+          <label id="title-label" style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Title /
+            Question</label>
+          <input type="text" id="new-content-title" placeholder="Enter title or question..."
+            style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
         </div>
-
-        <!-- ROW 1, COL 2: STAR RATINGS -->
-        <div class="chart-card" style="height: 400px;">
-          <div class="chart-header">
-            <h3>Star Ratings Breakdown</h3>
-            <p style="color: var(--text-muted); font-size: 13px;">Distribution of user ratings.</p>
-          </div>
-          <div class="canvas-container" style="height: 300px;">
-            <canvas id="chart4"></canvas>
-          </div>
+        <div class="input-group" id="group-description" style="margin-bottom: 15px;">
+          <label id="desc-label"
+            style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Description
+            / Answer</label>
+          <textarea id="new-content-desc" rows="12" placeholder="Enter story or answer..."
+            style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
         </div>
-
-        <!-- ROW 2, FULL WIDTH: PLATFORM ENGAGEMENT -->
-        <div class="chart-card" style="grid-column: span 2;">
-          <div class="chart-header">
-            <h3>Platform Engagement Overview</h3>
-            <p style="color: var(--text-muted); font-size: 13px;">Consolidated metrics for accounts, visitors, and players.</p>
-          </div>
-          <div class="canvas-container" style="height: 350px;">
-            <canvas id="chartEngagement"></canvas>
-          </div>
+        <div class="input-group" id="group-image" style="margin-bottom: 20px;">
+          <label style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Image URL</label>
+          <input type="text" id="new-content-image" placeholder="https://example.com/image.jpg"
+            style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
         </div>
-
-        <!-- ROW 3, COL 1: GENDER -->
-        <div class="chart-card">
-          <div class="chart-header">
-            <h3>Gender Distribution</h3>
-            <p style="color: var(--text-muted); font-size: 13px;">Visitor distribution by gender.</p>
-          </div>
-          <div style="display: flex; align-items: center; gap: 30px; padding: 10px 0;">
-            <div class="gender-chart-wrapper">
-              <canvas id="chartGender"></canvas>
-              <div class="gender-center-label">
-                <span class="gender-total-num" id="gender-total-count">0</span>
-                <span class="gender-total-text">Visitors</span>
-              </div>
-            </div>
-            <div class="gender-legend" style="flex: 1; padding-left: 0;">
-              <div class="gender-item">
-                <div class="gender-icon-box" style="background: rgba(244, 114, 182, 0.1); color: #f472b6;">
-                  <i class="fas fa-venus"></i>
-                </div>
-                <div class="gender-info">
-                  <span class="gender-name">Female</span>
-                  <span class="gender-value" id="gender-female-val">0%</span>
-                </div>
-              </div>
-              <div class="gender-item">
-                <div class="gender-icon-box" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
-                  <i class="fas fa-mars"></i>
-                </div>
-                <div class="gender-info">
-                  <span class="gender-name">Male</span>
-                  <span class="gender-value" id="gender-male-val">0%</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button class="btn" onclick="closeAddContentModal()"
+            style="background: transparent; color: #9ca3af; border: 1px solid #374151;">Cancel</button>
+          <button class="btn btn-primary" onclick="submitNewContent()">Save Content</button>
         </div>
-
-        <!-- ROW 3, COL 2: AGE GROUPS -->
-        <div class="chart-card">
-          <div class="chart-header">
-            <h3>Age Groups</h3>
-            <p style="color: var(--text-muted); font-size: 13px;">Age demographics of registered visitors.</p>
-          </div>
-          <div class="canvas-container" style="height: 300px;">
-            <canvas id="chart7"></canvas>
-          </div>
-        </div>
-
-        <!-- ROW 4: OTHER -->
-        <div class="chart-card">
-          <div class="chart-header">
-            <h3>Locations</h3>
-            <p style="color: var(--text-muted); font-size: 13px;">Where your registered visitors are from.</p>
-          </div>
-          <div class="canvas-container" style="height: 300px;">
-            <canvas id="chart6"></canvas>
-          </div>
-        </div>
-
-        <div class="chart-card">
-          <div class="chart-header">
-            <h3>Booking Comparison</h3>
-            <p style="color: var(--text-muted); font-size: 13px;">Photoshoot vs Group Tour distribution.</p>
-          </div>
-          <div class="canvas-container" style="height: 300px;">
-            <canvas id="chart5"></canvas>
-          </div>
-        </div>
-
       </div>
     </div>
 
-    <!-- PAGE: SETTINGS -->
-    <div id="settings" class="page">
-      <div class="settings-grid">
+    <!-- JAVASCRIPT LOGIC -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="supabaseClient.js"></script>
+    <script src="admin.js"></script>
+    <script>
+      /* AUTH CHECK */
+      if (localStorage.getItem("isAdmin") !== "true") {
+        window.location.href = "admin login.html";
+      }
 
-        <!-- General Info -->
-        <div>
-          <div class="settings-card">
-            <div class="settings-header">
-              <div class="icon"><i class="fas fa-globe"></i></div>
-              <div>
-                <h3 style="font-size: 18px;">General Platform Settings</h3>
-                <p style="color: var(--text-muted); font-size: 13px;">Manage core information about the portal.</p>
-              </div>
-            </div>
+      /* PAGE SWITCHING LOGIC */
+      function openPage(pageId, el, event) {
+        if (event) event.stopPropagation();
 
-            <div class="input-group">
-              <label>Site Name</label>
-              <input type="text" value="Pio Museo Quest Admin">
-            </div>
+        // Manage Active Pages
+        document.querySelectorAll(".page").forEach(page => {
+          page.classList.remove("active");
+        });
+        document.getElementById(pageId).classList.add("active");
 
-            <div class="input-group">
-              <label>Admin Support Email</label>
-              <input type="email" value="admin@piomuseo.quest">
-            </div>
-          </div>
-        </div>
+        // Manage Active Nav Items
+        document.querySelectorAll(".nav li").forEach(navItem => {
+          navItem.classList.remove("active");
+        });
+        el.classList.add("active");
 
-        <!-- System & Security preferences -->
-        <div>
-          <div class="settings-card">
-            <div class="settings-header">
-              <div class="icon security"><i class="fas fa-shield-alt"></i></div>
-              <div>
-                <h3 style="font-size: 18px;">Security & Features</h3>
-                <p style="color: var(--text-muted); font-size: 13px;">Configure feature flags and access.</p>
-              </div>
-            </div>
+        // Update Header Title dynamically mapping to the label
+        let pageTitle = el.innerText.trim();
+        document.getElementById("title").innerText = pageTitle + " Overview";
 
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <b>User Registration</b>
-                <small>Allow new players to create accounts.</small>
-              </div>
-              <label class="switch">
-                <input type="checkbox" checked>
-                <span class="slider"></span>
-              </label>
-            </div>
-
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <b>Maintenance Mode</b>
-                <small>Disable public access while pushing updates.</small>
-              </div>
-              <label class="switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-
-          <div style="display: flex; justify-content: flex-end;">
-            <button class="save-btn" onclick="saveSettings()">
-              <i class="fas fa-save" style="margin-right: 8px;"></i> Save All Settings
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Add Content Modal -->
-  <div id="addContentModal" class="modal-overlay"
-    style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;">
-    <div class="modal-content"
-      style="background: #111827; width: 700px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white;">
-      <h3 id="modal-title" style="margin-top: 0; margin-bottom: 20px;">Add New Content</h3>
-      <input type="hidden" id="edit-content-id" value="">
-      <div class="input-group" style="margin-bottom: 15px;">
-        <label style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Content Type</label>
-        <select id="new-content-type"
-          style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
-          <option value="blog">Blog / Story</option>
-          <option value="gallery">Gallery Image</option>
-          <option value="faq">FAQ</option>
-        </select>
-      </div>
-      <div class="input-group" style="margin-bottom: 15px;">
-        <label id="title-label" style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Title /
-          Question</label>
-        <input type="text" id="new-content-title" placeholder="Enter title or question..."
-          style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
-      </div>
-      <div class="input-group" id="group-description" style="margin-bottom: 15px;">
-        <label id="desc-label" style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Description
-          / Answer</label>
-        <textarea id="new-content-desc" rows="12" placeholder="Enter story or answer..."
-          style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
-      </div>
-      <div class="input-group" id="group-image" style="margin-bottom: 20px;">
-        <label style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Image URL</label>
-        <input type="text" id="new-content-image" placeholder="https://example.com/image.jpg"
-          style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
-      </div>
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button class="btn" onclick="closeAddContentModal()"
-          style="background: transparent; color: #9ca3af; border: 1px solid #374151;">Cancel</button>
-        <button class="btn btn-primary" onclick="submitNewContent()">Save Content</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- JAVASCRIPT LOGIC -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="supabaseClient.js"></script>
-  <script src="admin.js"></script>
-  <script>
-    /* AUTH CHECK */
-    if (localStorage.getItem("isAdmin") !== "true") {
-      window.location.href = "admin login.html";
-    }
-
-    /* PAGE SWITCHING LOGIC */
-    function openPage(pageId, el) {
-      // Manage Active Pages
-      document.querySelectorAll(".page").forEach(page => {
-        page.classList.remove("active");
-      });
-      document.getElementById(pageId).classList.add("active");
-
-      // Manage Active Nav Items
-      document.querySelectorAll(".nav li").forEach(navItem => {
-        navItem.classList.remove("active");
-      });
-      el.classList.add("active");
-
-      // Update Header Title dynamically mapping to the label
-      let pageTitle = el.innerText.trim();
-      document.getElementById("title").innerText = pageTitle + " Overview";
-
-      if (pageId === "analytics") {
-        if (typeof renderCharts === "function") {
-          renderCharts();
-          renderEvaluationStats();
-          renderGenderChart();
-          renderPlatformEngagementChart();
+        if (pageId === "analytics") {
+          if (typeof renderCharts === "function") {
+            renderCharts();
+            renderEvaluationStats();
+            renderGenderChart();
+            renderPlatformEngagementChart();
+          }
         }
       }
-    }
 
-    // Render charts logic is now handled in admin.js using renderCharts()
+      function toggleSubmenu(el) {
+        const isOpen = el.classList.contains('open');
 
-    // Logout Function
-    function logout() {
-      localStorage.removeItem("isAdmin");
-      window.location.href = "admin-login.html";
-    }
+        // Close all submenus
+        document.querySelectorAll('.has-submenu').forEach(submenu => {
+          submenu.classList.remove('open');
+        });
 
-  </script>
+        if (!isOpen) {
+          el.classList.add('open');
+        }
+      }
+
+      // Render charts logic is now handled in admin.js using renderCharts()
+
+      // Logout Function
+      function logout() {
+        localStorage.removeItem("isAdmin");
+        window.location.href = "admin login.html";
+      }
+
+    </script>
 </body>
 
 </html>
