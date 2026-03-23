@@ -12,9 +12,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <style>
     :root {
       --bg-dark: #0f172a;
@@ -1840,9 +1837,10 @@
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script src="supabaseClient.js"></script>
-    <script src="admin.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+  <script src="supabaseClient.js"></script>
+  <script src="admin.js"></script>
+
     <script>
       /* AUTH CHECK */
       if (localStorage.getItem("isAdmin") !== "true") {
