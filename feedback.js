@@ -392,8 +392,8 @@ async function fetchPublicContent() {
         }
 
         // Render Galleries
-        const leftRow = document.querySelector('.carousel-row.row-left');
-        const rightRow = document.querySelector('.carousel-row.row-right');
+        const leftRow = document.querySelector('.carousel-row.row-left .track') || document.querySelector('.carousel-row.row-left');
+        const rightRow = document.querySelector('.carousel-row.row-right .track') || document.querySelector('.carousel-row.row-right');
 
         if (leftRow && rightRow) {
             // Only overwrite if we have dynamic gallery content
@@ -405,7 +405,7 @@ async function fetchPublicContent() {
                     if (img.startsWith('images/')) {
                         img = img.replace('images/', 'web-images/').replace(/\.(jpeg|png)$/i, '.jpg').toLowerCase();
                     }
-                    const imgTag = `<img src="${img}" alt="${gal.title}" onerror="this.src='web-images/qqq.jpg'">`;
+                    const imgTag = `<div class="card"><img src="${img}" alt="${gal.title}" onerror="this.src='web-images/qqq.jpg'"></div>`;
                     if (index % 2 === 0) leftRow.innerHTML += imgTag;
                     else rightRow.innerHTML += imgTag;
                 });
