@@ -1,20 +1,14 @@
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
-
-<script>
 // ===============================
 // SUPABASE CONFIG
 // ===============================
 const SUPABASE_URL = 'https://brsoehxzpqhzgnsqivrq.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_pg9IZUYCihI7NiaS0NDHxQ_i7WqmCv6';
 
-// Wait until page is fully loaded
-document.addEventListener("DOMContentLoaded", () => {
-
-    // Initialize Supabase Client
-   // supabaseClient.js
-
 // VERY IMPORTANT: this must be GLOBAL
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Wait until page is fully loaded
+document.addEventListener("DOMContentLoaded", () => {
     // ===============================
     // TEST INSERT FUNCTION
     // ===============================
@@ -70,4 +64,3 @@ function decryptEmail(encryptedEmail) {
         return encryptedEmail;
     }
 }
-</script>
