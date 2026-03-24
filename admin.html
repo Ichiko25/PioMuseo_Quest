@@ -1566,339 +1566,336 @@
         </div>
       </div>
 
-        <div class="charts" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+      <div class="charts" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
 
-          <!-- ROW 1, COL 1: EVALUATION (Refined) -->
-          <div class="chart-card"
-            style="height: 400px; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
-            <div class="chart-header" style="margin-bottom: 5px;">
-              <h3
-                style="font-size: 16px; font-weight: 700; color: white; display: flex; align-items: center; gap: 8px;">
-                <i class="fas fa-star" style="color: #ef4444; font-size: 14px;"></i>
-                Museum Experience
-              </h3>
+        <!-- ROW 1, COL 1: EVALUATION (Refined) -->
+        <div class="chart-card" style="height: 400px; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+          <div class="chart-header" style="margin-bottom: 5px;">
+            <h3 style="font-size: 16px; font-weight: 700; color: white; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-star" style="color: #ef4444; font-size: 14px;"></i>
+              Museum Experience
+            </h3>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 20px; flex: 1; justify-content: space-between;">
+            <div class="evaluation-row">
+              <div class="evaluation-header">
+                <span class="evaluation-label">Overall Experience</span>
+                <span class="evaluation-meta">Average: <b id="label-overall">...</b></span>
+              </div>
+              <div class="evaluation-percent" id="percent-overall">0%</div>
+              <div class="evaluation-bar-container">
+                <div class="evaluation-bar-fill" id="bar-overall"
+                  style="width: 0%; background: linear-gradient(90deg, #3b82f6, #60a5fa);"></div>
+              </div>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 20px; flex: 1; justify-content: space-between;">
-              <div class="evaluation-row">
-                <div class="evaluation-header">
-                  <span class="evaluation-label">Overall Experience</span>
-                  <span class="evaluation-meta">Average: <b id="label-overall">...</b></span>
-                </div>
-                <div class="evaluation-percent" id="percent-overall">0%</div>
-                <div class="evaluation-bar-container">
-                  <div class="evaluation-bar-fill" id="bar-overall"
-                    style="width: 0%; background: linear-gradient(90deg, #3b82f6, #60a5fa);"></div>
-                </div>
+            <div class="evaluation-row">
+              <div class="evaluation-header">
+                <span class="evaluation-label">Exhibit / Display</span>
+                <span class="evaluation-meta">Average: <b id="label-exhibit">...</b></span>
               </div>
-              <div class="evaluation-row">
-                <div class="evaluation-header">
-                  <span class="evaluation-label">Exhibit / Display</span>
-                  <span class="evaluation-meta">Average: <b id="label-exhibit">...</b></span>
-                </div>
-                <div class="evaluation-percent" id="percent-exhibit">0%</div>
-                <div class="evaluation-bar-container">
-                  <div class="evaluation-bar-fill" id="bar-exhibit"
-                    style="width: 0%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
-                </div>
+              <div class="evaluation-percent" id="percent-exhibit">0%</div>
+              <div class="evaluation-bar-container">
+                <div class="evaluation-bar-fill" id="bar-exhibit"
+                  style="width: 0%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
               </div>
-              <div class="evaluation-row">
-                <div class="evaluation-header">
-                  <span class="evaluation-label">Information</span>
-                  <span class="evaluation-meta">Average: <b id="label-info">...</b></span>
-                </div>
-                <div class="evaluation-percent" id="percent-info">0%</div>
-                <div class="evaluation-bar-container">
-                  <div class="evaluation-bar-fill" id="bar-info"
-                    style="width: 0%; background: linear-gradient(90deg, #a855f7, #c084fc);"></div>
-                </div>
+            </div>
+            <div class="evaluation-row">
+              <div class="evaluation-header">
+                <span class="evaluation-label">Information</span>
+                <span class="evaluation-meta">Average: <b id="label-info">...</b></span>
               </div>
-              <div class="evaluation-row">
-                <div class="evaluation-header">
-                  <span class="evaluation-label">Game Application</span>
-                  <span class="evaluation-meta">Average: <b id="label-game">...</b></span>
-                </div>
-                <div class="evaluation-percent" id="percent-game">0%</div>
-                <div class="evaluation-bar-container">
-                  <div class="evaluation-bar-fill" id="bar-game"
-                    style="width: 0%; background: linear-gradient(90deg, #f97316, #fb923c);"></div>
-                </div>
+              <div class="evaluation-percent" id="percent-info">0%</div>
+              <div class="evaluation-bar-container">
+                <div class="evaluation-bar-fill" id="bar-info"
+                  style="width: 0%; background: linear-gradient(90deg, #a855f7, #c084fc);"></div>
+              </div>
+            </div>
+            <div class="evaluation-row">
+              <div class="evaluation-header">
+                <span class="evaluation-label">Game Application</span>
+                <span class="evaluation-meta">Average: <b id="label-game">...</b></span>
+              </div>
+              <div class="evaluation-percent" id="percent-game">0%</div>
+              <div class="evaluation-bar-container">
+                <div class="evaluation-bar-fill" id="bar-game"
+                  style="width: 0%; background: linear-gradient(90deg, #f97316, #fb923c);"></div>
               </div>
             </div>
           </div>
-
-          <!-- ROW 1, COL 2: STAR RATINGS -->
-          <div class="chart-card" style="height: 400px;">
-            <div class="chart-header">
-              <h3>Star Ratings Breakdown</h3>
-              <p style="color: var(--text-muted); font-size: 13px;">Distribution of user ratings.</p>
-            </div>
-            <div class="canvas-container" style="height: 300px;">
-              <canvas id="chart4"></canvas>
-            </div>
-          </div>
-
-          <!-- ROW 2, FULL WIDTH: PLATFORM ENGAGEMENT -->
-          <div class="chart-card" style="grid-column: span 2;">
-            <div class="chart-header">
-              <h3>Platform Engagement Overview</h3>
-              <p style="color: var(--text-muted); font-size: 13px;">Consolidated metrics for accounts, visitors, and
-                players.</p>
-            </div>
-            <div class="canvas-container" style="height: 350px;">
-              <canvas id="chartEngagement"></canvas>
-            </div>
-          </div>
-
-          <!-- ROW 3, COL 1: GENDER -->
-          <div class="chart-card">
-            <div class="chart-header">
-              <h3>Gender Distribution</h3>
-              <p style="color: var(--text-muted); font-size: 13px;">Visitor distribution by gender.</p>
-            </div>
-            <div style="display: flex; align-items: center; gap: 30px; padding: 10px 0;">
-              <div class="gender-chart-wrapper">
-                <canvas id="chartGender"></canvas>
-                <div class="gender-center-label">
-                  <span class="gender-total-num" id="gender-total-count">0</span>
-                  <span class="gender-total-text">Visitors</span>
-                </div>
-              </div>
-              <div class="gender-legend" style="flex: 1; padding-left: 0;">
-                <div class="gender-item">
-                  <div class="gender-icon-box" style="background: rgba(244, 114, 182, 0.1); color: #f472b6;">
-                    <i class="fas fa-venus"></i>
-                  </div>
-                  <div class="gender-info">
-                    <span class="gender-name">Female</span>
-                    <span class="gender-value" id="gender-female-val">0%</span>
-                  </div>
-                </div>
-                <div class="gender-item">
-                  <div class="gender-icon-box" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
-                    <i class="fas fa-mars"></i>
-                  </div>
-                  <div class="gender-info">
-                    <span class="gender-name">Male</span>
-                    <span class="gender-value" id="gender-male-val">0%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ROW 3, COL 2: AGE GROUPS -->
-          <div class="chart-card">
-            <div class="chart-header">
-              <h3>Age Groups</h3>
-              <p style="color: var(--text-muted); font-size: 13px;">Age demographics of registered visitors.</p>
-            </div>
-            <div class="canvas-container" style="height: 300px;">
-              <canvas id="chart7"></canvas>
-            </div>
-          </div>
-
-          <!-- ROW 4: OTHER -->
-          <div class="chart-card">
-            <div class="chart-header">
-              <h3>Locations</h3>
-              <p style="color: var(--text-muted); font-size: 13px;">Where your registered visitors are from.</p>
-            </div>
-            <div class="canvas-container" style="height: 300px;">
-              <canvas id="chart6"></canvas>
-            </div>
-          </div>
-
-          <div class="chart-card">
-            <div class="chart-header">
-              <h3>Booking Comparison</h3>
-              <p style="color: var(--text-muted); font-size: 13px;">Photoshoot vs Group Tour distribution.</p>
-            </div>
-            <div class="canvas-container" style="height: 300px;">
-              <canvas id="chart5"></canvas>
-            </div>
-          </div>
-
         </div>
-      </div>
 
-      <!-- PAGE: SETTINGS -->
-      <div id="settings" class="page">
-        <div class="settings-grid">
+        <!-- ROW 1, COL 2: STAR RATINGS -->
+        <div class="chart-card" style="height: 400px;">
+          <div class="chart-header">
+            <h3>Star Ratings Breakdown</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Distribution of user ratings.</p>
+          </div>
+          <div class="canvas-container" style="height: 300px;">
+            <canvas id="chart4"></canvas>
+          </div>
+        </div>
 
-          <!-- General Info -->
-          <div>
-            <div class="settings-card">
-              <div class="settings-header">
-                <div class="icon"><i class="fas fa-globe"></i></div>
-                <div>
-                  <h3 style="font-size: 18px;">General Platform Settings</h3>
-                  <p style="color: var(--text-muted); font-size: 13px;">Manage core information about the portal.</p>
+        <!-- ROW 2, FULL WIDTH: PLATFORM ENGAGEMENT -->
+        <div class="chart-card" style="grid-column: span 2;">
+          <div class="chart-header">
+            <h3>Platform Engagement Overview</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Consolidated metrics for accounts, visitors, and
+              players.</p>
+          </div>
+          <div class="canvas-container" style="height: 350px;">
+            <canvas id="chartEngagement"></canvas>
+          </div>
+        </div>
+
+        <!-- ROW 3, COL 1: GENDER -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Gender Distribution</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Visitor distribution by gender.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 30px; padding: 10px 0;">
+            <div class="gender-chart-wrapper">
+              <canvas id="chartGender"></canvas>
+              <div class="gender-center-label">
+                <span class="gender-total-num" id="gender-total-count">0</span>
+                <span class="gender-total-text">Visitors</span>
+              </div>
+            </div>
+            <div class="gender-legend" style="flex: 1; padding-left: 0;">
+              <div class="gender-item">
+                <div class="gender-icon-box" style="background: rgba(244, 114, 182, 0.1); color: #f472b6;">
+                  <i class="fas fa-venus"></i>
+                </div>
+                <div class="gender-info">
+                  <span class="gender-name">Female</span>
+                  <span class="gender-value" id="gender-female-val">0%</span>
                 </div>
               </div>
-
-              <div class="input-group">
-                <label>Site Name</label>
-                <input type="text" value="Pio Museo Quest Admin">
-              </div>
-
-              <div class="input-group">
-                <label>Admin Support Email</label>
-                <input type="email" value="admin@piomuseo.quest">
+              <div class="gender-item">
+                <div class="gender-icon-box" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                  <i class="fas fa-mars"></i>
+                </div>
+                <div class="gender-info">
+                  <span class="gender-name">Male</span>
+                  <span class="gender-value" id="gender-male-val">0%</span>
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- System & Security preferences -->
-          <div>
-            <div class="settings-card">
-              <div class="settings-header">
-                <div class="icon security"><i class="fas fa-shield-alt"></i></div>
-                <div>
-                  <h3 style="font-size: 18px;">Security & Features</h3>
-                  <p style="color: var(--text-muted); font-size: 13px;">Configure feature flags and access.</p>
-                </div>
-              </div>
-
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <b>User Registration</b>
-                  <small>Allow new players to create accounts.</small>
-                </div>
-                <label class="switch">
-                  <input type="checkbox" checked>
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <b>Maintenance Mode</b>
-                  <small>Disable public access while pushing updates.</small>
-                </div>
-                <label class="switch">
-                  <input type="checkbox">
-                  <span class="slider"></span>
-                </label>
-              </div>
-            </div>
-
-            <div style="display: flex; justify-content: flex-end;">
-              <button class="save-btn" onclick="saveSettings()">
-                <i class="fas fa-save" style="margin-right: 8px;"></i> Save All Settings
-              </button>
-            </div>
+        <!-- ROW 3, COL 2: AGE GROUPS -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Age Groups</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Age demographics of registered visitors.</p>
           </div>
+          <div class="canvas-container" style="height: 300px;">
+            <canvas id="chart7"></canvas>
+          </div>
+        </div>
 
+        <!-- ROW 4: OTHER -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Locations</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Where your registered visitors are from.</p>
+          </div>
+          <div class="canvas-container" style="height: 300px;">
+            <canvas id="chart6"></canvas>
+          </div>
         </div>
-      </div>
 
-    </div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Booking Comparison</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Photoshoot vs Group Tour distribution.</p>
+          </div>
+          <div class="canvas-container" style="height: 300px;">
+            <canvas id="chart5"></canvas>
+          </div>
+        </div>
 
-    <!-- Add Content Modal -->
-    <div id="addContentModal" class="modal-overlay"
-      style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;">
-      <div class="modal-content"
-        style="background: #111827; width: 700px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white;">
-        <h3 id="modal-title" style="margin-top: 0; margin-bottom: 20px;">Add New Content</h3>
-        <input type="hidden" id="edit-content-id" value="">
-        <div class="input-group" style="margin-bottom: 15px;">
-          <label style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Content Type</label>
-          <select id="new-content-type"
-            style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
-            <option value="blog">Blog / Story</option>
-            <option value="gallery">Gallery Image</option>
-            <option value="faq">FAQ</option>
-          </select>
-        </div>
-        <div class="input-group" style="margin-bottom: 15px;">
-          <label id="title-label" style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Title /
-            Question</label>
-          <input type="text" id="new-content-title" placeholder="Enter title or question..."
-            style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
-        </div>
-        <div class="input-group" id="group-description" style="margin-bottom: 15px;">
-          <label id="desc-label"
-            style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Description
-            / Answer</label>
-          <textarea id="new-content-desc" rows="12" placeholder="Enter story or answer..."
-            style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
-        </div>
-        <div class="input-group" id="group-image" style="margin-bottom: 20px;">
-          <label style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Image URL</label>
-          <input type="text" id="new-content-image" placeholder="https://example.com/image.jpg"
-            style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
-        </div>
-        <div style="display: flex; justify-content: flex-end; gap: 10px;">
-          <button class="btn" onclick="closeAddContentModal()"
-            style="background: transparent; color: #9ca3af; border: 1px solid #374151;">Cancel</button>
-          <button class="btn btn-primary" onclick="submitNewContent()">Save Content</button>
-        </div>
       </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <!-- PAGE: SETTINGS -->
+    <div id="settings" class="page">
+      <div class="settings-grid">
+
+        <!-- General Info -->
+        <div>
+          <div class="settings-card">
+            <div class="settings-header">
+              <div class="icon"><i class="fas fa-globe"></i></div>
+              <div>
+                <h3 style="font-size: 18px;">General Platform Settings</h3>
+                <p style="color: var(--text-muted); font-size: 13px;">Manage core information about the portal.</p>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label>Site Name</label>
+              <input type="text" value="Pio Museo Quest Admin">
+            </div>
+
+            <div class="input-group">
+              <label>Admin Support Email</label>
+              <input type="email" value="admin@piomuseo.quest">
+            </div>
+          </div>
+        </div>
+
+        <!-- System & Security preferences -->
+        <div>
+          <div class="settings-card">
+            <div class="settings-header">
+              <div class="icon security"><i class="fas fa-shield-alt"></i></div>
+              <div>
+                <h3 style="font-size: 18px;">Security & Features</h3>
+                <p style="color: var(--text-muted); font-size: 13px;">Configure feature flags and access.</p>
+              </div>
+            </div>
+
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <b>User Registration</b>
+                <small>Allow new players to create accounts.</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <b>Maintenance Mode</b>
+                <small>Disable public access while pushing updates.</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end;">
+            <button class="save-btn" onclick="saveSettings()">
+              <i class="fas fa-save" style="margin-right: 8px;"></i> Save All Settings
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Add Content Modal -->
+  <div id="addContentModal" class="modal-overlay"
+    style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;">
+    <div class="modal-content"
+      style="background: #111827; width: 700px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white;">
+      <h3 id="modal-title" style="margin-top: 0; margin-bottom: 20px;">Add New Content</h3>
+      <input type="hidden" id="edit-content-id" value="">
+      <div class="input-group" style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Content Type</label>
+        <select id="new-content-type"
+          style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
+          <option value="blog">Blog / Story</option>
+          <option value="gallery">Gallery Image</option>
+          <option value="faq">FAQ</option>
+        </select>
+      </div>
+      <div class="input-group" style="margin-bottom: 15px;">
+        <label id="title-label" style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Title /
+          Question</label>
+        <input type="text" id="new-content-title" placeholder="Enter title or question..."
+          style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
+      </div>
+      <div class="input-group" id="group-description" style="margin-bottom: 15px;">
+        <label id="desc-label" style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Description
+          / Answer</label>
+        <textarea id="new-content-desc" rows="12" placeholder="Enter story or answer..."
+          style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
+      </div>
+      <div class="input-group" id="group-image" style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 5px; color: #9ca3af; font-size: 13px;">Image URL</label>
+        <input type="text" id="new-content-image" placeholder="https://example.com/image.jpg"
+          style="width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 6px;">
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn" onclick="closeAddContentModal()"
+          style="background: transparent; color: #9ca3af; border: 1px solid #374151;">Cancel</button>
+        <button class="btn btn-primary" onclick="submitNewContent()">Save Content</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
   <script src="supabaseClient.js"></script>
   <script src="admin.js"></script>
 
-    <script>
-      /* AUTH CHECK */
-      if (localStorage.getItem("isAdmin") !== "true") {
-        window.location.href = "admin login.html";
-      }
+  <script>
+    /* AUTH CHECK */
+    if (localStorage.getItem("isAdmin") !== "true") {
+      window.location.href = "admin login.html";
+    }
 
-      /* PAGE SWITCHING LOGIC */
-      function openPage(pageId, el, event) {
-        if (event) event.stopPropagation();
+    /* PAGE SWITCHING LOGIC */
+    function openPage(pageId, el, event) {
+      if (event) event.stopPropagation();
 
-        // Manage Active Pages
-        document.querySelectorAll(".page").forEach(page => {
-          page.classList.remove("active");
-        });
-        document.getElementById(pageId).classList.add("active");
+      // Manage Active Pages
+      document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+      });
+      document.getElementById(pageId).classList.add("active");
 
-        // Manage Active Nav Items
-        document.querySelectorAll(".nav li").forEach(navItem => {
-          navItem.classList.remove("active");
-        });
-        el.classList.add("active");
+      // Manage Active Nav Items
+      document.querySelectorAll(".nav li").forEach(navItem => {
+        navItem.classList.remove("active");
+      });
+      el.classList.add("active");
 
-        // Update Header Title dynamically mapping to the label
-        let pageTitle = el.innerText.trim();
-        document.getElementById("title").innerText = pageTitle + " Overview";
+      // Update Header Title dynamically mapping to the label
+      let pageTitle = el.innerText.trim();
+      document.getElementById("title").innerText = pageTitle + " Overview";
 
-        if (pageId === "analytics") {
-          if (typeof renderCharts === "function") {
-            renderCharts();
-            renderEvaluationStats();
-            renderGenderChart();
-            renderPlatformEngagementChart();
-          }
+      if (pageId === "analytics") {
+        if (typeof renderCharts === "function") {
+          renderCharts();
+          renderEvaluationStats();
+          renderGenderChart();
+          renderPlatformEngagementChart();
         }
       }
+    }
 
-      function toggleSubmenu(el) {
-        const isOpen = el.classList.contains('open');
+    function toggleSubmenu(el) {
+      const isOpen = el.classList.contains('open');
 
-        // Close all submenus
-        document.querySelectorAll('.has-submenu').forEach(submenu => {
-          submenu.classList.remove('open');
-        });
+      // Close all submenus
+      document.querySelectorAll('.has-submenu').forEach(submenu => {
+        submenu.classList.remove('open');
+      });
 
-        if (!isOpen) {
-          el.classList.add('open');
-        }
+      if (!isOpen) {
+        el.classList.add('open');
       }
+    }
 
-      // Render charts logic is now handled in admin.js using renderCharts()
+    // Render charts logic is now handled in admin.js using renderCharts()
 
-      // Logout Function
-      function logout() {
-        localStorage.removeItem("isAdmin");
-        window.location.href = "admin login.html";
-      }
+    // Logout Function
+    function logout() {
+      localStorage.removeItem("isAdmin");
+      window.location.href = "admin login.html";
+    }
 
-    </script>
+  </script>
 </body>
 
 </html>
