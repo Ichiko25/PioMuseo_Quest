@@ -303,7 +303,8 @@
         }
 
         .navbar {
-            max-width: 2120px;
+            box-sizing: border-box;
+            max-width: none;
             margin: 0 auto;
             padding: 0.75rem 1.5rem;
             display: flex;
@@ -311,6 +312,11 @@
             justify-content: space-between;
             gap: 1rem;
             background-color: darkred;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
         }
 
         .logo {
@@ -419,7 +425,7 @@
         .hero {
             max-width: 1120px;
             margin: 0 auto;
-            padding: 2.4rem .5rem 2.75rem;
+            padding: 7.4rem .5rem 2.75rem;
             display: grid;
             grid-template-columns: minmax(0, 3fr) minmax(0, 2.6fr);
             gap: 2.5rem;
@@ -1984,126 +1990,47 @@
 
             </div>
 
-            <section id="gallery" class="section">
+            <section id="gallery" class="section" style="overflow: hidden; width: 100%;">
                 <div class="carousel-row row-left">
-                    <div class="carousel">
-                        <div class="track">
-                            <div class="card">
-                                <img src="web-images/second-floor.jpg" alt="Second-floor"
-                                    onerror="this.src='web-images/second-floor.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/table.jpg" alt="table" onerror="this.src='web-images/table.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/study-table.jpg" alt="study-table"
-                                    onerror="this.src='web-images/study-table.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/museo-pic.jpg" alt="museo-pic"
-                                    onerror="this.src='web-images/museo-pic.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/front.jpg" alt="front" onerror="this.src='web-images/front.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/right.jpg" alt="right" onerror="this.src='web-images/right.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/fam.jpg" alt="fam" onerror="this.src='web-images/fam.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/gazebo.jpg" alt="gazebo"
-                                    onerror="this.src='web-images/gazebo.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/cinematic-table.jpg" alt="cinematic-table"
-                                    onerror="this.src='web-images/cinematic-table.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/news.jpg" alt="news" onerror="this.src='web-images/news.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/sala.jpg" alt="sala" onerror="this.src='web-images/sala.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/guho.jpg" alt="guho" onerror="this.src='web-images/guho.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/tools.jpg" alt="tools" onerror="this.src='web-images/tools.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/pictures.jpg" alt="pictures"
-                                    onerror="this.src='web-images/pictures.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/cinematic.jpg" alt="cinematic"
-                                    onerror="this.src='web-images/cinematic.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/first-floor.jpg" alt="first-floor"
-                                    onerror="this.src='web-images/first-floor.jpg'">
-                            </div>
-                        </div>
-                    </div>
+                    <img src="web-images/second-floor.jpg" alt="Second-floor" onerror="this.src='web-images/second-floor.jpg'">
+                    <img src="web-images/table.jpg" alt="table" onerror="this.src='web-images/table.jpg'">
+                    <img src="web-images/study-table.jpg" alt="study-table" onerror="this.src='web-images/study-table.jpg'">
+                    <img src="web-images/museo-pic.jpg" alt="museo-pic" onerror="this.src='web-images/museo-pic.jpg'">
+                    <img src="web-images/front.jpg" alt="front" onerror="this.src='web-images/front.jpg'">
+                    <img src="web-images/right.jpg" alt="right" onerror="this.src='web-images/right.jpg'">
+                    <img src="web-images/fam.jpg" alt="fam" onerror="this.src='web-images/fam.jpg'">
+                    <img src="web-images/gazebo.jpg" alt="gazebo" onerror="this.src='web-images/gazebo.jpg'">
+                    
+                    <!-- Duplicated set for seamless scrolling -->
+                    <img src="web-images/second-floor.jpg" alt="Second-floor" onerror="this.src='web-images/second-floor.jpg'">
+                    <img src="web-images/table.jpg" alt="table" onerror="this.src='web-images/table.jpg'">
+                    <img src="web-images/study-table.jpg" alt="study-table" onerror="this.src='web-images/study-table.jpg'">
+                    <img src="web-images/museo-pic.jpg" alt="museo-pic" onerror="this.src='web-images/museo-pic.jpg'">
+                    <img src="web-images/front.jpg" alt="front" onerror="this.src='web-images/front.jpg'">
+                    <img src="web-images/right.jpg" alt="right" onerror="this.src='web-images/right.jpg'">
+                    <img src="web-images/fam.jpg" alt="fam" onerror="this.src='web-images/fam.jpg'">
+                    <img src="web-images/gazebo.jpg" alt="gazebo" onerror="this.src='web-images/gazebo.jpg'">
                 </div>
 
                 <div class="carousel-row row-right">
-                    <div class="carousel">
-                        <div class="track">
-                            <div class="card">
-                                <img src="web-images/bookshelf.jpg" alt="bookshelf"
-                                    onerror="this.src='web-images/bookshelf.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/dining.jpg" alt="dining"
-                                    onerror="this.src='web-images/dining.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/salaa.jpg" alt="salaa" onerror="this.src='web-images/salaa.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/guhoat.jpg" alt="guhoat"
-                                    onerror="this.src='web-images/guhoat.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/dio.jpg" alt="dio" onerror="this.src='web-images/dio.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/kitchen.jpg" alt="kitchen"
-                                    onerror="this.src='web-images/kitchen.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/clinica.jpg" alt="clinica"
-                                    onerror="this.src='web-images/clinica.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/dioramas.jpg" alt="dioramas"
-                                    onerror="this.src='web-images/dioramas.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/exit.jpg" alt="exit" onerror="this.src='web-images/exit.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/haligingtahanan.jpg" alt="haligingtahanan"
-                                    onerror="this.src='web-images/qqq.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/timeline.jpg" alt="timeline"
-                                    onerror="this.src='web-images/timeline.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/tv.jpg" alt="tv" onerror="this.src='web-images/tv.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/jail.jpg" alt="jail" onerror="this.src='web-images/jail.jpg'">
-                            </div>
-                            <div class="card">
-                                <img src="web-images/history.jpg" alt="history"
-                                    onerror="this.src='web-images/history.jpg'">
-                            </div>
-                        </div>
-                    </div>
+                    <img src="web-images/bookshelf.jpg" alt="bookshelf" onerror="this.src='web-images/bookshelf.jpg'">
+                    <img src="web-images/dining.jpg" alt="dining" onerror="this.src='web-images/dining.jpg'">
+                    <img src="web-images/salaa.jpg" alt="salaa" onerror="this.src='web-images/salaa.jpg'">
+                    <img src="web-images/guhoat.jpg" alt="guhoat" onerror="this.src='web-images/guhoat.jpg'">
+                    <img src="web-images/dio.jpg" alt="dio" onerror="this.src='web-images/dio.jpg'">
+                    <img src="web-images/kitchen.jpg" alt="kitchen" onerror="this.src='web-images/kitchen.jpg'">
+                    <img src="web-images/clinica.jpg" alt="clinica" onerror="this.src='web-images/clinica.jpg'">
+                    <img src="web-images/dioramas.jpg" alt="dioramas" onerror="this.src='web-images/dioramas.jpg'">
+                    
+                    <!-- Duplicated set for seamless scrolling -->
+                    <img src="web-images/bookshelf.jpg" alt="bookshelf" onerror="this.src='web-images/bookshelf.jpg'">
+                    <img src="web-images/dining.jpg" alt="dining" onerror="this.src='web-images/dining.jpg'">
+                    <img src="web-images/salaa.jpg" alt="salaa" onerror="this.src='web-images/salaa.jpg'">
+                    <img src="web-images/guhoat.jpg" alt="guhoat" onerror="this.src='web-images/guhoat.jpg'">
+                    <img src="web-images/dio.jpg" alt="dio" onerror="this.src='web-images/dio.jpg'">
+                    <img src="web-images/kitchen.jpg" alt="kitchen" onerror="this.src='web-images/kitchen.jpg'">
+                    <img src="web-images/clinica.jpg" alt="clinica" onerror="this.src='web-images/clinica.jpg'">
+                    <img src="web-images/dioramas.jpg" alt="dioramas" onerror="this.src='web-images/dioramas.jpg'">
                 </div>
             </section>
 
@@ -2441,10 +2368,24 @@
         </div>
     </footer>
 
-	<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script src="supabaseClient.js"></script>
-<script src="feedback.js"></script>
-<script src="pio_museo.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabaseClient.js"></script>
+    <script src="feedback.js"></script>
+    <script src="pio_museo.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navToggle = document.querySelector('.nav-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (navToggle && navLinks) {
+                navToggle.addEventListener('click', () => {
+                    navLinks.classList.toggle('open');
+                    const isOpen = navLinks.classList.contains('open');
+                    navToggle.setAttribute('aria-expanded', isOpen);
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
