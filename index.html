@@ -518,83 +518,54 @@
 
         .hero-visual {
             display: flex;
+            gap: 20px;
             justify-content: center;
             align-items: center;
         }
 
-        .card.active {
-            transform: scale(1.2);
-        }
-
-        .card.prev,
-        .card.next {
-            transform: scale(0.85);
-        }
-
-        .prev-btn,
-        .next-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            border-radius: 50%;
-            z-index: 5;
-        }
-
-        .prev-btn {
-            left: 5px;
-        }
-
-        .next-btn {
-            right: 5px;
-        }
-
-        .hero-orbit {
-            position: relative;
-            height: 260px;
-            border-radius: 40px;
-            background: radial-gradient(circle at 15% 20%, #ffe2b3, var(--red-soft-alt));
-            overflow: hidden;
-            box-shadow: var(--shadow-soft);
-        }
-
-        .hero-orbit-dot {
-            position: absolute;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.8);
-        }
-
-        .hero-orbit-dot--big {
-            width: 120px;
-            height: 24px;
-            top: 18%;
-            left: -15%;
-            transform: rotate(-18deg);
-        }
-
-        .hero-orbit-dot--small {
-            width: 80px;
-            height: 16px;
-            bottom: 12%;
-            right: -10%;
-            transform: rotate(18deg);
-        }
-
         .hero-card {
+            position: relative;
+            overflow: hidden;
+            background: var(--charcoal-mid);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hero-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+
+        .hero-card-tall {
+            width: 260px;
+        }
+
+        .hero-card-mid {
+            width: 200px;
+            height: 360px;
+        }
+        
+        .hero-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-label {
             position: absolute;
-            background: var(--white);
-            border-radius: 1.2rem;
-            padding: 0.8rem 1rem;
-            font-size: 0.9rem;
-            min-width: 140px;
-            box-shadow: var(--shadow-soft);
-            display: inline-flex;
-            flex-direction: column;
-            gap: 0.15rem;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.8);
+            color: var(--white);
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            box-sizing: border-box;
         }
 
         .hero-orbit::before {
@@ -618,10 +589,11 @@
         }
 
         .carousel-row img {
-            width: 320px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 4px;
+            width: 320px !important;
+            height: 200px !important;
+            object-fit: cover !important;
+            border-radius: 4px !important;
+            flex-shrink: 0;
         }
 
         .row-left {
@@ -652,78 +624,6 @@
             to {
                 transform: translateX(0);
             }
-        }
-
-        .carousel {
-            position: relative;
-            width: 100%;
-            max-width: 650px;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-
-        .carousel .track {
-            display: flex;
-            align-items: center;
-            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            will-change: transform;
-        }
-
-        .card {
-            flex: 0 0 auto;
-            width: 280px;
-            margin: 0 12.5px;
-            border-radius: 25px;
-            overflow: hidden;
-            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.6s ease;
-            opacity: 0.5;
-            transform: scale(0.8);
-        }
-
-        .cards {
-            flex: 0 0 auto;
-            width: 280px;
-            border-radius: 25px;
-            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.6s ease;
-            transform: scale(0.8);
-        }
-
-        .card carousel {
-            flex: 0 0 auto;
-            width: 280px;
-            margin: 0 12.5px;
-            border-radius: 25px;
-            overflow: hidden;
-            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.6s ease;
-            opacity: 0.5;
-            transform: scale(0.8);
-        }
-
-        .card img {
-            width: 100%;
-            height: 450px;
-            object-fit: cover;
-            border-radius: 25px;
-        }
-
-        .card.active {
-            transform: scale(1.2);
-            opacity: 1;
-            z-index: 2;
-            border-radius: 30px;
-        }
-
-        .card.prev,
-        .card.next {
-            transform: scale(0.85);
-            opacity: 0.7;
-            z-index: 1;
-        }
-
-        .card,
-        .card img {
-            backface-visibility: hidden;
-            will-change: transform, opacity;
         }
 
         main {
