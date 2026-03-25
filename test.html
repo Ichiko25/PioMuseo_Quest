@@ -14,31 +14,31 @@
   // Wait until everything is loaded
   window.onload = async function () {
 
-    const SUPABASE_URL = 'https://brsoehxzpqhzgnsqivrq.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_pg9IZUYCihI7NiaS0NDHxQ_i7WqmCv6';
+const SUPABASE_URL = 'https://brsoehxzpqhzgnsqivrq.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_pg9IZUYCihI7NiaS0NDHxQ_i7WqmCv6';
 
-    // ✅ Correct initialization
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    async function testInsert() {
-      const { data, error } = await supabaseClient
-        .from('visitor_logs')
-        .insert([{
-          player_name: 'Test Player',
-          location: 'Browser Test',
-          total_visitors: 1
-        }]);
-
-      if (error) {
-        console.error("Insert failed:", error);
-        document.body.innerHTML += "<p style='color:red;'>❌ Insert Failed</p>";
-      } else {
-        console.log("Insert succeeded:", data);
-        document.body.innerHTML += "<p style='color:green;'>✅ Insert Succeeded</p>";
-      }
+async function test() {
+    console.log("Fetching all content rows...");
+    try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/content?select=*&limit=5`, {
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`
+            }
+        });
+        const data = await res.json();
+        console.log("Status:", res.status);
+        if (!res.ok) {
+            console.log("Error:", data);
+        } else {
+            console.log("Data (first 5 rows):", data);
+        }
+    } catch (e) {
+        console.log("Fetch error:", e);
     }
+}
+test();
 
-    testInsert();
   };
 </script>
 
