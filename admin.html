@@ -1833,68 +1833,59 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT LOGIC -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
-  <script src="supabaseClient.js"></script>
-  <script src="admin.js"></script>
+<!-- JAVASCRIPT LOGIC -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="supabaseClient.js"></script>
+<script src="admin.js"></script>
 
-  <script>
-    /* AUTH CHECK */
-    if (localStorage.getItem("isAdmin") !== "true") {
-      window.location.href = "admin login.html";
-    }
+<script>
+  /* AUTH CHECK */
+  if (localStorage.getItem("isAdmin") !== "true") {
+    window.location.href = "admin login.html";
+  }
 
-    /* PAGE SWITCHING LOGIC */
-    function openPage(pageId, el, event) {
-      if (event) event.stopPropagation();
+  function openPage(pageId, el, event) {
+    if (event) event.stopPropagation();
 
-      // Manage Active Pages
-      document.querySelectorAll(".page").forEach(page => {
-        page.classList.remove("active");
-      });
-      document.getElementById(pageId).classList.add("active");
+    document.querySelectorAll(".page").forEach(page => {
+      page.classList.remove("active");
+    });
+    document.getElementById(pageId).classList.add("active");
 
-      // Manage Active Nav Items
-      document.querySelectorAll(".nav li").forEach(navItem => {
-        navItem.classList.remove("active");
-      });
-      el.classList.add("active");
+    document.querySelectorAll(".nav li").forEach(navItem => {
+      navItem.classList.remove("active");
+    });
+    el.classList.add("active");
 
-      // Update Header Title dynamically mapping to the label
-      let pageTitle = el.innerText.trim();
-      document.getElementById("title").innerText = pageTitle + " Overview";
+    let pageTitle = el.innerText.trim();
+    document.getElementById("title").innerText = pageTitle + " Overview";
 
-      if (pageId === "analytics") {
-        if (typeof renderCharts === "function") {
-          renderCharts();
-          renderEvaluationStats();
-          renderGenderChart();
-          renderPlatformEngagementChart();
-        }
+    if (pageId === "analytics") {
+      if (typeof renderCharts === "function") {
+        renderCharts();
+        renderEvaluationStats();
+        renderGenderChart();
+        renderPlatformEngagementChart();
       }
     }
+  }
 
-    function toggleSubmenu(el) {
-      const isOpen = el.classList.contains('open');
+  function toggleSubmenu(el) {
+    const isOpen = el.classList.contains('open');
 
-      // Close all submenus
-      document.querySelectorAll('.has-submenu').forEach(submenu => {
-        submenu.classList.remove('open');
-      });
+    document.querySelectorAll('.has-submenu').forEach(submenu => {
+      submenu.classList.remove('open');
+    });
 
-      if (!isOpen) {
-        el.classList.add('open');
-      }
+    if (!isOpen) {
+      el.classList.add('open');
     }
+  }
 
-    // Render charts logic is now handled in admin.js using renderCharts()
-
-    // Logout Function
-    function logout() {
-      localStorage.removeItem("isAdmin");
-      window.location.href = "admin login.html";
-    }
-
+  function logout() {
+    localStorage.removeItem("isAdmin");
+    window.location.href = "admin-login.html";
+  }
   </script>
 </body>
 
