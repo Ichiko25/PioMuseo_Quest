@@ -12,56 +12,63 @@ if (navToggle && navLinks) {
 }
 
 // Carousel
-const track = document.querySelector('.carousel .track');
-const cards = Array.from(track.children);
-const cardWidth = cards[0].offsetWidth + 25;
-let currentIndex = 0;
-const interval = 5000;
+function initHeroCarousel() {
+    const container = document.querySelector('.hero-visual .carousel');
+    const track = document.querySelector('.hero-visual .track');
+    if (!container || !track) return;
+    
+    // Wait for layout
+    setTimeout(() => {
+        const originalCards = Array.from(track.children);
+        if (originalCards.length === 0) return;
+        
+        const cardWidth = originalCards[0].offsetWidth + 25;
+        const containerWidth = container.offsetWidth;
+        let currentIndex = 0;
 
-// Clone first and last cards for infinite effect
-const firstClone = cards[0].cloneNode(true);
-const lastClone = cards[cards.length - 1].cloneNode(true);
-track.appendChild(firstClone);
-track.insertBefore(lastClone, track.firstChild);
+        // Infinite loop clones
+        originalCards.forEach(card => {
+            const clone = card.cloneNode(true);
+            track.appendChild(clone);
+        });
+        
+        const totalCards = track.children.length;
 
-const allCards = Array.from(track.children);
-let offset = -(cardWidth * (currentIndex + 1) - track.offsetWidth / 2 + cardWidth / 2);
-track.style.transform = `translateX(${offset}px)`;
+        function updatePosition(smooth = true) {
+            const offset = (containerWidth / 2) - (cardWidth * currentIndex + cardWidth / 2);
+            track.style.transition = smooth ? 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)' : 'none';
+            track.style.transform = `translateX(${offset}px)`;
+            
+            // Classes for zoom effect
+            const allCards = Array.from(track.children);
+            allCards.forEach((card, i) => {
+                card.classList.remove('active', 'prev', 'next');
+                if (i === currentIndex) card.classList.add('active');
+                else if (i === currentIndex - 1) card.classList.add('prev');
+                else if (i === currentIndex + 1) card.classList.add('next');
+            });
+        }
 
-// Set active classes initially
-function setClasses(index) {
-    allCards.forEach((card, i) => {
-        card.classList.remove('active', 'prev', 'next');
-        if (i === index) card.classList.add('active');
-        else if (i === index - 1) card.classList.add('prev');
-        else if (i === index + 1) card.classList.add('next');
-    });
+        function next() {
+            currentIndex++;
+            updatePosition(true);
+            
+            if (currentIndex >= originalCards.length) {
+                setTimeout(() => {
+                    currentIndex = 0;
+                    updatePosition(false);
+                }, 800);
+            }
+        }
+
+        updatePosition(false);
+        setInterval(next, 5000);
+    }, 500);
 }
-setClasses(currentIndex + 1);
 
-// Slide function
-function slide() {
-    currentIndex++;
-    track.style.transition = 'transform 0.8s ease-in-out';
-    const translate = -(cardWidth * (currentIndex + 1) - track.offsetWidth / 2 + cardWidth / 2);
-    track.style.transform = `translateX(${translate}px)`;
-
-    setClasses(currentIndex + 1);
-
-    // Reset to first card if we reached the cloned last card
-    if (currentIndex >= cards.length) {
-        setTimeout(() => {
-            track.style.transition = 'none';
-            currentIndex = 0;
-            const resetTranslate = -(cardWidth * (currentIndex + 1) - track.offsetWidth / 2 + cardWidth / 2);
-            track.style.transform = `translateX(${resetTranslate}px)`;
-            setClasses(currentIndex + 1);
-        }, 820); // slightly longer than transition
-    }
-}
-
-// Start automatic sliding
-setInterval(slide, interval);
+// Call initialization
+if (document.readyState === 'complete') initHeroCarousel();
+else window.addEventListener('load', initHeroCarousel);
 
 function openModal(id) {
     document.getElementById(id).style.display = 'block';
