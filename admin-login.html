@@ -209,36 +209,37 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="supabaseClient.js"></script>
-  <script>
-    document.getElementById("loginForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
+<!-- ✅ FIXED Supabase CDN -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+<script src="supabaseClient.js"></script>
 
-      // DEMO ADMIN LOGIN
-      if (email === "admin@museo.ph" && password === "piomuseo_123") {
+<script>
+  document.getElementById("loginForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-        try {
-          // Log admin login to audit_logs
-          await supabaseClient.from('audit_logs').insert([{
-            admin_email: email,
-            action: 'Logged In',
-            details: 'Admin Dashboard Access'
-          }]);
-        } catch (err) {
-          console.error("Failed to log admin login:", err);
-        }
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-        localStorage.setItem("isAdmin", "true");
-        window.location.href = "admin.html";
-      } else {
-        document.getElementById("loginError").style.display = "block";
+    if (email === "admin@museo.ph" && password === "piomuseo_123") {
+
+      try {
+        await supabase.from('audit_logs').insert([{
+          admin_email: email,
+          action: 'Logged In',
+          details: 'Admin Dashboard Access'
+        }]);
+      } catch (err) {
+        console.error("Failed to log admin login:", err);
       }
-    });
-  </script>
+
+      localStorage.setItem("isAdmin", "true");
+      window.location.href = "admin.html";
+    } else {
+      document.getElementById("loginError").style.display = "block";
+    }
+  });
+</script>
 
 </body>
 
