@@ -612,15 +612,16 @@
 
         .carousel-row {
             display: flex;
-            gap: 40px;
+            gap: 10px;
             width: max-content;
-            margin-top: 50px;
+            margin-top: 0;
         }
 
         .carousel-row img {
-            width: 300px;
-            height: 190px;
+            width: 320px;
+            height: 200px;
             object-fit: cover;
+            border-radius: 4px;
         }
 
         .row-left {
@@ -629,7 +630,8 @@
 
         .row-right {
             animation: scrollRight 65s linear infinite;
-            margin: 30px;
+            margin-top: 10px;
+            margin-bottom: 30px;
         }
 
         @keyframes scrollLeft {
@@ -2349,21 +2351,12 @@
                         <p>Phone: (02) 82945699</p>
                     </div>
                 </div>
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#gallery">Gallery</a></li>
-                        <li><a href="#game">Game</a></li>
-                        <li><a href="#blog">Blog</a></li>
-                    </ul>
-                </div>
             </div>
 
             <div class="footer-bottom">
-                <p style="text-align: center;">
-                    © 2026 Museo ni Dr. Pio Valenzuela. All rights reserved.
-                </p>
+                <div class="footer-copyright">
+                    <p>&copy; 2026 Museo ni Dr. Pio Valenzuela. All rights reserved.</p>
+                </div>
             </div>
         </div>
     </footer>
