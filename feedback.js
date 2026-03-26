@@ -371,24 +371,6 @@ async function fetchPublicContent() {
                     </div>
                 `;
 
-                // Toggle logic
-                const header = item.querySelector('.faq-header');
-                header.addEventListener('click', () => {
-                    // Close others (optional, but requested 'toggle on and off' usually implies this or independent)
-                    // If you want only one open at a time:
-                    // faqContainer.querySelectorAll('.faq-item').forEach(other => {
-                    //     if (other !== item) other.classList.remove('active');
-                    // });
-                    
-                    item.classList.toggle('active');
-                });
-
-                faqContainer.appendChild(item);
-            });
-        } else if (faqContainer) {
-            faqContainer.innerHTML = '<h3>FAQ\'s</h3><p style="color: var(--text-muted); font-size: 14px; text-align: center;">No FAQs available at the moment.</p>';
-        }
-
         // Render Blogs
         const blogContainer = document.querySelector('.blog-grid');
         if (blogContainer) {
