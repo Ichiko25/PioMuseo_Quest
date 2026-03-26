@@ -352,30 +352,37 @@ async function fetchPublicContent() {
 
         const blogs = contents.filter(c => c.type === 'blog');
         const galleries = contents.filter(c => c.type === 'gallery');
-             const faqs = contents.filter(c => c.type === 'faq');
+        const faqs = contents.filter(c => c.type === 'faq');
 
         // Render FAQs
         const faqContainer = document.getElementById('faq-section-container');
         if (faqContainer && faqs.length > 0) {
-            // Keep the H3
             faqContainer.innerHTML = '<h3>FAQ\'s</h3>';
             faqs.forEach(faq => {
                 const item = document.createElement('div');
-                item.style.marginBottom = '20px';
-                item.style.textAlign = 'left';
-                item.style.padding = '15px';
-                item.style.background = 'rgba(255,255,255,0.5)';
-                item.style.borderRadius = '12px';
-                item.style.border = '1px solid rgba(0,0,0,0.05)';
+                item.className = 'faq-item';
                 item.innerHTML = `
-                    <div style="font-weight: 700; color: #1e293b; margin-bottom: 8px; font-size: 15px; display:flex; align-items:flex-start; gap:10px;">
-                        <span style="background: var(--accent-primary); color: white; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">?</span>
+                    <button class="faq-header">
                         ${faq.title}
-                    </div>
-                    <div style="color: #475569; font-size: 14px; line-height: 1.6; padding-left: 28px;">
+                        <span class="faq-toggle-icon"></span>
+                    </button>
+                    <div class="faq-content">
                         ${faq.description}
                     </div>
                 `;
+
+                // Toggle logic
+                const header = item.querySelector('.faq-header');
+                header.addEventListener('click', () => {
+                    // Close others (optional, but requested 'toggle on and off' usually implies this or independent)
+                    // If you want only one open at a time:
+                    // faqContainer.querySelectorAll('.faq-item').forEach(other => {
+                    //     if (other !== item) other.classList.remove('active');
+                    // });
+                    
+                    item.classList.toggle('active');
+                });
+
                 faqContainer.appendChild(item);
             });
         } else if (faqContainer) {
