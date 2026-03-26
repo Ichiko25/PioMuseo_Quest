@@ -485,16 +485,12 @@ async function autoSeedContent() {
 }
 
 async function fetchFAQs() {
-    const faqContainer = document.getElementById('faq-section-container');
-    if (!faqContainer) return;
+    console.log("faq: fetchFAQs started");
     try {
         const { data: faqs, error } = await supabaseClient
-            .from('content')
-            .select('*')
-            .eq('type', 'faq')
-            .eq('status', 'published')
-            .order('created_at', { ascending: true });
-        if (error) throw error;
-        // Render FAQs...
-    } catch (err) { console.error(err); }
+            .from('content').select('*').eq('type', 'faq')
+            .eq('status', 'published');
+        console.log("faq: received data", faqs);
+        // ... update UI
+    } catch (err) { console.error("faq: failed", err); }
 }
