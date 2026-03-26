@@ -362,11 +362,10 @@ async function fetchPublicContent() {
                 const item = document.createElement('div');
                 item.className = 'faq-item';
                 item.innerHTML = `
-                    <button class="faq-header">
+                    <div class="faq-question">
                         ${faq.title}
-                        <span class="faq-toggle-icon"></span>
-                    </button>
-                    <div class="faq-content">
+                    </div>
+                    <div class="faq-answer">
                         ${faq.description}
                     </div>
                 `;
