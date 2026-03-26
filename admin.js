@@ -123,6 +123,21 @@ async function fetchAnalytics() {
     }
 }
 
+// [admin.js] Sidebar Toggle Logic
+function toggleSidebar() {
+    document.body.classList.toggle('fullscreen-mode');
+    const icon = document.querySelector('.fullscreen-toggle i');
+    if (!icon) return;
+    
+    if (document.body.classList.contains('fullscreen-mode')) {
+        icon.classList.remove('fa-expand-alt');
+        icon.classList.add('fa-compress-alt');
+    } else {
+        icon.classList.remove('fa-compress-alt');
+        icon.classList.add('fa-expand-alt');
+    }
+}
+
 // --- AUDIT LOGS ---
 let allAuditLogs = [];
 async function fetchAuditLogs() {
