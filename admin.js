@@ -665,7 +665,7 @@ async function fetchContent() {
             tempDiv.innerHTML = item.description || '';
             const plainTextDesc = tempDiv.textContent || tempDiv.innerText || '';
 
-            const cardHTML = `
+           const cardHTML = `
                <div class="content-card">
                   <div class="content-card-header">
                     <span class="status-badge ${badgeType}">${item.status || 'Draft'}</span>
@@ -677,9 +677,6 @@ async function fetchContent() {
                   <h4 class="content-card-title">${item.title}</h4>
                   <p class="content-card-desc" style="-webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;">${plainTextDesc}</p>
                   <div class="content-card-footer">
-                    <div class="content-stats">
-                      <span><i class="fas fa-eye"></i> ${item.views || 0}</span>
-                    </div>
                     <div>
                       <button class="btn-icon edit" onclick="openEditContentModal('${item.id}')" style="margin-right:8px;" title="Edit"><i class="fas fa-edit"></i></button>
                       <button class="btn-icon delete" onclick="deleteContent('${item.id}', '${item.title.replace(/'/g, "\\'")}')" title="Delete"><i class="fas fa-trash"></i></button>
@@ -687,7 +684,6 @@ async function fetchContent() {
                   </div>
                 </div>
             `;
-
             if (item.type === 'blog') {
                 blogGrid.innerHTML += cardHTML;
             } else if (item.type === 'gallery') {
