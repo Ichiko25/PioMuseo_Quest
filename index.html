@@ -427,9 +427,9 @@
             margin: 0 auto;
             padding: 7.4rem .5rem 2.75rem;
             display: grid;
-            grid-template-columns: minmax(0, 3fr) minmax(0, 2.6fr);
-            gap: 2.5rem;
-            align-items: center;
+  		    grid-template-columns: 1fr 700px; /* Force 700px for the visual side */
+  		    max-width: 1200px;
+            gap: 3rem;
         }
 
         .hero-content h1 {
@@ -527,14 +527,15 @@
         }
         
         .hero-visual .carousel {
-            width: 700px;
-            height: 400px;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            align-items: center;
-           flex-shrink: 0; /* Ensures the container stays at 700px */
-        }
+		    width: 700px; 
+		    height: 400px;
+		    overflow: hidden;
+		    position: relative;
+		    display: flex;
+		    align-items: center;
+		    flex-shrink: 0; /* Ensures the container stays exactly 700px */
+		}
+
         
         .hero-visual .track {
             display: flex !important;
@@ -545,32 +546,31 @@
             align-items: center;
         }
         
-        .hero-visual .card {
-            width: 320px;
-            height: 240px;
-            flex-shrink: 0;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0.4;
-            transform: scale(0.85);
-            filter: grayscale(40%);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-        
-        .hero-visual .card.active {
-            opacity: 1;
-            transform: scale(1.15);
-            z-index: 10;
-            filter: grayscale(0%);
-            box-shadow: 0 20px 40px rgba(144, 25, 27, 0.25);
-        }
-
-        .hero-visual .card.prev,
-        .hero-visual .card.next {
-            opacity: 0.7;
-            transform: scale(0.95);
-            z-index: 5;
-        }
+        /* Base state (inactive cards) */
+		.hero-visual .card {
+		    width: 320px;
+		    height: 240px;
+		    flex-shrink: 0;
+		    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+		    opacity: 0.4;
+		    transform: scale(0.85); /* Shrunk by default */
+		    filter: grayscale(40%);
+		}
+		/* Active center state */
+		.hero-visual .card.active {
+		    opacity: 1;
+		    transform: scale(1.15); /* Zoomed in */
+		    z-index: 10;            /* Stays on top */
+		    filter: grayscale(0%);
+		    box-shadow: 0 20px 40px rgba(144, 25, 27, 0.25);
+		}
+		/* Neighboring "peeking" cards */
+		.hero-visual .card.prev,
+		.hero-visual .card.next {
+		    opacity: 0.7;
+		    transform: scale(0.95); /* Medium zoom for smooth entry */
+		    z-index: 5;
+		}
         
         .hero-visual .card img {
             width: 100%;
