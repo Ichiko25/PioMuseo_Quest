@@ -451,66 +451,6 @@
             margin-bottom: 1.3rem;
         }
 
-		/* Hero Visual Container - Handles the grid placement and containment */
-.hero-visual {
-    position: relative;
-    width: 100%;
-    height: 450px;
-    overflow: hidden;
-    display: flex;
-    justify-content: flex-end; /* Keeps images on the right side of the hero text */
-    align-items: center;
-}
-
-/* The Carousel viewport - Fixed 700px width used by JS for centering */
-.hero-visual .carousel {
-    width: 700px;
-    height: 400px;
-    overflow: hidden;
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-/* The Sliding Track */
-.hero-visual .track {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 25px !important;
-    width: max-content;
-    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    align-items: center;
-}
-
-/* Base Card Style (Non-active images are smaller and faded) */
-.hero-visual .card {
-    width: 320px;
-    height: 240px;
-    flex-shrink: 0;
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0.4;
-    transform: scale(0.85); /* Zoomed out by default */
-    border-radius: 16px;
-    overflow: hidden;
-}
-
-/* ACTIVE Card - This is where the JS Zoom happens */
-.hero-visual .card.active {
-    opacity: 1;
-    transform: scale(1.15); /* Zoomed in effect */
-    z-index: 10;
-    box-shadow: 0 20px 40px rgba(144, 25, 27, 0.25);
-}
-
-/* Smooth transition for adjacent cards */
-.hero-visual .card.prev,
-.hero-visual .card.next {
-    opacity: 0.7;
-    transform: scale(0.95);
-    z-index: 5;
-}
-
-		
         .btn {
             display: inline-flex;
             align-items: center;
@@ -577,10 +517,66 @@
         }
 
         .hero-visual {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            overflow: hidden;
             display: flex;
-            gap: 20px;
-            justify-content: center;
+            justify-content: flex-end;
             align-items: center;
+        }
+        
+        .hero-visual .carousel {
+            width: 700px;
+            height: 400px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            /* mask-image removed to show side cards clearly */
+        }
+        
+        .hero-visual .track {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 25px !important;
+            width: max-content;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            align-items: center;
+        }
+        
+        .hero-visual .card {
+            width: 320px;
+            height: 240px;
+            flex-shrink: 0;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.4;
+            transform: scale(0.85);
+            filter: grayscale(40%);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .hero-visual .card.active {
+            opacity: 1;
+            transform: scale(1.15);
+            z-index: 10;
+            filter: grayscale(0%);
+            box-shadow: 0 20px 40px rgba(144, 25, 27, 0.25);
+        }
+
+        .hero-visual .card.prev,
+        .hero-visual .card.next {
+            opacity: 0.7;
+            transform: scale(0.95);
+            z-index: 5;
+        }
+        
+        .hero-visual .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
         }
 
         .hero-card {
@@ -588,13 +584,13 @@
             overflow: hidden;
             background: var(--charcoal-mid);
             border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .hero-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             cursor: pointer;
         }
 
@@ -606,7 +602,7 @@
             width: 200px;
             height: 360px;
         }
-        
+
         .hero-card img {
             width: 100%;
             height: 100%;
@@ -1954,7 +1950,7 @@
             <section id="gallery" class="section" style="overflow: hidden; width: 100%;">
                 <div class="carousel-row row-left">
                     <img src="web-images/second-floor.jpg" alt="Second-floor" onerror="this.src='web-images/second-floor.jpg'">
-                    <img src="web-images/table.jpg" alt="table" onerror="this.src='web-images/table.jpg'">
+                    <img src="web-images/study-table.jpg" alt="table" onerror="this.src='web-images/study-table.jpg'">
                     <img src="web-images/study-table.jpg" alt="study-table" onerror="this.src='web-images/study-table.jpg'">
                     <img src="web-images/museo-pic.jpg" alt="museo-pic" onerror="this.src='web-images/museo-pic.jpg'">
                     <img src="web-images/front.jpg" alt="front" onerror="this.src='web-images/front.jpg'">
@@ -1964,7 +1960,7 @@
                     
                     <!-- Duplicated set for seamless scrolling -->
                     <img src="web-images/second-floor.jpg" alt="Second-floor" onerror="this.src='web-images/second-floor.jpg'">
-                    <img src="web-images/table.jpg" alt="table" onerror="this.src='web-images/table.jpg'">
+                    <img src="web-images/study-table.jpg" alt="table" onerror="this.src='web-images/study-table.jpg'">
                     <img src="web-images/study-table.jpg" alt="study-table" onerror="this.src='web-images/study-table.jpg'">
                     <img src="web-images/museo-pic.jpg" alt="museo-pic" onerror="this.src='web-images/museo-pic.jpg'">
                     <img src="web-images/front.jpg" alt="front" onerror="this.src='web-images/front.jpg'">
