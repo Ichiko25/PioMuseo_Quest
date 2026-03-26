@@ -11,62 +11,77 @@ if (navToggle && navLinks) {
     });
 }
 
-// Carousel
+// Hero Carousel Initialization
 function initHeroCarousel() {
     const container = document.querySelector('.hero-visual .carousel');
     const track = document.querySelector('.hero-visual .track');
-    if (!container || !track) return;
     
-    // Wait for layout
-    setTimeout(() => {
-        const originalCards = Array.from(track.children);
-        if (originalCards.length === 0) return;
-        
-        const cardWidth = originalCards[0].offsetWidth + 25;
-        const containerWidth = container.offsetWidth;
-        let currentIndex = 0;
+    if (!container || !track) return;
 
-        // Infinite loop clones
-        originalCards.forEach(card => {
-            const clone = card.cloneNode(true);
-            track.appendChild(clone);
+    // Capture original cards before cloning for infinite loop
+    const originalCards = Array.from(track.children);
+    if (originalCards.length === 0) return;
+
+    // Clean up any existing clones
+    const existingClones = track.querySelectorAll('.is-clone');
+    existingClones.forEach(el => el.remove());
+
+    // Clone cards for infinite scrolling
+    originalCards.forEach(card => {
+        const clone = card.cloneNode(true);
+        clone.classList.add('is-clone');
+        track.appendChild(clone);
+    });
+
+    let currentIndex = 0;
+    let cardWidth = 0;
+    let containerWidth = 0;
+
+    function calculateDimensions() {
+        if (originalCards[0]) {
+            cardWidth = originalCards[0].offsetWidth + 25;
+            containerWidth = container.offsetWidth;
+            updatePosition(false);
+        }
+    }
+
+    function updatePosition(smooth = true) {
+        if (cardWidth <= 25) return;
+        
+        const offset = (containerWidth / 2) - (cardWidth * currentIndex + cardWidth / 2);
+        track.style.transition = smooth ? 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)' : 'none';
+        track.style.transform = `translateX(${offset}px)`;
+
+        const allCards = Array.from(track.children);
+        allCards.forEach((card, i) => {
+            card.classList.remove('active', 'prev', 'next');
+            if (i === currentIndex) card.classList.add('active');
+            else if (i === currentIndex - 1) card.classList.add('prev');
+            else if (i === currentIndex + 1) card.classList.add('next');
         });
-        
-        const totalCards = track.children.length;
+    }
 
-        function updatePosition(smooth = true) {
-            const offset = (containerWidth / 2) - (cardWidth * currentIndex + cardWidth / 2);
-            track.style.transition = smooth ? 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)' : 'none';
-            track.style.transform = `translateX(${offset}px)`;
-            
-            // Classes for zoom effect
-            const allCards = Array.from(track.children);
-            allCards.forEach((card, i) => {
-                card.classList.remove('active', 'prev', 'next');
-                if (i === currentIndex) card.classList.add('active');
-                else if (i === currentIndex - 1) card.classList.add('prev');
-                else if (i === currentIndex + 1) card.classList.add('next');
-            });
+    function next() {
+        currentIndex++;
+        updatePosition(true);
+
+        if (currentIndex >= originalCards.length) {
+            setTimeout(() => {
+                currentIndex = 0;
+                updatePosition(false);
+            }, 800);
         }
+    }
 
-        function next() {
-            currentIndex++;
-            updatePosition(true);
-            
-            if (currentIndex >= originalCards.length) {
-                setTimeout(() => {
-                    currentIndex = 0;
-                    updatePosition(false);
-                }, 800);
-            }
-        }
+    calculateDimensions();
+    setTimeout(calculateDimensions, 500);
 
-        updatePosition(false);
-        setInterval(next, 5000);
-    }, 500);
+    const intervalId = setInterval(next, 4000);
+
+    window.addEventListener('resize', calculateDimensions);
 }
 
-// Call initialization
+// Initialize on Load
 if (document.readyState === 'complete') initHeroCarousel();
 else window.addEventListener('load', initHeroCarousel);
 
