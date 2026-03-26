@@ -1869,9 +1869,12 @@
 
 </head>
 
-<div id="blogModal" class="blog-modal">
-    <div class="blog-modal-content">
-        <span id="closeBlog">&times;</span>
+	<div id="blogModal" class="modal" style="display:none; position:fixed; z-index:9999; 
+     left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
+    <div class="modal-content" style="background:#fff; margin:5% auto; padding:40px; 
+         border-radius:20px; width:80%; max-width:900px; position:relative;">
+        <span class="close-modal" onclick="document.getElementById('blogModal').style.display='none'" 
+              style="position:fixed; top:30px; right:40px; cursor:pointer; font-size:35px;">&times;</span>
         <div id="blogContent"></div>
     </div>
 </div>
