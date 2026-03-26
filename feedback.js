@@ -483,3 +483,18 @@ async function autoSeedContent() {
         console.error("Auto seed failed", e);
     }
 }
+
+async function fetchFAQs() {
+    const faqContainer = document.getElementById('faq-section-container');
+    if (!faqContainer) return;
+    try {
+        const { data: faqs, error } = await supabaseClient
+            .from('content')
+            .select('*')
+            .eq('type', 'faq')
+            .eq('status', 'published')
+            .order('created_at', { ascending: true });
+        if (error) throw error;
+        // Render FAQs...
+    } catch (err) { console.error(err); }
+}
