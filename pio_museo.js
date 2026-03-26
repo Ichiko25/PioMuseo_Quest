@@ -114,6 +114,22 @@ async function loginWithGoogle() {
     }
 }
 
+async function checkAuth() {
+    try {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        if (!session) {
+            window.location.href = 'login.html';
+        }
+    } catch (err) { console.error(err); }
+}
+if (window.supabaseClient && window.supabaseClient.auth) {
+    window.supabaseClient.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_OUT' || !session) {
+            window.location.href = 'login.html';
+        }
+    });
+}
+
 /* Game carousel */
 const gameTrack = document.querySelector("#game .track");
 const gameLeftBtn = document.querySelector("#game .carousel-btn.left");
