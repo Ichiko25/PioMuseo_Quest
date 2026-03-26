@@ -91,6 +91,28 @@ function openModal(id) {
 function closeModal(id) {
     document.getElementById(id).style.display = 'none';
 }
+async function loginWithGoogle() {
+    const errorEl = document.getElementById('login-error');
+    if (errorEl) errorEl.style.display = 'none';
+    // Check for protocol limits
+    if (window.location.protocol === 'file:') {
+        if (errorEl) {
+            errorEl.innerHTML = `<strong>Local File Detected:</strong> Google login does not support file://. Please use a local server.`;
+            errorEl.style.display = 'block';
+        }
+        return;
+    }
+    const { error } = await window.supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin + window.location.pathname }
+    });
+    if (error && errorEl) {
+        errorEl.innerHTML = error.message.includes("not enabled") 
+            ? "<strong>Provider Not Enabled:</strong> Toggle Google ON in your Supabase Dashboard." 
+            : error.message;
+        errorEl.style.display = 'block';
+    }
+}
 
 /* Game carousel */
 const gameTrack = document.querySelector("#game .track");
