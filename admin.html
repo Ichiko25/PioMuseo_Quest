@@ -64,6 +64,22 @@
       z-index: 10;
     }
 
+    /* [admin.html] Fullscreen Mode CSS */
+body.fullscreen-mode .sidebar {
+  width: 0;
+  overflow: visible;
+  visibility: hidden;
+}
+body.fullscreen-mode .fullscreen-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10001;
+  background: var(--sidebar-bg);
+  visibility: visible;
+  display: flex !important;
+}
+
     .logo {
       display: flex;
       align-items: center;
