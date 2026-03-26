@@ -1181,17 +1181,16 @@
 
 <body>
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="logo">
-      <img src="web-images/qqq.jpg" alt="Pio Museo Logo"
-        style=" width: 45px; object-fit: contain; border-radius: 10px; background: white; padding: 2px;">
-      <div class="logo-text">
-        <b>Pio Museo</b>
-        <small>Admin Portal</small>
-      </div>
-    </div>
-
+ <!-- [admin.html] Fullscreen Toggle & Sidebar -->
+<div class="logo">
+  <img src="web-images/qqq.jpg" alt="Logo">
+  <div class="logo-text"><b>Pio Museo</b></div>
+  <!-- Toggle Button -->
+  <div class="fullscreen-toggle" onclick="toggleSidebar()" title="Toggle Dashboard Size">
+    <i class="fas fa-expand-alt"></i>
+  </div>
+</div>
+  
     <ul class="nav">
       <li class="active" onclick="openPage('dashboard', this, event)">
         <i class="fas fa-th-large"></i> <span>Dashboard</span>
