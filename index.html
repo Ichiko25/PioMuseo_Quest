@@ -645,12 +645,23 @@
         }
 
         .carousel-row img {
-            width: 320px !important;
-            height: 200px !important;
-            object-fit: cover !important;
-            border-radius: 4px !important;
-            flex-shrink: 0;
-        }
+		    width: 320px !important;
+		    height: 200px !important;
+		    object-fit: cover !important;
+		    border-radius: 4px !important;
+		    flex-shrink: 0;
+		    /* Added transition and pointer cursor */
+		    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+		    cursor: pointer;
+		}
+		
+		/* Added new hover effect */
+		.carousel-row img:hover {
+		    transform: scale(1.08); /* Subtle zoom */
+		    z-index: 10;
+		    position: relative;
+		    box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+		}
 
         .row-left {
             animation: scrollLeft 75s linear infinite;
