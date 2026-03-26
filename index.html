@@ -8,15 +8,16 @@
 	 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabaseClient.js"></script>
     <script>
-        (async function() {
-            document.documentElement.style.visibility = 'hidden';
-            const { data: { session } } = await window.supabaseClient.auth.getSession();
-            if (!session) {
-                window.location.href = 'login.html';
-            } else {
-                document.documentElement.style.visibility = 'visible';
-            }
-        })();
+       // [index.html] Strict Auth Guard Reminder
+(async function() {
+    document.documentElement.style.visibility = 'hidden';
+    const { data: { session } } = await window.supabaseClient.auth.getSession();
+    if (!session) {
+        window.location.href = 'login.html';
+    } else {
+        document.documentElement.style.visibility = 'visible';
+    }
+})();
     </script>
     <link rel="icon" type="images/jpg" href="web-images/qqq.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
