@@ -357,7 +357,7 @@ async function fetchPublicContent() {
         // Render FAQs
         const faqContainer = document.getElementById('faq-section-container');
         if (faqContainer && faqs.length > 0) {
-            faqContainer.innerHTML = '<h3>FAQ\'s</h3>';
+            faqContainer.innerHTML = "<h3>FAQ's</h3>";
             faqs.forEach(faq => {
                 const item = document.createElement('div');
                 item.className = 'faq-item';
@@ -369,6 +369,31 @@ async function fetchPublicContent() {
                         ${faq.description}
                     </div>
                 `;
+                
+                // Add click listener to increment views
+                const questionDiv = item.querySelector('.faq-question');
+                if (questionDiv) {
+                    questionDiv.addEventListener('click', async () => {
+                        // Prevent multiple increments per session for the same FAQ
+                        if (!item.dataset.viewed) {
+                            item.dataset.viewed = "true";
+                            try {
+                                const { data, error } = await supabaseClient.from('content').select('views').eq('id', faq.id).single();
+                                if (data) {
+                                    await supabaseClient.from('content').update({ views: (data.views || 0) + 1 }).eq('id', faq.id);
+                                }
+                            } catch (err) {
+                                console.error("FAQ view error:", err);
+                            }
+                        }
+                    });
+                }
+
+                faqContainer.appendChild(item);
+            });
+        } else if (faqContainer) {
+            faqContainer.innerHTML = "<h3>FAQ's</h3><p style=\"color: var(--text-muted); font-size: 14px; text-align: center;\">No FAQs available at the moment.</p>";
+        }
 
         // Render Blogs
         const blogContainer = document.querySelector('.blog-grid');
