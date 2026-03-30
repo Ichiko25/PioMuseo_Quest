@@ -271,6 +271,7 @@ async function deleteAuditLog(id) {
 
 // --- USERS ---
 let allUsers = [];
+let archivedUsers = []; // New Archive list
 
 async function fetchUsers() {
     try {
@@ -280,18 +281,27 @@ async function fetchUsers() {
             .order('created_at', { ascending: false });
 
         if (error) throw error;
-        
+
         await fetchApprovedMapping();
         const localIds = JSON.parse(localStorage.getItem('approved_feedbacks') || '[]');
-        
+
         users.forEach(u => {
             u.is_approved = approvedFeedbackIds.includes(u.id) || localIds.includes(u.id);
         });
 
-        allUsers = users;
+        // Split active users vs permanently archived users
+        const unarchived = users.filter(u => !u.is_archived);
+        archivedUsers = users.filter(u => u.is_archived);
+
+        allUsers = unarchived;
         renderUsers(allUsers);
         renderRecentUsers(allUsers.slice(0, 5)); // Show top 5 on dash
         renderFeedbacks(allUsers.filter(u => u.rating || u.message));
+
+        // Calculate new users for notification badge (last 24 hours)
+        const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const newUsersCount = unarchived.filter(u => new Date(u.created_at) > dayAgo).length;
+        updateNotifBadge(newUsersCount);
 
         if (document.getElementById('analytics').classList.contains('active')) {
             renderCharts();
@@ -305,8 +315,6 @@ async function fetchUsers() {
     }
 }
 
-// Helper to Obfuscate Name
-// Example: "Tricia Lara" -> "T***** L***"
 function obfuscateName(fullName) {
     if (!fullName) return 'Unknown';
     const parts = fullName.trim().split(' ');
@@ -451,13 +459,11 @@ if (searchUserInput) searchUserInput.addEventListener('input', filterUsers);
 if (ageUserFilter) ageUserFilter.addEventListener('change', filterUsers);
 if (dateUserFilter) dateUserFilter.addEventListener('change', filterUsers);
 
-// --- FEEDBACKS ---
 function renderFeedbacks(feedbacks) {
     const tbody = document.getElementById('all-feedbacks-tbody');
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    // Sort: Pending feedbacks first
     const sortedFeedbacks = [...feedbacks].sort((a, b) => {
         if (a.is_approved === b.is_approved) return 0;
         return a.is_approved ? 1 : -1;
@@ -466,7 +472,6 @@ function renderFeedbacks(feedbacks) {
     let firstApproved = true;
 
     sortedFeedbacks.forEach(user => {
-        // Add separator before first approved item if there are pending items
         const hasPending = sortedFeedbacks.some(f => !f.is_approved);
         if (user.is_approved && firstApproved && hasPending) {
             const sepTr = document.createElement('tr');
@@ -503,7 +508,6 @@ function renderFeedbacks(feedbacks) {
         const dateOnlyStr = rawDate.toLocaleDateString();
         const timeOnlyStr = rawDate.toLocaleTimeString();
 
-        // Status badge colors
         const statusBg = user.is_approved ? 'rgba(34, 197, 94, 0.15)' : 'rgba(245, 158, 11, 0.15)';
         const statusColor = user.is_approved ? '#22c55e' : '#f59e0b';
         const statusText = user.is_approved ? 'Approved' : 'Pending';
@@ -572,7 +576,6 @@ if (searchFeedbackInput) searchFeedbackInput.addEventListener('input', filterFee
 if (starsFeedbackFilter) starsFeedbackFilter.addEventListener('change', filterFeedbacks);
 if (dateFeedbackFilter) dateFeedbackFilter.addEventListener('change', filterFeedbacks);
 
-// Load Approved IDs mapped to users
 let approvedFeedbackIds = [];
 async function fetchApprovedMapping() {
     try {
@@ -591,7 +594,6 @@ async function approveFeedback(userId) {
                 approvedFeedbackIds.push(userId);
                 const { error } = await supabaseClient.from('analytics').update({ approved_feedbacks: approvedFeedbackIds }).eq('id', 1);
                 if (error) {
-                    // Fallback to storing in localStorage if analytics column doesn't exist
                     console.warn("Analytics mapping failed, falling back to localStorage");
                     let localIds = JSON.parse(localStorage.getItem('approved_feedbacks') || '[]');
                     if (!localIds.includes(userId)) localIds.push(userId);
@@ -619,7 +621,6 @@ async function deleteUser(userId) {
     }
 }
 
-// --- CONTENT MANAGER (GALLERY / BLOGS) ---
 async function fetchContent() {
     try {
         const { data: contents, error } = await supabaseClient
@@ -653,7 +654,6 @@ async function fetchContent() {
         if (galleries.length === 0) galleryGrid.innerHTML = emptyMessage;
         if (faqs.length === 0) faqGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">No FAQs published yet.</div>';
 
-        // Update Counters
         const publishedBlogs = blogs.filter(b => b.status === 'published').length;
         const publishedGalleries = galleries.filter(g => g.status === 'published').length;
         const publishedFaqs = faqs.filter(f => f.status === 'published').length;
@@ -675,7 +675,6 @@ async function fetchContent() {
                 iconHTML = `<img src="${item.image_url}" style="width: 100%; height: 100%; object-fit: cover;">`;
             }
 
-            // Extract plain text to avoid rich HTML tags breaking the 2-line clamp
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = item.description || '';
             const plainTextDesc = tempDiv.textContent || tempDiv.innerText || '';
@@ -750,7 +749,6 @@ async function deleteContent(id, title = 'Content Item') {
     }
 }
 
-// Add Content Modal Logic
 function openAddContentModal(defaultType = 'blog') {
     document.getElementById('modal-title').innerText = 'Add New Content';
     document.getElementById('edit-content-id').value = '';
@@ -762,11 +760,9 @@ function openAddContentModal(defaultType = 'blog') {
     const typeSelect = document.getElementById('new-content-type');
     typeSelect.value = defaultType;
 
-    // Trigger change event to toggle field visibility based on type
     const event = new Event('change');
     typeSelect.dispatchEvent(event);
 
-    // Reset labels
     const titleLabel = document.getElementById('title-label');
     const descLabel = document.getElementById('desc-label');
     if (titleLabel) titleLabel.innerText = "Title / Question";
@@ -808,7 +804,6 @@ function closeAddContentModal() {
     document.getElementById('addContentModal').style.display = 'none';
 }
 
-// Add event listener for type change to hide/show description and image
 document.addEventListener('DOMContentLoaded', () => {
     const typeSelect = document.getElementById('new-content-type');
     if (typeSelect) {
@@ -864,7 +859,6 @@ async function submitNewContent() {
             logAction = 'Added Content';
         }
 
-        // Log the change
         await supabaseClient.from('audit_logs').insert([{
             admin_email: 'admin@museo.ph',
             action: logAction,
@@ -881,12 +875,11 @@ async function submitNewContent() {
 
 async function seedInitialContent() {
     const defaultContent = [
-        // Blogs
+        
         { type: 'blog', title: 'The Life and Legacy of Dr. Pío Valenzuela', description: '<h2>The Life and Legacy of Dr. Pío Valenzuela</h2>\n<p>\nPío Valenzuela was born on July 11, 1869 in Polo, Bulacan—now Valenzuela City. He studied medicine at the University of Santo Tomas and became a licensed physician in 1895. After completing his studies, he practiced medicine in Manila and Bulacan while starting a family with his wife, Marciana Castriy.\n<br> A Katipunero <br> <br> \nWhile still a medical student, Valenzuela joined the Katipunan in 1892 and became a close ally of its founder, Andrés Bonifacio. He served as the society’s physician and helped establish its revolutionary newspaper Kalayaan together with Emilio Jacinto. The publication helped spread the ideas of the revolution and recruit members.\n<br> <br> \nValenzuela was sent by Bonifacio to Dapitan to consult José Rizal about the planned uprising against Spain. Rizal advised caution, saying the revolution should only begin if the people were prepared and well-armed.\nAfter the Katipunan was discovered, Valenzuela was arrested and imprisoned by Spanish authorities, later being deported to Spain and Africa. After his release, he returned to the Philippines and entered public service, becoming municipal president of Polo and later governor of Bulacan.\nHe died on April 6, 1956. Today, Valenzuela City bears his name in honor of his contributions to Philippine history and the struggle for independence.\n</p>', status: 'published' },
         { type: 'blog', title: 'Museum Updates', description: '<h2>Museum Updates</h2>\n<p>\nThe Museo ni Dr. Pío Valenzuela continues to improve its exhibits\nto provide visitors with a deeper understanding of Philippine history.\n</p>\n<p>\nRecent updates include improved artifact displays, new educational\npanels, and guided tours for students and tourists.\n</p>', status: 'published' },
         { type: 'blog', title: 'Educational Discoveries', description: '<h2>Educational Discoveries</h2>\n<p>\nInside the museum are many artifacts that tell the story of the\nPhilippine Revolution and the life of Dr. Pío Valenzuela.\n</p>\n<p>\nVisitors can learn about historical documents, personal belongings,\nand photographs that highlight the contributions of Filipino heroes.\n</p>', status: 'published' },
 
-        // Gallery Left
         { type: 'gallery', title: 'Second Floor', image_url: 'images/Second-Floor.jpeg', status: 'published' },
         { type: 'gallery', title: 'Table', image_url: 'images/table.jpeg', status: 'published' },
         { type: 'gallery', title: 'Study Table', image_url: 'images/study-table.jpeg', status: 'published' },
@@ -904,7 +897,6 @@ async function seedInitialContent() {
         { type: 'gallery', title: 'Cinematic', image_url: 'images/cinematic.jpg', status: 'published' },
         { type: 'gallery', title: 'First Floor', image_url: 'images/first-sloor.jpg', status: 'published' },
 
-        // Gallery Right
         { type: 'gallery', title: 'Bookshelf', image_url: 'images/bookshelf.jpeg', status: 'published' },
         { type: 'gallery', title: 'Dining', image_url: 'images/dining.png', status: 'published' },
         { type: 'gallery', title: 'Salaa', image_url: 'images/salaa.png', status: 'published' },
@@ -934,14 +926,12 @@ async function seedInitialContent() {
     }
 }
 
-// --- SETTINGS ---
 async function fetchSettings() {
     try {
         const { data: settings, error } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
         if (error) throw error;
 
         if (settings) {
-            // Only fetch text inputs now
             const inputs = document.querySelectorAll('#settings input[type="text"]');
             if (inputs.length >= 1) {
                 inputs[0].value = settings.site_name || '';
@@ -959,7 +949,6 @@ async function fetchSettings() {
 }
 
 async function saveSettings() {
-    // Only fetch text inputs now
     const inputs = document.querySelectorAll('#settings input[type="text"]');
     const toggles = document.querySelectorAll('#settings input[type="checkbox"]');
 
@@ -982,7 +971,6 @@ async function saveSettings() {
     }
 }
 
-// --- CHARTS LOGIC ---
 function renderCharts() {
     if (!window.Chart) return;
 
@@ -998,10 +986,8 @@ function renderCharts() {
         const userYear = d.getFullYear();
         const userMonth = d.getMonth();
 
-        // Strict Filter: Year must match
         if (userYear !== selectedYear) return;
         
-        // Strict Filter: Month must match if not 'all'
         if (selectedMonth !== 'all' && userMonth !== parseInt(selectedMonth)) return;
 
         const m = d.toLocaleString('default', { month: 'short' });
@@ -1037,32 +1023,26 @@ function renderCharts() {
     let labelsTime = [];
     
     if (selectedMonth === 'all') {
-        // Show all 12 months for the selected year
         labelsTime = allMonths;
     } else {
-        // Show only the selected month
         labelsTime = [allMonths[parseInt(selectedMonth)]];
     }
 
     const regData = labelsTime.map(l => monthCounts[l]);
     const fbkData = labelsTime.map(l => monthFeedbacks[l]);
 
-    // Mock Monthly Visitor distribution based on total visitors
     const totalVisitors = currentStats ? (currentStats.total_visitors || 0) : 0;
     const visitorData = labelsTime.map((l, idx) => Math.floor((totalVisitors / 6) * (1 + (Math.random() * 0.4 - 0.2))));
 
-    // Common Chart options
     Chart.defaults.color = "#94a3b8";
     Chart.defaults.font.family = "'Inter', sans-serif";
     const gridColor = "rgba(255,255,255,0.05)";
 
-    // Consolidated Platform Engagement Chart (Grouped Bar)
     const canvasEng = document.getElementById("chartEngagement");
     if (canvasEng) {
         const ctxEng = canvasEng.getContext('2d');
         if (typeof engagementChartInstance !== 'undefined' && engagementChartInstance) engagementChartInstance.destroy();
 
-        // Derived No. of Players (Mocked as a percentage of registered users for now)
         const playerData = regData.map(v => Math.floor(v * 0.8));
 
         engagementChartInstance = new Chart(ctxEng, {
@@ -1118,7 +1098,6 @@ function renderCharts() {
         });
     }
 
-    // Chart 3: Submitted Feedbacks (Line Graph)
     const canvas3 = document.getElementById("chart3");
     if (canvas3) {
         const ctx3 = canvas3.getContext('2d');
@@ -1155,7 +1134,6 @@ function renderCharts() {
         });
     }
 
-    // Chart 4: Star Rating Graph (Bar)
     const canvas4 = document.getElementById("chart4");
     if (canvas4) {
         const ctx4 = canvas4.getContext('2d');
@@ -1185,7 +1163,6 @@ function renderCharts() {
         });
     }
 
-    // Chart 5: Pie Chart Booking Comparison
     const canvas5 = document.getElementById("chart5");
     if (canvas5) {
         const ctx5 = canvas5.getContext('2d');
@@ -1213,7 +1190,6 @@ function renderCharts() {
         });
     }
 
-    // Chart 6: Visitor Locations Bar Chart
     const canvas6 = document.getElementById("chart6");
     if (canvas6) {
         const ctx6 = canvas6.getContext('2d');
@@ -1243,7 +1219,6 @@ function renderCharts() {
         });
     }
 
-    // Chart 7: Age Group Pie Chart
     const canvas7 = document.getElementById("chart7");
     if (canvas7) {
         const ctx7 = canvas7.getContext('2d');
@@ -1271,7 +1246,6 @@ function renderCharts() {
     }
 }
 
-// Auto-seed FAQ function
 let seedingFAQs = false;
 async function seedInitialFAQs() {
     if (seedingFAQs) return;
@@ -1310,16 +1284,13 @@ async function seedInitialFAQs() {
             }
         ];
 
-        // Insert the initial FAQs
         for (let i = 0; i < websiteFaqs.length; i++) {
             await supabaseClient.from('content').insert([websiteFaqs[i]]);
         }
         console.log("Seeded 5 initial FAQs from website successfully.");
-        // Refresh the UI explicitly after seeding
         fetchContent();
     } catch (err) {
         console.error("Error seeding FAQs:", err);
-        // Reset flag to allow manual retry if needed
         seedingFAQs = false;
     }
 }
@@ -1334,14 +1305,10 @@ async function renderEvaluationStats() {
     ];
 
     criteria.forEach(crit => {
-        // Filter users who have this specific rating
-        // Fallback: If the field doesn't exist yet, we'll use the generic 'rating' but scale it or use mock variation
         let scores = allUsers.filter(u => u[crit.field]).map(u => u[crit.field]);
         
-        // MOCK LOGIC for demonstration if real fields are missing
         if (scores.length === 0) {
             scores = allUsers.filter(u => u.rating).map(u => {
-                // Add some slight variation so they don't look identical
                 let variation = 0;
                 if (crit.id === 'overall') variation = 0;
                 if (crit.id === 'exhibit') variation = -0.2;
@@ -1353,8 +1320,6 @@ async function renderEvaluationStats() {
 
         if (scores.length > 0) {
             const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-            // Scale: 1-4 to 0-100%
-            // Map 1 -> 25%, 2 -> 50%, 3 -> 75%, 4 -> 100%
             const percent = Math.round((avg / 4) * 100);
             
             const labelEl = document.getElementById(`label-${crit.id}`);
@@ -1387,7 +1352,6 @@ async function renderGenderChart() {
         genderChartInstance.destroy();
     }
 
-    // Using mock data as planned since gender is not collected yet
     const totalUsers = allUsers.length || 0;
     const femaleCount = Math.round(totalUsers * 0.55);
     const maleCount = totalUsers - femaleCount;
