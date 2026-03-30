@@ -6,6 +6,7 @@
   <title>Admin Login | Museum Management Portal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="admin.css" />
+  <link rel="icon" href="web-images/qqq.jpg" type="image/jpeg">
 
   <style>
     :root {
@@ -34,7 +35,6 @@
       color: var(--text);
     }
 
-    /* ===== CONTAINER ===== */
     .container {
       width: 100%;
       padding: 20px;
@@ -42,7 +42,6 @@
       justify-content: center;
     }
 
-    /* ===== CARD ===== */
     .card {
       background: var(--card);
       width: 100%;
@@ -54,7 +53,6 @@
       animation: fadeUp 0.6s ease;
     }
 
-    /* ===== ICON ===== */
     .icon {
       width: 70px;
       height: 70px;
@@ -67,7 +65,6 @@
       font-size: 32px;
     }
 
-    /* ===== TITLES ===== */
     .card h1 {
       margin: 12px 0 4px;
       font-size: 26px;
@@ -80,14 +77,12 @@
       margin-bottom: 26px;
     }
 
-    /* ===== FORM ===== */
     form {
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
 
-    /* INPUT GROUP */
     .input-group {
       display: flex;
       align-items: center;
@@ -116,7 +111,6 @@
       border-color: var(--accent-yellow);
     }
 
-    /* ===== BUTTON ===== */
     button[type="submit"] {
       margin-top: 10px;
       padding: 14px;
@@ -138,13 +132,11 @@
       box-shadow: 0 14px 30px rgba(255, 77, 77, 0.45);
     }
 
-    /* ===== ERROR MESSAGE ===== */
     #loginError {
       font-size: 13px;
       margin-top: 8px;
     }
 
-    /* ===== NOTICE ===== */
     .notice {
       margin-top: 26px;
       padding: 16px;
@@ -162,7 +154,6 @@
       font-size: 18px;
     }
 
-    /* ===== ANIMATION ===== */
     @keyframes fadeUp {
       from {
         opacity: 0;
@@ -209,7 +200,6 @@
     </div>
   </div>
 
-<!-- ✅ FIXED Supabase CDN -->
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <script src="supabaseClient.js"></script>
