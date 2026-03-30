@@ -1204,8 +1204,54 @@ body.fullscreen-mode .fullscreen-toggle {
     .filter-select:focus {
       border-color: var(--accent-primary);
     }
+    /* =========================
+       TABLET & MOBILE RESPONSIVENESS
+    ========================= */
+    @media (max-width: 1024px) {
+      .content-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+      .charts {
+        grid-template-columns: 1fr !important;
+      }
+    }
 
-        /* =========================
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 70px !important;
+      }
+      .logo-text, .nav span, .logout span, .chevron {
+        display: none !important;
+      }
+      .nav li, .submenu-title, .title-left, .submenu li, .logo {
+        justify-content: center !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+      .main {
+        padding: 20px !important;
+      }
+      .header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 15px !important;
+      }
+      .content-grid, .settings-grid, .bottom-charts {
+        grid-template-columns: 1fr !important;
+      }
+      .analytics-filter-bar {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 20px !important;
+      }
+      .analytics-filter-bar > div {
+        width: 100% !important;
+      }
+      .analytics-filter-bar > div:first-child {
+        grid-template-columns: 1fr 1fr !important;
+      }
+    }
+     /* =========================
        PRINT PDF EXPORT LAYOUT
     ========================= */
     @media print {
