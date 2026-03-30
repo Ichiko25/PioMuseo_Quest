@@ -1204,12 +1204,93 @@ body.fullscreen-mode .fullscreen-toggle {
     .filter-select:focus {
       border-color: var(--accent-primary);
     }
+
+        /* =========================
+       PRINT PDF EXPORT LAYOUT
+    ========================= */
+    @media print {
+      @page {
+        size: landscape;
+        margin: 10mm;
+      }
+      body, html {
+        background: white !important;
+        color: black !important;
+        height: auto !important;
+        width: 100% !important;
+        overflow: visible !important;
+        display: block !important;
+      }
+      /* Hide Unnecessary Elements */
+      .sidebar, .analytics-filter-bar, .modal-overlay, .user-profile, #dashboard .table-container {
+        display: none !important;
+      }
+      /* Format Header for Print */
+      .header {
+        display: flex !important;
+        align-items: flex-start !important;
+        padding: 0 !important;
+        margin-bottom: 30px !important;
+        border: none !important;
+        background: transparent !important;
+        page-break-after: avoid;
+      }
+      /* Expand Main Area */
+      .main {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: white !important;
+      }
+      /* Only show Analytics and Dashboard Pages */
+      .page {
+        display: none !important;
+      }
+      #dashboard, #analytics {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+      
+      /* Clean Up Cards for Print */
+      .analytics-card, .evaluation-card, .card {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin-bottom: 15px !important;
+      }
+      
+      /* Force Text to Black for Readability */
+      h3, h2, p, span, div, b, small, .evaluation-label, .gender-name, .gender-value, .gender-total-num, .gender-total-text {
+        color: black !important;
+      }
+      
+      /* Ensure Canvases Fit */
+      canvas {
+        max-width: 100% !important;
+        height: auto !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      
+      /* Grid Fallbacks */
+      .analytics-grid, .charts-grid, .bottom-charts {
+        gap: 15px !important;
+      }
+    }
+    
   </style>
 </head>
 
 <body>
 
- <!-- [admin.html] Fullscreen Toggle & Sidebar -->
 <div class="logo">
   <img src="web-images/qqq.jpg" alt="Logo">
   <div class="logo-text"><b>Pio Museo</b></div>
