@@ -1540,6 +1540,72 @@ window.triggerResetDataFlow = function() {
     };
 };
 
+window.openArchiveModal = function() {
+    try {
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        overlay.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2500; display: flex; justify-content: center; align-items: center;';
+        
+        let tableRows = '';
+        if(!archivedUsers || archivedUsers.length === 0) {
+            tableRows = '<tr><td colspan="5" style="text-align: center; color: #94a3b8; padding: 30px;">No archived data found for this session.</td></tr>';
+        } else {
+            // Safely loop over users without crashing on missing data
+            archivedUsers.forEach(u => {
+                const dateStr = u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A';
+                const displayName = (u.name) ? obfuscateName(u.name.toString()) : 'Unknown';
+                
+                let displayEmail = '';
+                try { 
+                    displayEmail = u.email_encrypted ? obfuscateEmail(decryptEmail(u.email_encrypted)) : 'N/A'; 
+                } catch(e) { 
+                    displayEmail = 'N/A'; 
+                }
+                
+                tableRows += `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 10px;">${displayName} <br><small style="color:#94a3b8;">${displayEmail}</small></td>
+                        <td style="padding: 10px;">${u.age_group || 'N/A'}</td>
+                        <td style="padding: 10px;">${u.location || 'N/A'}</td>
+                        <td style="padding: 10px;">${u.rating || 'N/A'} <i class="fas fa-star" style="color:#fbbf24; font-size:10px;"></i></td>
+                        <td style="padding: 10px; color: #94a3b8;">${dateStr}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        overlay.innerHTML = `
+          <div class="modal-content" style="background: #1e293b; width: 800px; max-height: 80vh; overflow-y: auto; padding: 25px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); color: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+               <h3 style="margin: 0; color: #f8fafc;"><i class="fas fa-archive" style="margin-right: 8px; color: #94a3b8;"></i> Data Archives</h3>
+               <button onclick="document.body.removeChild(this.closest('.modal-overlay'))" style="background: transparent; color: #94a3b8; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+            </div>
+            <p style="color: #cbd5e1; font-size: 14px; margin-bottom: 20px;">This data was previously archived from your active dashboard.</p>
+            
+            <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 13px;">
+              <thead>
+                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); color: #94a3b8;">
+                  <th style="padding: 10px;">User Info</th>
+                  <th style="padding: 10px;">Age Group</th>
+                  <th style="padding: 10px;">Location</th>
+                  <th style="padding: 10px;">Rating</th>
+                  <th style="padding: 10px;">Date Logged</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${tableRows}
+              </tbody>
+            </table>
+          </div>
+        `;
+        
+        document.body.appendChild(overlay);
+    } catch(err) {
+        console.error("Archive modal error:", err);
+        alert("Could not load archive data. Check console for details.");
+    }
+};
+
 function scrollToActivity() {
     // Show dashboard page
     const dashPage = document.getElementById('dashboard');
