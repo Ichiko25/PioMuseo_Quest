@@ -1558,13 +1558,16 @@ body.fullscreen-mode .fullscreen-toggle {
       <div class="analytics-filter-bar"
         style="display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 25px; padding: 15px 20px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); flex-wrap: wrap;">
 
-        <div style="display: flex; gap: 10px;">
-          <button class="btn btn-primary" onclick="alert('Exporting CSV data...')"
+       <div style="display: flex; gap: 10px;">
+          <button class="btn btn-primary" onclick="window.exportDataCSV && window.exportDataCSV()"
             style="padding: 10px 16px; font-size: 13px; background: #10b981; border: none; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);"><i
               class="fas fa-file-csv" style="margin-right: 6px;"></i> Export CSV</button>
-          <button class="btn btn-primary" onclick="alert('Exporting PDF report...')"
+          <button class="btn btn-primary" onclick="window.print()"
             style="padding: 10px 16px; font-size: 13px; background: #ef4444; border: none; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);"><i
               class="fas fa-file-pdf" style="margin-right: 6px;"></i> Export PDF</button>
+          <button class="btn btn-primary" onclick="triggerResetDataFlow()"
+            style="padding: 10px 16px; font-size: 13px; background: #3b82f6; border: none; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);"><i
+              class="fas fa-trash-alt" style="margin-right: 6px;"></i> Reset Data</button>
         </div>
 
         <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
