@@ -398,6 +398,7 @@ function renderUsers(usersMap) {
     });
 }
 
+// Look for this function:
 function renderRecentUsers(usersMap) {
     const tbody = document.getElementById('recent-users-tbody');
     if (!tbody) return;
@@ -412,6 +413,18 @@ function renderRecentUsers(usersMap) {
         const rawDate = new Date(user.created_at);
         const dateStr = rawDate.toLocaleDateString();
 
+        // --- NEW: DYNAMIC ACTIVITY LOGIC ---
+        let activityStatus = 'Site Visit';
+        let activityColor = '#3b82f6';
+        let activityBg = 'rgba(59, 130, 246, 0.1)';
+        
+        if (user.rating || (user.message && user.message.trim() !== '')) {
+            activityStatus = 'Form Submission';
+            activityColor = '#10b981';
+            activityBg = 'rgba(16, 185, 129, 0.1)';
+        }
+        // -----------------------------------
+
         tr.innerHTML = `
             <td>
                 <div class="user-cell">
@@ -423,6 +436,14 @@ function renderRecentUsers(usersMap) {
             </td>
             <td><i class="fas fa-map-marker-alt" style="color: var(--text-muted); margin-right: 5px;"></i> ${user.location || 'N/A'}</td>
             <td>${dateStr}</td>
+            
+            <!-- NEW: ACTIVITY COLUMN HTML -->
+            <td>
+                <span style="background: ${activityBg}; color: ${activityColor}; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: ${activityColor};"></span>
+                    ${user.activity || activityStatus}
+                </span>
+            </td>
         `;
         tbody.appendChild(tr);
     });
