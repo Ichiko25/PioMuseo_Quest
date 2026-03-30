@@ -194,12 +194,15 @@ function renderAuditLogs(logs) {
         let badgeColor = 'var(--blue, #3b82f6)';
         const actLower = (log.action || '').toLowerCase();
         
-        if (actLower.includes('delete') || actLower.includes('remove')) {
+      if (actLower.includes('delete') || actLower.includes('remove')) {
             badgeBg = 'rgba(239, 68, 68, 0.15)'; // Red
             badgeColor = '#ef4444';
-        } else if (actLower.includes('login') || actLower.includes('log in')) {
+        } else if (actLower.includes('site visit')) {
             badgeBg = 'rgba(245, 158, 11, 0.15)'; // Yellow
             badgeColor = '#f59e0b';
+        } else if (actLower.includes('login') || actLower.includes('log in')) {
+            badgeBg = 'rgba(59, 130, 246, 0.15)'; // Blue
+            badgeColor = 'var(--blue, #3b82f6)';
         } else if (actLower.includes('add') || actLower.includes('create') || actLower.includes('approve')) {
             badgeBg = 'rgba(34, 197, 94, 0.15)'; // Green
             badgeColor = '#22c55e';
