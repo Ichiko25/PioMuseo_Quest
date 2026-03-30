@@ -944,10 +944,10 @@ async function fetchSettings() {
         if (error) throw error;
 
         if (settings) {
-            const inputs = document.querySelectorAll('#settings input[type="text"], #settings input[type="email"]');
-            if (inputs.length >= 2) {
+            // Only fetch text inputs now
+            const inputs = document.querySelectorAll('#settings input[type="text"]');
+            if (inputs.length >= 1) {
                 inputs[0].value = settings.site_name || '';
-                inputs[1].value = settings.support_email || '';
             }
 
             const toggles = document.querySelectorAll('#settings input[type="checkbox"]');
@@ -962,18 +962,17 @@ async function fetchSettings() {
 }
 
 async function saveSettings() {
-    const inputs = document.querySelectorAll('#settings input[type="text"], #settings input[type="email"]');
+    // Only fetch text inputs now
+    const inputs = document.querySelectorAll('#settings input[type="text"]');
     const toggles = document.querySelectorAll('#settings input[type="checkbox"]');
 
     const site_name = inputs[0].value;
-    const support_email = inputs[1].value;
     const user_registration = toggles[0].checked;
     const maintenance_mode = toggles[1].checked;
 
     try {
         const { error } = await supabaseClient.from('settings').update({
             site_name,
-            support_email,
             user_registration,
             maintenance_mode
         }).eq('id', 1);
