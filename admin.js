@@ -319,8 +319,6 @@ function obfuscateName(fullName) {
     return obfuscatedParts.join(' ');
 }
 
-// Helper to Obfuscate Email
-// Example: "tricialara15@gmail.com" -> "t*****@gmail.com"
 function obfuscateEmail(email) {
     if (!email) return '';
     const parts = email.split('@');
@@ -346,7 +344,6 @@ function renderUsers(usersMap) {
         const rawDate = new Date(user.created_at);
         const currentDateOnly = rawDate.toLocaleDateString();
 
-        // Add date separator line
         if (currentDateOnly !== lastDate) {
             const separatorTr = document.createElement('tr');
             separatorTr.innerHTML = `
@@ -1446,4 +1443,179 @@ async function renderGenderChart() {
     if (femaleVal) femaleVal.innerText = femalePct + '%';
     if (maleVal) maleVal.innerText = malePct + '%';
     if (totalEl) totalEl.innerText = totalUsers;
+}
+
+/* --- DATA EXPORT & RESET --- */
+window.exportDataCSV = function() {
+    const month = document.getElementById('filter-month').value;
+    const year = document.getElementById('filter-year').value;
+    
+    if(!allUsers || allUsers.length === 0) {
+        alert("No data available to export.");
+        return;
+    }
+    
+    const filtered = allUsers.filter(u => {
+        const d = new Date(u.created_at);
+        const yMatch = d.getFullYear() === parseInt(year);
+        const mMatch = month === 'all' ? true : d.getMonth() === parseInt(month);
+        return yMatch && mMatch;
+    });
+
+    if(filtered.length === 0) {
+        alert("No tracking data found for the selected period.");
+        return;
+    }
+
+    let csv = "ID,Name,Email,Age Group,Location,Rating,Message,Date\n";
+    filtered.forEach(u => {
+        const row = [
+            u.id, 
+            `"${u.name || ''}"`, 
+            `"${u.email_encrypted || ''}"`, 
+            `"${u.age_group || ''}"`, 
+            `"${u.location || ''}"`, 
+            u.rating || '', 
+            `"${(u.message || '').replace(/"/g, '""')}"`, 
+            new Date(u.created_at).toLocaleString()
+        ];
+        csv += row.join(',') + "\n";
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Museum_Analytics_${year}_${month === 'all' ? 'All' : month}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+};
+
+window.triggerResetDataFlow = function() {
+    const month = document.getElementById('filter-month').value;
+    const year = document.getElementById('filter-year').value;
+    let monthName = month === 'all' ? 'All Months' : new Date(year, month).toLocaleString('default', { month: 'long' });
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.style = 'position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; display: flex; justify-content: center; align-items: center;';
+    
+    overlay.innerHTML = `
+      <div class="modal-content" style="background: #1e293b; width: 450px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white; text-align: center;">
+        <h3 style="margin-top: 0; margin-bottom: 15px; color: #ef4444;"><i class="fas fa-exclamation-triangle" style="margin-right:8px;"></i> Reset Data</h3>
+        <p style="color: #cbd5e1; margin-bottom: 25px; line-height: 1.5; font-size: 15px;">Are you sure you want to reset data for <b>${monthName} ${year}</b>?<br><small style="color: #94a3b8;">This will permanently delete feedback and player records for this period.</small></p>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+           <button class="btn" id="reset-btn-no" style="background: transparent; color: #94a3b8; border: 1px solid #334155; padding: 10px 20px; flex: 1; border-radius: 8px;">No, Go Back</button>
+           <button class="btn btn-primary" id="reset-btn-yes" style="background: #ef4444; border: none; padding: 10px 20px; flex: 1; border-radius: 8px;">Yes, Reset Data</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    document.getElementById('reset-btn-no').onclick = () => document.body.removeChild(overlay);
+
+    document.getElementById('reset-btn-yes').onclick = () => {
+        overlay.innerHTML = `
+          <div class="modal-content" style="background: #1e293b; width: 450px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white; text-align: center;">
+            <h3 style="margin-top: 0; margin-bottom: 15px; color: #3b82f6;"><i class="fas fa-download" style="margin-right:8px;"></i> Export Data?</h3>
+            <p style="color: #cbd5e1; margin-bottom: 25px; font-size: 14px;">Would you like to export the data before deleting it forever?</p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+               <button class="btn btn-primary" id="btn-export-csv" style="background: #10b981; border: none; padding: 12px; border-radius: 8px;"><i class="fas fa-file-csv" style="margin-right:8px;"></i> Export CSV & Reset</button>
+               <button class="btn btn-primary" id="btn-export-pdf" style="background: #f97316; border: none; padding: 12px; border-radius: 8px;"><i class="fas fa-file-pdf" style="margin-right:8px;"></i> Export PDF & Reset</button>
+               <button class="btn" id="btn-skip-export" style="background: #334155; color: white; border: none; padding: 12px; border-radius: 8px;">Skip Export & Reset</button>
+            </div>
+            <button class="btn" onclick="document.body.removeChild(document.querySelector('.modal-overlay'))" style="margin-top: 20px; background: transparent; color: #94a3b8; width: 100%; border: 1px solid #334155; border-radius: 8px; padding: 10px;">Cancel Data Reset</button>
+          </div>
+        `;
+        
+        const executeReset = async () => {
+           document.body.removeChild(overlay);
+           const loader = document.createElement('div');
+           loader.style = 'position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: flex; justify-content: center; align-items: center; color: white; font-size: 20px;';
+           loader.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> Deleting Data...';
+           document.body.appendChild(loader);
+
+           try {
+               const { data: usersData } = await supabaseClient.from('users').select('id, created_at');
+               const toDelete = (usersData || []).filter(u => {
+                   const d = new Date(u.created_at);
+                   const yMatch = d.getFullYear() === parseInt(year);
+                   const mMatch = month === 'all' ? true : d.getMonth() === parseInt(month);
+                   return yMatch && mMatch;
+               }).map(u => u.id);
+
+               if(toDelete.length > 0) {
+                   const { error: delErr } = await supabaseClient.from('users').delete().in('id', toDelete);
+                   if(delErr) throw delErr;
+                   await supabaseClient.from('audit_logs').insert([{ action: 'Reset Data', details: `Deleted ${toDelete.length} records for ${monthName} ${year}` }]);
+               }
+
+               document.body.removeChild(loader);
+               alert("Data reset successfully.");
+               location.reload();
+           } catch(err) {
+               console.error(err);
+               alert("Error resetting data: " + err.message);
+               location.reload();
+           }
+        };
+
+        document.getElementById('btn-export-csv').onclick = () => {
+            window.exportDataCSV();
+            setTimeout(executeReset, 1000);
+        };
+        document.getElementById('btn-export-pdf').onclick = () => {
+            window.print();
+            setTimeout(executeReset, 1000);
+        };
+        document.getElementById('btn-skip-export').onclick = () => {
+            executeReset();
+        };
+    };
+};
+
+function scrollToActivity() {
+    // Show dashboard page
+    const dashPage = document.getElementById('dashboard');
+    if (dashPage && !dashPage.classList.contains('active')) {
+        // Find the dashboard nav link and click it
+        const dashNav = document.querySelector('.nav li:first-child');
+        if (typeof openPage === 'function') {
+            openPage('dashboard', dashNav);
+        }
+    }
+
+    // Scroll to the recent activity table
+    const table = document.querySelector('.table-container');
+    if (table) {
+        table.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Brief visual highlight
+        table.style.transition = 'all 0.5s ease';
+        table.style.boxShadow = '0 0 20px rgba(249, 115, 22, 0.4)';
+        table.style.borderColor = 'var(--accent-primary)';
+        
+        setTimeout(() => {
+            table.style.boxShadow = 'var(--shadow-sm)';
+            table.style.borderColor = 'rgba(255, 255, 255, 0.02)';
+        }, 2000);
+    }
+    
+    // Clear notification badge locally
+    const badge = document.getElementById('notif-count');
+    if (badge) badge.style.display = 'none';
+}
+
+function updateNotifBadge(count) {
+    const badge = document.getElementById('notif-count');
+    if (!badge) return;
+    
+    if (count > 0) {
+        badge.innerText = count > 99 ? '99+' : count;
+        badge.style.display = 'flex';
+    } else {
+        badge.style.display = 'none';
+    }
 }
