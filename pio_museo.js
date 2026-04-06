@@ -91,6 +91,7 @@ function openModal(id) {
 function closeModal(id) {
     document.getElementById(id).style.display = 'none';
 }
+/*
 async function loginWithGoogle() {
     const errorEl = document.getElementById('login-error');
     if (errorEl) errorEl.style.display = 'none';
@@ -129,7 +130,7 @@ if (window.supabaseClient && window.supabaseClient.auth) {
         }
     });
 }
-
+*/
 /* Game carousel */
 const gameTrack = document.querySelector("#game .track");
 const gameLeftBtn = document.querySelector("#game .carousel-btn.left");
