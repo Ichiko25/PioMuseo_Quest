@@ -88,16 +88,16 @@ async function fetchAnalytics() {
         if (stats) {
             currentStats = stats;
             const totalUsers = allUsers.length || 0;
-            
+
             // Website Dashboard
-            document.getElementById('stat-users').innerText = totalUsers;
+            // stat-users has been replaced
             document.getElementById('stat-visitors').innerText = stats.total_visitors || 0;
             document.getElementById('stat-photoshoots').innerText = stats.photoshoot_bookings || 0;
             document.getElementById('stat-tours').innerText = stats.tour_bookings || 0;
 
             // Game Dashboard
             document.getElementById('stat-game-players').innerText = totalUsers;
-            
+
             // Calculate Average Game Rating
             const ratedUsers = allUsers.filter(u => u.rating);
             if (ratedUsers.length > 0) {
@@ -106,10 +106,21 @@ async function fetchAnalytics() {
             } else {
                 document.getElementById('stat-game-rating').innerText = 'N/A';
             }
-            
+
             document.getElementById('stat-feedbacks').innerText = stats.total_feedbacks || 0;
             // E-certificate is currently static as it's not in the DB schema yet
             document.getElementById('stat-game-certs').innerText = stats.certificates_sent || 0;
+            const gcEl = document.getElementById('stat-game-completed');
+            if (gcEl) gcEl.innerText = stats.games_completed || 0;
+
+            // Summary Ratings
+            const websiteScore = (stats.total_visitors || 0) + (stats.photoshoot_bookings || 0) + (stats.tour_bookings || 0);
+            document.getElementById('stat-website-rating').innerText = websiteScore.toLocaleString();
+
+            const avgRating = ratedUsers.length > 0
+                ? (ratedUsers.reduce((sum, u) => sum + u.rating, 0) / ratedUsers.length).toFixed(1)
+                : 'N/A';
+            document.getElementById('stat-summary-game-rating').innerText = avgRating === 'N/A' ? 'N/A' : avgRating + " / 5";
 
             if (document.getElementById('analytics').classList.contains('active')) {
                 renderCharts();
@@ -120,21 +131,6 @@ async function fetchAnalytics() {
         }
     } catch (err) {
         console.error("Error fetching analytics:", err);
-    }
-}
-
-// [admin.js] Sidebar Toggle Logic
-function toggleSidebar() {
-    document.body.classList.toggle('fullscreen-mode');
-    const icon = document.querySelector('.fullscreen-toggle i');
-    if (!icon) return;
-    
-    if (document.body.classList.contains('fullscreen-mode')) {
-        icon.classList.remove('fa-expand-alt');
-        icon.classList.add('fa-compress-alt');
-    } else {
-        icon.classList.remove('fa-compress-alt');
-        icon.classList.add('fa-expand-alt');
     }
 }
 
@@ -189,20 +185,17 @@ function renderAuditLogs(logs) {
         const timeStr = rawDate.toLocaleTimeString();
 
         const displayEmail = log.admin_email || 'Unknown Admin';
-        
+
         let badgeBg = 'rgba(59, 130, 246, 0.15)'; // Blue
         let badgeColor = 'var(--blue, #3b82f6)';
         const actLower = (log.action || '').toLowerCase();
-        
-      if (actLower.includes('delete') || actLower.includes('remove')) {
+
+        if (actLower.includes('delete') || actLower.includes('remove')) {
             badgeBg = 'rgba(239, 68, 68, 0.15)'; // Red
             badgeColor = '#ef4444';
-        } else if (actLower.includes('site visit')) {
+        } else if (actLower.includes('login') || actLower.includes('log in')) {
             badgeBg = 'rgba(245, 158, 11, 0.15)'; // Yellow
             badgeColor = '#f59e0b';
-        } else if (actLower.includes('login') || actLower.includes('log in')) {
-            badgeBg = 'rgba(59, 130, 246, 0.15)'; // Blue
-            badgeColor = 'var(--blue, #3b82f6)';
         } else if (actLower.includes('add') || actLower.includes('create') || actLower.includes('approve')) {
             badgeBg = 'rgba(34, 197, 94, 0.15)'; // Green
             badgeColor = '#22c55e';
@@ -236,7 +229,7 @@ function filterAuditLogs() {
         const matchTerm = (log.admin_email && log.admin_email.toLowerCase().includes(term)) ||
             (log.action && log.action.toLowerCase().includes(term)) ||
             (log.details && log.details.toLowerCase().includes(term));
-        
+
         let matchDate = true;
         if (dateVal) {
             const logDate = d.toISOString().split('T')[0];
@@ -271,7 +264,7 @@ async function deleteAuditLog(id) {
 
 // --- USERS ---
 let allUsers = [];
-let archivedUsers = []; // New Archive list
+let archivedUsers = [];
 
 async function fetchUsers() {
     try {
@@ -289,7 +282,6 @@ async function fetchUsers() {
             u.is_approved = approvedFeedbackIds.includes(u.id) || localIds.includes(u.id);
         });
 
-        // Split active users vs permanently archived users
         const unarchived = users.filter(u => !u.is_archived);
         archivedUsers = users.filter(u => u.is_archived);
 
@@ -298,17 +290,15 @@ async function fetchUsers() {
         renderRecentUsers(allUsers.slice(0, 5)); // Show top 5 on dash
         renderFeedbacks(allUsers.filter(u => u.rating || u.message));
 
-        // Calculate new users for notification badge (last 24 hours)
-        const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        const newUsersCount = unarchived.filter(u => new Date(u.created_at) > dayAgo).length;
-        updateNotifBadge(newUsersCount);
-
         if (document.getElementById('analytics').classList.contains('active')) {
             renderCharts();
             renderEvaluationStats();
             renderGenderChart();
             renderPlatformEngagementChart();
         }
+
+        // Refresh analytics totals now that allUsers is populated
+        fetchAnalytics();
 
     } catch (err) {
         console.error("Error fetching users:", err);
