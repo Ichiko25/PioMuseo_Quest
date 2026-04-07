@@ -7,7 +7,15 @@
   <title>Pio Museo - Admin Portal</title>
    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabaseClient.js"></script>
-    <script>
+   <script>
+      // Strict Auth Guard: Redirect before page renders
+      (function () {
+        if (localStorage.getItem('isAdmin') !== 'true') {
+          window.location.href = 'admin-login.html';
+        }
+      })();
+    </script> 
+  <!-- <script>
         (async function() {
             document.documentElement.style.visibility = 'hidden';
             const { data: { session } } = await window.supabaseClient.auth.getSession();
@@ -17,7 +25,7 @@
                 document.documentElement.style.visibility = 'visible';
             }
         })();
-    </script>
+    </script>-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="icon" href="web-images/qqq.jpg" type="image/jpeg">
