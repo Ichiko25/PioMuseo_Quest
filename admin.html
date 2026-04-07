@@ -107,17 +107,7 @@ body.fullscreen-mode .fullscreen-toggle {
       padding: 24px 20px;
       border-bottom: 1px solid var(--border-color);
     }
- .logo img {
-      width: 45px !important;
-      height: auto;
-      max-width: 45px;
-      object-fit: contain;
-      border-radius: 10px;
-      background: white;
-      padding: 2px;
-      flex-shrink: 0;
-    }
-    
+
     .logo-box {
       width: 42px;
       height: 42px;
@@ -1355,14 +1345,19 @@ body.fullscreen-mode .fullscreen-toggle {
 
 <body>
 
-<div class="logo">
-  <img src="web-images/qqq.jpg" alt="Logo">
-  <div class="logo-text"><b>Pio Museo</b></div>
-  <!-- Toggle Button -->
-  <div class="fullscreen-toggle" onclick="toggleSidebar()" title="Toggle Dashboard Size">
-    <i class="fas fa-expand-alt"></i>
-  </div>
-</div>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo">
+      <img src="web-images/qqq.jpg" alt="Pio Museo Logo"
+        style=" width: 45px; object-fit: contain; border-radius: 10px; background: white; padding: 2px;">
+      <div class="logo-text">
+        <b>Pio Museo</b>
+        <small>Admin Portal</small>
+      </div>
+      <div class="fullscreen-toggle" onclick="toggleSidebar()" title="Toggle Dashboard Size">
+        <i class="fas fa-expand-alt"></i>
+      </div>
+    </div>
   
     <ul class="nav">
       <li class="active" onclick="openPage('dashboard', this, event)">
