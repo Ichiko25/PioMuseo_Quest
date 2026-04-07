@@ -7,7 +7,7 @@
   <title>Pio Museo - Admin Portal</title>
    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabaseClient.js"></script>
-   <script>
+<!--   <script>
       // Strict Auth Guard: Redirect before page renders
       (function () {
         if (localStorage.getItem('isAdmin') !== 'true') {
@@ -15,7 +15,7 @@
         }
       })();
     </script> 
-  <!-- <script>
+ <script>
         (async function() {
             document.documentElement.style.visibility = 'hidden';
             const { data: { session } } = await window.supabaseClient.auth.getSession();
