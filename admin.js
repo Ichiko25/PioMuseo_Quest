@@ -680,11 +680,8 @@ async function fetchContent() {
         const publishedFaqs = faqs.filter(f => f.status === 'published').length;
 
         const totalPublished = publishedBlogs + publishedGalleries + publishedFaqs;
-        const totalDrafts = contents.filter(c => c.status !== 'published').length;
         const statPublishedEl = document.getElementById('stat-published');
-        const statDraftsEl = document.getElementById('stat-drafts');
         if (statPublishedEl) statPublishedEl.innerText = totalPublished;
-        if (statDraftsEl) statDraftsEl.innerText = totalDrafts;
 
         const blogCountEl = document.getElementById('blog-count');
         const galleryCountEl = document.getElementById('gallery-count');
