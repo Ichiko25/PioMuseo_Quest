@@ -1495,6 +1495,38 @@
             }
         }
 
+		             @media (max-width: 720px) {
+            .navbar {
+                padding-inline: 1.1rem;
+            }
+
+            .nav-toggle {
+                display: inline-flex;
+                gap: 0.1rem;
+            }
+
+            /* FIX: Anchored menu exactly at the bottom of header */
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--red);
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 0 1.4rem;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height var(--transition-med), padding var(--transition-med);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            }
+
+            .nav-links.open {
+                max-height: 260px;
+                padding: 1rem 1.4rem;
+            }
+        }
+
         .footer-brand h3 {
             font-family: 'Cinzel', serif;
             font-size: 1.5rem;
@@ -1796,37 +1828,32 @@
     }
 }
 
-        @media (max-width: 768px) {
-            .footer-main {
+               @media (max-width: 768px) {
+            
+            /* ... (hero media queries omitted for brevity) ... */
+
+            .game-card {
                 grid-template-columns: 1fr;
-                text-align: center;
-            }
-        }
-
-        @media (max-width: 720px) {
-            .navbar {
-                padding-inline: 1.1rem;
+                gap: 1.5rem;
             }
 
-            .nav-toggle {
-                display: inline-flex;
-                gap: 0.1rem;
+            .game-info {
+                padding: 0 1rem 1rem;
             }
 
-            .nav-links {
-                position: fixed;
-                inset: 56px 0 auto;
-                background: var(--red);
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 0.7rem 1.4rem 1rem;
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height var(--transition-med);
+            /* FIX: Expanding the Game Carousel Image size bounds */
+            #game .card {
+                min-width: 220px;
+                margin: 0 8px;
             }
 
-            .nav-links.open {
-                max-height: 260px;
+            /* FIX: Safely pulling the overlay buttons inwards */
+            .carousel-btn.left {
+                left: 10px;
+            }
+
+            .carousel-btn.right {
+                right: 10px;
             }
         }
 
