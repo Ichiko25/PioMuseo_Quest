@@ -1740,6 +1740,62 @@
             margin-left: 400px;
         }
 
+		/* --- NEW RESPONSIVENESS FIXES --- */
+
+/* For smaller laptops and tablets */
+@media (max-width: 1024px) {
+    .hero {
+        grid-template-columns: 1fr; /* Stacks the two sides vertically */
+        padding-top: 6rem;
+    }
+    .hero-visual .carousel {
+        width: 100%;
+        max-width: 700px;
+    }
+}
+
+/* For mobile phones */
+@media (max-width: 768px) {
+    .hero {
+        padding: 5rem 1rem 2rem;
+        gap: 2rem;
+    }
+    
+    /* Resizes the massive Landing Page Title */
+    .hero-content h3.footer-logo {
+        font-size: 28px !important; 
+    }
+    
+    .hero-tagline {
+        font-size: 15px;
+        line-height: 1.6;
+    }
+    
+    .hero-visual {
+        height: 300px;
+        justify-content: center;
+    }
+    
+    .hero-visual .carousel {
+        height: 300px;
+    }
+    
+    .hero-visual .card {
+        width: 240px;
+        height: 180px;
+    }
+    
+    /* Stacks the Game Section Image and Text */
+    .game-card {
+        grid-template-columns: 1fr; /* Image goes on top, text below */
+        gap: 1.5rem;
+    }
+    
+    .game-info {
+        padding: 0 1rem 1rem;
+    }
+}
+
         @media (max-width: 768px) {
             .footer-main {
                 grid-template-columns: 1fr;
