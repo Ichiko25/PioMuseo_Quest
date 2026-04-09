@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pio Museo - Admin Portal</title>
-   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabaseClient.js"></script>
-<!--   <script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js"></script>
+  <!--   <script>
       // Strict Auth Guard: Redirect before page renders
       (function () {
         if (localStorage.getItem('isAdmin') !== 'true') {
@@ -29,6 +29,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="icon" href="web-images/qqq.jpg" type="image/jpeg">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -85,20 +87,41 @@
     }
 
     /* [admin.html] Fullscreen Mode CSS */
-body.fullscreen-mode .sidebar {
-  width: 0;
-  overflow: visible;
-  visibility: hidden;
-}
-body.fullscreen-mode .fullscreen-toggle {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 10001;
-  background: var(--sidebar-bg);
-  visibility: visible;
-  display: flex !important;
-}
+    body.fullscreen-mode .sidebar {
+      width: 0;
+      overflow: visible;
+      visibility: hidden;
+    }
+
+    body.fullscreen-mode .fullscreen-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 10001;
+      background: rgba(105, 105, 105, 0.3);
+      visibility: visible;
+      display: flex !important;
+    }
+
+    .fullscreen-toggle {
+      background: rgba(105, 105, 105, 0.3);
+      border: none;
+      color: var(--text-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      padding: 5px;
+    }
+
+    .fullscreen-toggle:hover {
+      background: rgba(105, 105, 105, 0.5);
+      color: var(--text-main);
+    }
 
     .logo {
       display: flex;
@@ -834,6 +857,19 @@ body.fullscreen-mode .fullscreen-toggle {
       box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
     }
 
+    .display-box {
+      width: 100%;
+      padding: 12px 16px;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      font-size: 15px;
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+    }
+
     .toggle-row {
       display: flex;
       justify-content: space-between;
@@ -863,6 +899,22 @@ body.fullscreen-mode .fullscreen-toggle {
       display: inline-block;
       width: 50px;
       height: 26px;
+    }
+
+    #cert-preview-name {
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8), 0 0 1px rgba(0, 0, 0, 0.1);
+      letter-spacing: 0.5px;
+    }
+
+    .settings-card h3 {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .settings-card p {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin: 4px 0 0 0;
     }
 
     .switch input {
@@ -1212,6 +1264,7 @@ body.fullscreen-mode .fullscreen-toggle {
     .filter-select:focus {
       border-color: var(--accent-primary);
     }
+
     /* =========================
        TABLET & MOBILE RESPONSIVENESS
     ========================= */
@@ -1219,6 +1272,7 @@ body.fullscreen-mode .fullscreen-toggle {
       .content-grid {
         grid-template-columns: repeat(2, 1fr) !important;
       }
+
       .charts {
         grid-template-columns: 1fr !important;
       }
@@ -1228,38 +1282,56 @@ body.fullscreen-mode .fullscreen-toggle {
       .sidebar {
         width: 70px !important;
       }
-      .logo-text, .nav span, .logout span, .chevron {
+
+      .logo-text,
+      .nav span,
+      .logout span,
+      .chevron {
         display: none !important;
       }
-      .nav li, .submenu-title, .title-left, .submenu li, .logo {
+
+      .nav li,
+      .submenu-title,
+      .title-left,
+      .submenu li,
+      .logo {
         justify-content: center !important;
         padding-left: 0 !important;
         padding-right: 0 !important;
       }
+
       .main {
         padding: 20px !important;
       }
+
       .header {
         flex-direction: column !important;
         align-items: flex-start !important;
         gap: 15px !important;
       }
-      .content-grid, .settings-grid, .bottom-charts {
+
+      .content-grid,
+      .settings-grid,
+      .bottom-charts {
         grid-template-columns: 1fr !important;
       }
+
       .analytics-filter-bar {
         flex-direction: column !important;
         align-items: flex-start !important;
         gap: 20px !important;
       }
-      .analytics-filter-bar > div {
+
+      .analytics-filter-bar>div {
         width: 100% !important;
       }
-      .analytics-filter-bar > div:first-child {
+
+      .analytics-filter-bar>div:first-child {
         grid-template-columns: 1fr 1fr !important;
       }
     }
-     /* =========================
+
+    /* =========================
        PRINT PDF EXPORT LAYOUT
     ========================= */
     @media print {
@@ -1267,7 +1339,9 @@ body.fullscreen-mode .fullscreen-toggle {
         size: landscape;
         margin: 10mm;
       }
-      body, html {
+
+      body,
+      html {
         background: white !important;
         color: black !important;
         height: auto !important;
@@ -1275,10 +1349,16 @@ body.fullscreen-mode .fullscreen-toggle {
         overflow: visible !important;
         display: block !important;
       }
+
       /* Hide Unnecessary Elements */
-      .sidebar, .analytics-filter-bar, .modal-overlay, .user-profile, #dashboard .table-container {
+      .sidebar,
+      .analytics-filter-bar,
+      .modal-overlay,
+      .user-profile,
+      #dashboard .table-container {
         display: none !important;
       }
+
       /* Format Header for Print */
       .header {
         display: flex !important;
@@ -1289,6 +1369,7 @@ body.fullscreen-mode .fullscreen-toggle {
         background: transparent !important;
         page-break-after: avoid;
       }
+
       /* Expand Main Area */
       .main {
         display: block !important;
@@ -1300,18 +1381,23 @@ body.fullscreen-mode .fullscreen-toggle {
         margin: 0 !important;
         background: white !important;
       }
+
       /* Only show Analytics and Dashboard Pages */
       .page {
         display: none !important;
       }
-      #dashboard, #analytics {
+
+      #dashboard,
+      #analytics {
         display: block !important;
         height: auto !important;
         overflow: visible !important;
       }
-      
+
       /* Clean Up Cards for Print */
-      .analytics-card, .evaluation-card, .card {
+      .analytics-card,
+      .evaluation-card,
+      .card {
         background: white !important;
         color: black !important;
         border: 1px solid #ccc !important;
@@ -1320,12 +1406,23 @@ body.fullscreen-mode .fullscreen-toggle {
         break-inside: avoid;
         margin-bottom: 15px !important;
       }
-      
+
       /* Force Text to Black for Readability */
-      h3, h2, p, span, div, b, small, .evaluation-label, .gender-name, .gender-value, .gender-total-num, .gender-total-text {
+      h3,
+      h2,
+      p,
+      span,
+      div,
+      b,
+      small,
+      .evaluation-label,
+      .gender-name,
+      .gender-value,
+      .gender-total-num,
+      .gender-total-text {
         color: black !important;
       }
-      
+
       /* Ensure Canvases Fit */
       canvas {
         max-width: 100% !important;
@@ -1333,13 +1430,14 @@ body.fullscreen-mode .fullscreen-toggle {
         page-break-inside: avoid;
         break-inside: avoid;
       }
-      
+
       /* Grid Fallbacks */
-      .analytics-grid, .charts-grid, .bottom-charts {
+      .analytics-grid,
+      .charts-grid,
+      .bottom-charts {
         gap: 15px !important;
       }
     }
-    
   </style>
 </head>
 
@@ -1358,7 +1456,7 @@ body.fullscreen-mode .fullscreen-toggle {
         <i class="fas fa-expand-alt"></i>
       </div>
     </div>
-  
+
     <ul class="nav">
       <li class="active" onclick="openPage('dashboard', this, event)">
         <i class="fas fa-th-large"></i> <span>Dashboard</span>
@@ -1394,7 +1492,10 @@ body.fullscreen-mode .fullscreen-toggle {
           <i class="fas fa-chevron-down chevron"></i>
         </div>
         <ul class="submenu">
-          <li onclick="openPage('auditlog', this, event)"><i class="fas fa-history"></i> <span>Audit Log</span></li>
+          <li onclick="openPage('auditlog', this, event)"><i class="fas fa-history"></i> <span>Admin Activity</span>
+          </li>
+          <li onclick="openPage('visitorlogs', this, event)"><i class="fas fa-user-friends"></i> <span>Visitor
+              Logs</span></li>
           <li onclick="openPage('analytics', this, event)"><i class="fas fa-chart-line"></i> <span>Analytics</span></li>
         </ul>
       </li>
@@ -1420,6 +1521,12 @@ body.fullscreen-mode .fullscreen-toggle {
       </div>
 
       <div class="user-profile">
+        <div class="notification" onclick="scrollToActivity()" title="Recent Activity"
+          style="margin-right: 15px; position: relative; cursor: pointer;">
+          <i class="fas fa-bell" style="color: var(--text-muted); font-size: 18px;"></i>
+          <span class="badge-dot" id="notif-count"
+            style="position: absolute; top: -5px; right: -5px; background: var(--red); color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold;">0</span>
+        </div>
         <div class="user-info">
           <b>Admin User</b>
           <small>admin@museo.ph</small>
@@ -1428,47 +1535,32 @@ body.fullscreen-mode .fullscreen-toggle {
       </div>
     </div>
 
-     <!-- PAGE: DASHBOARD -->
+    <!-- PAGE: DASHBOARD -->
     <div id="dashboard" class="page active">
-     <!-- Summary Ratings Section -->
+      <!-- Summary Ratings Section 
       <div class="stats"
-        style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; margin-top: 10px;">
-        <div class="card" style="display: flex; align-items: center; gap: 20px; padding: 20px;">
-          <div class="icon-wrapper"
-            style="width: 60px; height: 60px; font-size: 28px; background: rgba(59, 130, 246, 0.15); color: var(--blue); margin-bottom: 0;">
-            <i class="fas fa-chart-line"></i>
-          </div>
-          <div>
-            <h3 id="stat-website-rating" style="font-size: 28px; margin-bottom: 2px;">...</h3>
-            <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Website Performance</p>
-          </div>
+        style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; margin-top: 10px;">
+        <div class="card" style="padding: 20px;">
+          <h3 id="stat-website-rating"
+            style="font-size: 36px; margin-bottom: 4px; font-weight: 800; color: var(--text-main);">0</h3>
+          <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">Website
+            Visitors</p>
         </div>
-        <div class="card" style="display: flex; align-items: center; gap: 20px; padding: 20px;">
-          <div class="icon-wrapper"
-            style="width: 60px; height: 60px; font-size: 28px; background: rgba(249, 115, 22, 0.15); color: var(--accent-primary); margin-bottom: 0;">
-            <i class="fas fa-star"></i>
-          </div>
-          <div>
-            <h3 id="stat-summary-game-rating" style="font-size: 28px; margin-bottom: 2px;">...</h3>
-            <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Game Experience</p>
-          </div>
+        <div class="card" style="padding: 20px;">
+          <h3 id="stat-summary-game-rating"
+            style="font-size: 36px; margin-bottom: 4px; font-weight: 800; color: var(--text-main);">0</h3>
+          <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">Game
+            Star Ratings</p>
         </div>
-      </div>
-      
-    <!-- Website Dashboard Section -->
-      <h3 style="font-size: 20px; margin-bottom: 20px; color: var(--text-main); display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+      </div> -->
+
+      <!-- Website Dashboard Section -->
+      <h3
+        style="font-size: 20px; margin-bottom: 20px; color: var(--text-main); display: flex; align-items: center; gap: 10px; margin-top: 10px;">
         <i class="fas fa-globe" style="color: var(--blue);"></i> Website Overview
       </h3>
       <div class="stats"
         style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
-        <div class="card">
-          <div class="trend up"><i class="fas fa-arrow-up"></i></div>
-          <div class="icon-wrapper" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
-            <i class="fas fa-check-circle"></i>
-          </div>
-          <h3 id="stat-published">...</h3>
-          <p>Published</p>
-        </div>
         <div class="card">
           <div class="trend up"><i class="fas fa-arrow-up"></i></div>
           <div class="icon-wrapper">
@@ -1476,6 +1568,14 @@ body.fullscreen-mode .fullscreen-toggle {
           </div>
           <h3 id="stat-visitors">...</h3>
           <p>Total Website Visitors</p>
+        </div>
+        <div class="card">
+          <div class="trend up"><i class="fas fa-arrow-up"></i></div>
+          <div class="icon-wrapper" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <h3 id="stat-published">...</h3>
+          <p>Published Contents</p>
         </div>
         <div class="card">
           <div class="trend up"><i class="fas fa-arrow-up"></i></div>
@@ -1494,36 +1594,38 @@ body.fullscreen-mode .fullscreen-toggle {
           <p>Tour Group Bookings</p>
         </div>
       </div>
- <!-- Game Dashboard Section -->
+      <!-- Game Dashboard Section -->
       <h3
         style="font-size: 20px; margin-bottom: 20px; color: var(--text-main); display: flex; align-items: center; gap: 10px;">
         <i class="fas fa-gamepad" style="color: var(--accent-primary);"></i> Game Overview
       </h3>
       <div class="stats"
         style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
-        <div class="card">
+        <div class="card" style="padding: 16px 20px;">
           <div class="trend up"><i class="fas fa-arrow-up"></i></div>
           <div class="icon-wrapper"><i class="fas fa-gamepad"></i></div>
           <h3 id="stat-game-players">...</h3>
           <p>Total No. Players</p>
         </div>
-        <div class="card">
+        <div class="card" style="padding: 16px 20px;">
           <div class="trend up"><i class="fas fa-arrow-up"></i></div>
           <div class="icon-wrapper" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;"><i
               class="fas fa-flag-checkered"></i></div>
           <h3 id="stat-game-completed">0</h3>
           <p>Total completed game</p>
         </div>
-        <div class="card">
+        <div class="card" style="padding: 16px 20px;">
           <div class="trend up"><i class="fas fa-arrow-up"></i></div>
           <div class="icon-wrapper"><i class="fas fa-comment-dots"></i></div>
-          <h3 id="stat-feedbacks">...</h3>
+          <h3 id="stat-feedbacks">0</h3>
           <p>Feedbacks</p>
         </div>
-        <div class="card">
-          <div class="icon-wrapper"><i class="fas fa-certificate"></i></div>
-          <h3 id="stat-game-certs">0</h3>
-          <p>Sended E-certificate</p>
+        <div class="card" style="padding: 16px 20px;">
+          <div class="trend up"><i class="fas fa-arrow-up"></i></div>
+          <div class="icon-wrapper" style="background: rgba(249, 115, 22, 0.15); color: var(--accent-primary);"><i
+              class="fas fa-star"></i></div>
+          <h3 id="stat-game-star-ratings">0</h3>
+          <p>Game Star Ratings</p>
         </div>
       </div>
 
@@ -1647,9 +1749,9 @@ body.fullscreen-mode .fullscreen-toggle {
               <th>User Info</th>
               <th>Age Group</th>
               <th>Location</th>
-             <th>Action</th>
+              <th>Status</th>
               <th>Time Registered</th>
-              
+
             </tr>
           </thead>
           <tbody id="all-users-tbody">
@@ -1677,6 +1779,12 @@ body.fullscreen-mode .fullscreen-toggle {
               <option value="2">2 Stars</option>
               <option value="1">1 Star</option>
             </select>
+            <select id="feedback-filter-visibility"
+              style="padding: 10px; border-radius: 8px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); outline: none;">
+              <option value="">All</option>
+              <option value="visible">Visible</option>
+              <option value="hidden">Hidden</option>
+            </select>
             <input type="date" id="feedback-filter-date"
               style="padding: 10px; border-radius: 8px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); outline: none;">
           </div>
@@ -1698,15 +1806,24 @@ body.fullscreen-mode .fullscreen-toggle {
       </div>
     </div>
 
-    <!-- PAGE: AUDIT LOG -->
+    <!-- PAGE: ADMIN ACTIVITY LOG -->
     <div id="auditlog" class="page">
       <div class="table-container">
         <div class="table-header" style="flex-wrap: wrap; gap: 15px;">
           <div class="input-group" style="margin-bottom: 0; width: 250px;">
-            <input type="text" id="audit-search" placeholder="Search logs..." style="padding-left: 36px;">
+            <input type="text" id="audit-search" placeholder="Search admin logs..." style="padding-left: 36px;">
           </div>
 
           <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <select id="audit-filter-action"
+              style="padding: 10px; border-radius: 8px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); outline: none; cursor: pointer;">
+              <option value="">All Actions</option>
+              <option value="create">Added Content</option>
+              <option value="update">Edited Content</option>
+              <option value="delete">Deleted Content</option>
+              <option value="settings">Settings Changes</option>
+              <option value="login">Logged In</option>
+            </select>
             <input type="date" id="audit-filter-date"
               style="padding: 10px; border-radius: 8px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); outline: none;">
           </div>
@@ -1714,15 +1831,53 @@ body.fullscreen-mode .fullscreen-toggle {
         <table>
           <thead>
             <tr>
-              <th>Date & Time</th>
-              <th>Admin Identity</th>
-              <th>Action</th>
-              <th>Details</th>
-              <th style="text-align: right;">Manage</th>
+              <th style="width: 25%;">Date & Time</th>
+              <th style="width: 25%;">Admin Identity</th>
+              <th style="width: 25%;">Action</th>
+              <th style="width: 25%;">Details</th>
             </tr>
           </thead>
           <tbody id="audit-log-tbody">
-            <!-- Dynamic Audit Logs -->
+            <!-- Dynamic Admin Logs -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PAGE: VISITOR LOGS -->
+    <div id="visitorlogs" class="page">
+      <div class="table-container">
+        <div class="table-header" style="flex-wrap: wrap; gap: 15px;">
+          <div class="input-group" style="margin-bottom: 0; width: 250px;">
+            <input type="text" id="visitor-log-search" placeholder="Search visitor logs..." style="padding-left: 36px;">
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <select id="visitor-filter-action"
+              style="padding: 10px; border-radius: 8px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); outline: none; cursor: pointer;">
+              <option value="">All Actions</option>
+              <option value="visit">Visit</option>
+              <option value="faq">FAQ</option>
+              <option value="news">Blog</option>
+              <option value="game">Game</option>
+              <option value="plans to visit">Plans to visit</option>
+            </select>
+            <input type="date" id="visitor-log-filter-date"
+              style="padding: 10px; border-radius: 8px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); outline: none;">
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 15%;">Date & Time</th>
+              <th style="width: 35%;">Visitor ID / Session</th>
+              <th style="width: 15%;">Page Visited</th>
+              <th style="width: 15%;">Action</th>
+              <th style="width: 20%;">Details</th>
+            </tr>
+          </thead>
+          <tbody id="visitor-log-tbody">
+            <!-- Dynamic Visitor Logs -->
           </tbody>
         </table>
       </div>
@@ -1733,7 +1888,7 @@ body.fullscreen-mode .fullscreen-toggle {
       <div class="analytics-filter-bar"
         style="display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 25px; padding: 15px 20px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); flex-wrap: wrap;">
 
-         <div style="display: grid; grid-template-columns: 1.3fr 1.3fr; gap: 10px;">
+        <div style="display: grid; grid-template-columns: 1.3fr 1.3fr; gap: 10px;">
           <button class="btn btn-primary" onclick="window.exportDataCSV && window.exportDataCSV()"
             style="width: 100%; padding: 10px 16px; font-size: 13px; background: #10b981; border: none; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);"><i
               class="fas fa-file-csv" style="margin-right: 4px;"></i> Export CSV</button>
@@ -1929,67 +2084,150 @@ body.fullscreen-mode .fullscreen-toggle {
 
     <!-- PAGE: SETTINGS -->
     <div id="settings" class="page">
-      <div class="settings-grid">
+      <div class="settings-grid"
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px;">
 
         <!-- General Info -->
-        <div>
-          <div class="settings-card">
-            <div class="settings-header">
-              <div class="icon"><i class="fas fa-globe"></i></div>
-              <div>
-                <h3 style="font-size: 18px;">General Platform Settings</h3>
-                <p style="color: var(--text-muted); font-size: 13px;">Manage core information about the portal.</p>
-              </div>
+        <div class="settings-card">
+          <div class="settings-header">
+            <div class="icon"><i class="fas fa-globe"></i></div>
+            <div>
+              <h3>General Platform</h3>
             </div>
-
-            <div class="input-group">
-              <label>Site Name</label>
-              <input type="text" value="Pio Museo Quest Admin">
-            </div>
+          </div>
+          <div class="input-group">
+            <label>Site Name</label>
+            <div id="setting-site-name" class="display-box">Pio Museo Quest Admin</div>
+          </div>
+          <div class="input-group">
+            <label>Year</label>
+            <div id="setting-year" class="display-box">2026</div>
           </div>
         </div>
 
-        <!-- System & Security preferences -->
-        <div>
-          <div class="settings-card">
-            <div class="settings-header">
-              <div class="icon security"><i class="fas fa-shield-alt"></i></div>
-              <div>
-                <h3 style="font-size: 18px;">Security & Features</h3>
-                <p style="color: var(--text-muted); font-size: 13px;">Configure feature flags and access.</p>
-              </div>
-            </div>
-
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <b>User Registration</b>
-                <small>Allow new players to create accounts.</small>
-              </div>
-              <label class="switch">
-                <input type="checkbox" checked>
-                <span class="slider"></span>
-              </label>
-            </div>
-
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <b>Maintenance Mode</b>
-                <small>Disable public access while pushing updates.</small>
-              </div>
-              <label class="switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-              </label>
+        <!-- Security & Features -->
+        <div class="settings-card">
+          <div class="settings-header">
+            <div class="icon security"><i class="fas fa-shield-alt"></i></div>
+            <div>
+              <h3>Security & Features</h3>
+              <p>Configure access and maintenance mode.</p>
             </div>
           </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <b>User Registration</b>
+              <small>Allow new players to create accounts.</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setting-user-reg">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row" style="margin-top: 15px;">
+            <div class="toggle-info">
+              <b>Maintenance Mode</b>
+              <small>Disable public access during updates.</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setting-maint-mode">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
 
-          <div style="display: flex; justify-content: flex-end;">
-            <button class="save-btn" onclick="saveSettings()">
-              <i class="fas fa-save" style="margin-right: 8px;"></i> Save All Settings
+        <!-- Email Configuration (SMTP) -->
+        <div class="settings-card">
+          <div class="settings-header">
+            <div class="icon" style="background: rgba(249, 115, 22, 0.1); color: #f97316;"><i
+                class="fas fa-envelope"></i></div>
+            <div>
+              <h3>Email Configuration (SMTP)</h3>
+              <p>Setup outgoing mail server for certificates.</p>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div class="input-group">
+              <label>SMTP Host</label>
+              <input type="text" id="setting-smtp-host" placeholder="smtp.gmail.com">
+            </div>
+            <div class="input-group">
+              <label>Port</label>
+              <input type="text" id="setting-smtp-port" placeholder="465">
+            </div>
+          </div>
+          <div class="input-group" style="margin-bottom: 15px;">
+            <label>Username / Email</label>
+            <input type="text" id="setting-smtp-user" placeholder="museum@example.com">
+          </div>
+          <div class="input-group">
+            <label>Password / App Key</label>
+            <input type="password" id="setting-smtp-pass" placeholder="••••••••••••"
+              style="width: 100%; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); color: white; border-radius: 8px;">
+          </div>
+          <button class="btn" style="margin-top: 15px; width: 100%; background: #334155;" onclick="testSMTP()">
+            <i class="fas fa-paper-plane" style="margin-right: 8px;"></i> Send Test Email
+          </button>
+        </div>
+
+        <!-- E-Certificates Management -->
+        <div class="settings-card">
+          <div class="settings-header">
+            <div class="icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;"><i
+                class="fas fa-certificate"></i></div>
+            <div>
+              <h3>Certificates Management</h3>
+              <p>Configure templates and automation.</p>
+            </div>
+          </div>
+          <div class="toggle-row" style="margin-bottom: 15px;">
+            <div class="toggle-info">
+              <b>Auto-send E-Certificates</b>
+              <small>Send automatically upon game completion.</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setting-auto-cert">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="input-group" style="margin-bottom: 15px;">
+            <label>Certificate Template (PNG URL)</label>
+            <input type="text" id="setting-cert-template" placeholder="https://example.com/template.png"
+              oninput="updateCertPreview()">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <div class="input-group">
+              <label>Name Position (Top %)</label>
+              <input type="number" id="setting-cert-name-top" value="48" min="0" max="100"
+                oninput="updateCertPreview()">
+            </div>
+            <div class="input-group">
+              <label>Name Font Size (px)</label>
+              <input type="number" id="setting-cert-name-size" value="32" min="10" max="100"
+                oninput="updateCertPreview()">
+            </div>
+          </div>
+          <div id="cert-preview-box"
+            style="aspect-ratio: 1.4/1; background: #0f172a; border-radius: 8px; border: 2px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+            <img id="cert-preview-img" src="" style="width: 100%; height: 100%; object-fit: contain; display: none;">
+            <span id="cert-preview-placeholder" style="color: #475569; font-size: 13px;">Template Preview</span>
+            <div id="cert-preview-name"
+              style="position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%); color: #1e293b; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 14px; pointer-events: none; display: none;">
+              [Player Name]</div>
+          </div>
+          <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button class="btn" style="flex: 1; background: #334155;" onclick="downloadSampleCert()">
+              <i class="fas fa-download" style="margin-right: 8px;"></i> Sample PDF
             </button>
           </div>
         </div>
 
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
+        <button class="save-btn" onclick="saveSettings()">
+          <i class="fas fa-save" style="margin-right: 8px;"></i> Save All Settings
+        </button>
       </div>
     </div>
 
@@ -2036,59 +2274,91 @@ body.fullscreen-mode .fullscreen-toggle {
     </div>
   </div>
 
-<!-- JAVASCRIPT LOGIC -->
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script src="supabaseClient.js"></script>
-<script src="admin.js"></script>
+  <!-- JAVASCRIPT LOGIC -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js"></script>
+  <script src="admin.js"></script>
 
-<script>
-  /* AUTH CHECK */
-  if (localStorage.getItem("isAdmin") !== "true") {
-    window.location.href = "admin login.html";
-  }
+  <script>
+    /* AUTH CHECK */
+    if (localStorage.getItem("isAdmin") !== "true") {
+      window.location.href = "admin login.html";
+    }
 
-  function openPage(pageId, el, event) {
-    if (event) event.stopPropagation();
+    function openPage(pageId, el, event) {
+      if (event) event.stopPropagation();
 
-    document.querySelectorAll(".page").forEach(page => {
-      page.classList.remove("active");
-    });
-    document.getElementById(pageId).classList.add("active");
+      document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+      });
+      document.getElementById(pageId).classList.add("active");
 
-    document.querySelectorAll(".nav li").forEach(navItem => {
-      navItem.classList.remove("active");
-    });
-    el.classList.add("active");
+      document.querySelectorAll(".nav li").forEach(navItem => {
+        navItem.classList.remove("active");
+      });
+      el.classList.add("active");
 
-    let pageTitle = el.innerText.trim();
-    document.getElementById("title").innerText = pageTitle + " Overview";
+      let pageTitle = el.innerText.trim();
+      document.getElementById("title").innerText = pageTitle + " Overview";
 
-    if (pageId === "analytics") {
-      if (typeof renderCharts === "function") {
-        renderCharts();
-        renderEvaluationStats();
-        renderGenderChart();
-        renderPlatformEngagementChart();
+      if (pageId === 'auditlog') {
+        if (typeof renderAuditLogs === 'function') renderAuditLogs(allAuditLogs);
+      }
+      if (pageId === 'visitorlogs') {
+        if (typeof renderVisitorLogs === 'function') renderVisitorLogs(allAuditLogs);
+      }
+
+      if (pageId === "analytics") {
+        if (typeof renderCharts === "function") {
+          renderCharts();
+          renderEvaluationStats();
+          renderGenderChart();
+          renderPlatformEngagementChart();
+        }
       }
     }
-  }
 
-  function toggleSubmenu(el) {
-    const isOpen = el.classList.contains('open');
+    function toggleSubmenu(el) {
+      const isOpen = el.classList.contains('open');
 
-    document.querySelectorAll('.has-submenu').forEach(submenu => {
-      submenu.classList.remove('open');
-    });
+      document.querySelectorAll('.has-submenu').forEach(submenu => {
+        submenu.classList.remove('open');
+      });
 
-    if (!isOpen) {
-      el.classList.add('open');
+      if (!isOpen) {
+        el.classList.add('open');
+      }
     }
-  }
 
-  function logout() {
-    localStorage.removeItem("isAdmin");
-    window.location.href = "admin-login.html";
-  }
+    function logout() {
+      localStorage.removeItem("isAdmin");
+      window.location.href = "admin-login.html";
+    }
+
+    function toggleSidebar() {
+      document.body.classList.toggle('fullscreen-mode');
+      const icon = document.querySelector('.fullscreen-toggle i');
+      if (icon) {
+        icon.classList.toggle('fa-expand-alt');
+        icon.classList.toggle('fa-compress-alt');
+      }
+    }
+
+    function scrollToActivity() {
+      const table = document.getElementById('recent-users-tbody');
+      if (table) table.closest('.table-container').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    fetch("/api/sendCertificate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: "[EMAIL_ADDRESS]",
+        name: "Juan Dela Cruz"
+      })
+    });
   </script>
 </body>
 
