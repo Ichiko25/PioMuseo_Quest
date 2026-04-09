@@ -5,340 +5,38 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Dr. Pio valenzuela Museum — Historical Art Museum</title>
-	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabaseClient.js"></script>
-   <!--<script>
-        (async function() {
-            document.documentElement.style.visibility = 'hidden';
-            const { data: { session } } = await window.supabaseClient.auth.getSession();
-            if (!session) {
-                window.location.href = 'login.html';
-            } else {
-                document.documentElement.style.visibility = 'visible';
-            }
-        })();
-    </script>-->
     <link rel="icon" type="images/jpg" href="web-images/qqq.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@400;500&display=swap"
-        rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
 
     <style>
-        .feedback-pill {
-            display: flex;
-            flex-direction: column;
-            background: #f8f9fa;
-            border: 1px solid #f1f5f9;
-            border-radius: 12px;
-            padding: 16px;
-            color: #334155;
-            position: relative;
-            overflow: hidden;
-            animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0;
-            transform: translateY(20px);
-            gap: 16px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .feedback-pill:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
-        }
-
-        .feedback-pill::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent);
-            transform: skewX(-20deg);
-            animation: shimmer 3s infinite 1s;
-            pointer-events: none;
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes shimmer {
-            0% {
-                left: -100%;
-            }
-
-            100% {
-                left: 200%;
-            }
-        }
-
-        .feedback-pill:nth-child(1) {
-            animation-delay: 0.1s;
-        }
-
-        .feedback-pill:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .feedback-pill:nth-child(3) {
-            animation-delay: 0.3s;
-        }
-
-        .feedback-pill:nth-child(4) {
-            animation-delay: 0.4s;
-        }
-
-        .feedback-pill:nth-child(5) {
-            animation-delay: 0.5s;
-        }
-
-        .feedback-pill-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            width: 100%;
-        }
-
-        .feedback-pill-header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 0;
-            flex-grow: 1;
-        }
-
-        .feedback-pill-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: #90191B;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 600;
-            flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(144, 25, 27, 0.2);
-            font-family: 'Inter', sans-serif;
-        }
-
-        .feedback-pill-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .feedback-pill-name {
-            font-weight: 700;
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            color: #0f172a;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .feedback-pill-subtitle {
-            font-size: 12px;
-            color: #64748b;
-            font-family: 'Inter', sans-serif;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .feedback-pill-stars {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 14px;
-        }
-
-        .feedback-pill-rating-num {
-            font-weight: 600;
-            color: #0f172a;
-            font-size: 14px;
-            margin-left: 4px;
-        }
-
-        .feedback-pill-quote {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ea580c;
-            font-size: 16px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            flex-shrink: 0;
-            margin-left: 8px;
-        }
-
-        .feedback-pill-message {
-            font-size: 15px;
-            line-height: 1.6;
-            color: #64748b;
-            font-family: 'Inter', sans-serif;
-            display: -webkit-box;
-            -webkit-line-clamp: 4;
-            line-clamp: 4;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .faq-section {
-            background: #ffffff !important;
-            border-radius: 24px !important;
-            padding: 40px 50px !important;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04) !important;
-            max-width: 900px !important;
-            margin: 40px auto !important;
-            border: 1px solid rgba(0, 0, 0, 0.03) !important;
-        }
-
-        .faq-item {
-            background: transparent;
-            border-bottom: 1px solid #edf2f7;
-            margin-bottom: 0;
-            padding: 0;
-            transition: all 0.3s ease;
-        }
-
-        .faq-item:last-child {
-            border-bottom: none;
-        }
-
-
-        .faq-question {
-           width: 100% !important;
-		    padding: 13px 0 !important;
-		    display: flex !important;
-		    align-items: center !important;
-		    cursor: pointer !important;
-		    background: none !important;
-		    border: none !important;
-		    text-align: left !important;
-		    font-weight: 600 !important;
-		    color: #1e293b !important;
-		    transition: all 0.3s ease !important;
-		    position: relative !important;
-		}
-		
-        .faq-question::before {
-            content: '▶' !important;
-            font-size: 14px !important;
-            margin-right: 15px !important;
-            color: #1e293b !important;
-            transition: transform 0.3s ease, color 0.3s ease !important;
-            flex-shrink: 0 !important;
-        }
-
-        .faq-question:hover, .faq-item.active .faq-question {
-            color: #90191B; 
-        }
-
-        .faq-item.active .faq-question::before {
-            content: '▼';
-            color: #90191B;
-        }
-
-        .faq-question::after {
-            content: '+' !important;
-            margin-left: auto !important;
-            font-size: 22px !important;
-            color: #94a3b8 !important;
-            transition: all 0.3s ease !important;
-            font-weight: 300 !important;
-        }
-
-        .faq-item.active .faq-question::after {
-            content: '−';
-            color: #90191B;
-        }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden !important;
-            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            font-size: 15px !important;
-            line-height: 1.8 !important;
-            color: #334155 !important;
-            padding: 0 !important;
-        }
-
-        .faq-item.active .faq-answer {
-            max-height: 800px;
-            padding-bottom: 25px;
-        }
-		
-        /* Adjusting right container to match pill styling container */
-        .approved-feedbacks {
-            background: transparent !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-        }
-
-        .approved-feedbacks h3 {
-            color: #1e293b !important;
-            font-family: 'Cinzel', serif;
-            letter-spacing: 0.5px;
-            margin-bottom: 30px !important;
-        }
-
+        /* --- CSS VARIABLES --- */
         :root {
             --font-display: "Cormorant Garamond", Georgia, serif;
             --font-body: "Libre Baskerville", Georgia, serif;
-
-            --red: #d62828;
+            --red: #90191B;
+            --red-bright: #d62828;
             --red-soft: #ffe5e5;
-            --red-soft-alt: #ffecec;
             --black: #111111;
             --white: #ffffff;
             --gray-light: #f5f5f5;
             --gray-mid: #767676;
-            --accent-yellow: #ffcf33;
-            --accent-blue: #118ab2;
-            --accent-soft: #f1f5ff;
             --radius-lg: 24px;
             --radius-md: 16px;
             --radius-sm: 10px;
             --shadow-soft: 0 14px 35px rgba(0, 0, 0, 0.08);
-            --shadow-subtle: 0 8px 20px rgba(0, 0, 0, 0.04);
             --transition-fast: 0.18s ease-out;
             --transition-med: 0.25s ease-out;
         }
 
+        /* --- GLOBAL STYLES --- */
         * {
             box-sizing: border-box;
-        }
-
-          body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            font-family: 'Georgia', serif;
-            line-height: 1.5;
-            color: #222;
-            background-color: #fff;
         }
 
         html {
@@ -346,8 +44,18 @@
             overflow-x: hidden;
         }
 
-        h1 {
-            line-height: 3.4rem;
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            font-family: var(--font-body);
+            line-height: 1.5;
+            color: #222;
+            background-color: #fff;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Cinzel', serif;
         }
 
         nav {
@@ -356,13 +64,7 @@
         }
 
         button {
-            font-family: 'Inter', serif;
-            font-size: 18px;
-        }
-
-        img {
-            max-width: 100%;
-            display: block;
+            font-family: 'Inter', sans-serif;
         }
 
         a {
@@ -370,26 +72,12 @@
             text-decoration: none;
         }
 
-        .btn {
-            display: inline-block;
-            font-family: var(--font-display);
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            text-decoration: none;
-            padding: 0.9rem 1.8rem;
+        img {
+            max-width: 100%;
+            display: block;
         }
 
-        .sr-only {
-            border: 0;
-            clip: rect(0 0 0 0);
-            height: 1px;
-            margin: -1px;
-            overflow: hidden;
-            padding: 0;
-            position: absolute;
-            width: 1px;
-        }
-
+        /* --- HEADER & NAVIGATION --- */
         .site-header {
             position: relative;
             z-index: 30;
@@ -399,8 +87,7 @@
         }
 
         .navbar {
-            box-sizing: border-box;
-            background-color: darkred;
+            background-color: var(--red);
             position: fixed;
             top: 0;
             left: 0;
@@ -410,57 +97,12 @@
 
         .nav-container {
             width: 100%;
-            max-width: 1100px; /* Aligns with your visit-grid bounds */
+            max-width: 1100px;
             margin: 0 auto;
             padding: 0.75rem 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 1rem;
-        }
-        
-    @media (max-width: 720px) {
-    .nav-toggle {
-        display: inline-flex;
-        gap: 0.1rem;
-        order: -1; /* Moves hamburger to the left */
-    }
-
-    .nav-container {
-        padding-inline: 1.1rem;
-        justify-content: flex-start; /* Aligns toggle and logo to the left */
-        gap: 1.5rem;
-    }
-
-    .nav-container img {
-        height: 50px; /* Scaled down for mobile */
-        width: auto;
-    }
-}
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            font-weight: 700;
-            letter-spacing: 0.03em;
-        }
-
-        .logo-mark {
-            width: 34px;
-            height: 34px;
-            border-radius: 40% 60% 45% 55%;
-            background: var(--white);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
-        }
-
-        .logo-text {
-            font-size: 1.05rem;
-            color: white;
         }
 
         .nav-links {
@@ -470,54 +112,20 @@
             gap: 1rem;
             margin: 0;
             padding: 0;
-            font-family: var(--font-display);
-            letter-spacing: 0.12em;
             text-transform: uppercase;
+            letter-spacing: 0.12em;
         }
 
         .nav-links a {
-            position: relative;
-            display: inline-flex;
-            font-family: var(--font-display);
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            align-items: center;
-            justify-content: center;
             padding: 0.4rem 0.85rem;
             border-radius: 999px;
-            font-size: 18px;
             color: var(--white);
-            transition: color var(--transition-fast), background-color var(--transition-fast),
-                transform var(--transition-fast), box-shadow var(--transition-fast);
+            transition: all var(--transition-fast);
         }
 
-        .nav-links a::after {
-            content: "";
-            position: absolute;
-            inset: 2px;
-            font-family: var(--font-display);
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            border-radius: inherit;
-            border: 1px dashed rgba(255, 255, 255, 0.3);
-            opacity: 0;
-            transition: opacity var(--transition-fast);
-        }
-
-        .nav-links a:hover,
-        .nav-links a:focus-visible {
+        .nav-links a:hover {
             background-color: var(--white);
             color: var(--black);
-            font-family: var(--font-display);
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-        }
-
-        .nav-links a:hover::after,
-        .nav-links a:focus-visible::after {
-            opacity: 1;
         }
 
         .nav-toggle {
@@ -534,26 +142,18 @@
             width: 18px;
             height: 2px;
             background: var(--white);
-            border-radius: 999px;
+            margin: 4px 0;
         }
 
-        .nav-toggle span+span {
-            margin-top: 4px;
-        }
-
+        /* --- HERO SECTION --- */
         .hero {
-            max-width: 1120px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 7.4rem .5rem 2.75rem;
+            padding: 8rem 1.5rem 4rem;
             display: grid;
-  		    grid-template-columns: 1fr 700px; 
-  		    max-width: 1200px;
+            grid-template-columns: 1fr 1fr;
             gap: 3rem;
-        }
-
-        .hero-content h1 {
-            font-size: clamp(2.3rem, 3.2vw + 1.4rem, 3.1rem);
-            margin: 0 0 0.75rem;
+            align-items: center;
         }
 
         .hero-tagline {
@@ -567,479 +167,238 @@
             display: flex;
             flex-wrap: wrap;
             gap: 0.75rem;
-            margin-bottom: 1.3rem;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            padding: 0.6rem 1.25rem;
+            padding: 0.7rem 1.5rem;
             border-radius: 999px;
             font-weight: 600;
-            font-size: 0.98rem;
-            border: none;
             cursor: pointer;
-            transition: transform var(--transition-fast), box-shadow var(--transition-fast),
-                background-color var(--transition-fast), color var(--transition-fast);
+            transition: all 0.3s;
         }
 
         .btn-primary {
-            background-color: var(--white);
-            color: var(--black);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+            background: var(--black);
+            color: var(--white);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.28);
+        .btn-ghost {
+            background: var(--red);
+            color: var(--white);
+            border: 1px solid white;
         }
 
         .btn-secondary {
-            background-color: var(--black);
+            background: var(--black);
             color: var(--white);
-            box-shadow: var(--shadow-subtle);
-            align-items: center;
             margin-top: 10px;
         }
 
         .btn-secondary:hover {
-            background-color: #90191B;
-            transform: translateY(-1px);
-            margin-top: 10px;
+            background: var(--red);
         }
 
-        .btn-ghost {
-            background-color: #90191B;
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            color: var(--white);
-        }
-
-        .btn-ghost:hover {
-            background-color: #d62828;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
-            transform: translateY(-1px);
-        }
-
-        .hero-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-        }
-
-        .badge {
-            padding: 0.25rem 0.65rem;
-            border-radius: 999px;
-            font-size: 0.8rem;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.06);
-        }
-
-        .hero-visual {
-            position: relative;
-            width: 100%;
-            height: 450px;
-            overflow: hidden;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-        }
-        
         .hero-visual .carousel {
-		    width: 700px; 
-		    height: 400px;
-		    overflow: hidden;
-		    position: relative;
-		    display: flex;
-		    align-items: center;
-		    flex-shrink: 0; 
-		}
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            position: relative;
+        }
 
-        
         .hero-visual .track {
-            display: flex !important;
-            flex-direction: row !important;
-            gap: 25px !important;
-            width: max-content;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            gap: 25px;
+            transition: transform 0.8s ease;
             align-items: center;
         }
-        
-		.hero-visual .card {
-		    width: 320px;
-		    height: 240px;
-		    flex-shrink: 0;
-		    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-		    opacity: 0.4;
-		    transform: scale(0.85); 
-		    filter: grayscale(40%);
-		}
-		.hero-visual .card.active {
-		    opacity: 1;
-		    transform: scale(1.15); 
-		    z-index: 10;           
-		    filter: grayscale(0%);
-		    box-shadow: 0 20px 40px rgba(144, 25, 27, 0.25);
-		}
-		.hero-visual .card.prev,
-		.hero-visual .card.next {
-		    opacity: 0.7;
-		    transform: scale(0.95); 
-		    z-index: 5;
-		}
-        
+
+        .hero-visual .card {
+            width: 320px;
+            height: 240px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
         .hero-visual .card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 12px;
         }
 
-        .hero-card {
-            position: relative;
-            overflow: hidden;
-            background: var(--charcoal-mid);
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .hero-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-        }
-
-        .hero-card-tall {
-            width: 260px;
-        }
-
-        .hero-card-mid {
-            width: 200px;
-            height: 360px;
-        }
-
-        .hero-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .card-label {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(26, 26, 26, 0.8);
-            color: var(--white);
-            font-family: var(--font-display);
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            padding: 0.5rem 1rem;
-            box-sizing: border-box;
-        }
-
-        .hero-orbit::before {
-            content: "";
-            position: absolute;
-            inset: 12% 6%;
-            border: 2px dashed rgba(0, 0, 0, 0.08);
-            border-radius: 34px;
-        }
-
-        .photoshop {
-            overflow: hidden;
-            width: 100%;
-        }
-
-        .carousel-row {
-            display: flex;
-            gap: 2rem;
-            width: max-content;
-            margin-top: 0;
-        }
-
-        .carousel-row img {
-		    width: 320px !important;
-		    height: 200px !important;
-		    object-fit: cover !important;
-		    border-radius: 4px !important;
-		    flex-shrink: 0;
-		    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-		    cursor: pointer;
-		}
-		
-		.carousel-row img:hover {
-		    transform: scale(1.08); 
-		    z-index: 10;
-		    position: relative;
-		    box-shadow: 0 12px 24px rgba(0,0,0,0.25);
-		}
-
-        .row-left {
-            animation: scrollLeft 75s linear infinite;
-        }
-
-        .row-right {
-            animation: scrollRight 75s linear infinite;
-            margin-top: 1.5rem;
-            margin-bottom: 30px;
-        }
-
-        @keyframes scrollLeft {
-            from {
-                transform: translateX(0);
-            }
-
-            to {
-                transform: translateX(-50%);
-            }
-        }
-
-        @keyframes scrollRight {
-            from {
-                transform: translateX(-50%);
-            }
-
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        main {
-            background-color: var(--white);
+        /* --- CONTENT SECTIONS --- */
+        .section {
+            padding: 4rem 1.5rem;
         }
 
         .section--alt {
-            background: linear-gradient(180deg,
-                    var(--red-soft) 0%,
-                    var(--white) 60%,
-                    var(--white) 100%);
+            background: linear-gradient(180deg, var(--red-soft) 0%, var(--white) 100%);
         }
 
         .section-header {
-            max-width: 720px;
-            margin: 0 auto 2.1rem;
             text-align: center;
-        }
-
-        .section-header h2 {
-            margin: 0 0 0.5rem;
-            font-size: 1.5rem;
-        }
-
-        .section-header p {
-            margin: 0;
-            color: var(--gray-mid);
+            margin-bottom: 3rem;
         }
 
         .about-grid {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: auto;
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 50px;
-            align-items: start;
         }
 
         .side-box p {
-            text-align: justify;
-            color: #90191b;
+            color: var(--red);
             font-size: 15px;
+            margin-top: 10px;
         }
 
         .side-box img {
-            width: 100%;
             border-radius: 10px;
-        }
-
-        .caption {
-            font-size: 13px;
-            margin-top: 6px;
-            color: var(--gray-mid);
-        }
-
-        @media (max-width: 768px) {
-    .game-screen {
-        overflow: hidden; /* Clips the sliding track */
-        width: 100%;
-        margin: 0 auto;
-    }
-
-    #game .track {
-        display: flex;
-        flex-wrap: nowrap; /* Keeps items in a single line for carousel */
-    }
-}
-
-        .read-btn {
-            margin-top: 15px;
-            padding: 10px 22px;
-            font-size: 15px;
-            font-weight: 600;
-            border: 2px solid #8b0000;
-            background-color: transparent;
-            color: #8b0000;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .read-btn:hover {
-            background-color: #8b0000;
-            color: #ffffff;
-            transform: translateY(-2px);
-        }
-
-        .read-btn:active {
-            transform: translateY(0);
-        }
-
-        .about-text .read-btn {
-            display: block;
-            margin: 20px auto 15px;
-        }
-
-        .blog-card .read-btn {
-            display: block;
-            margin: auto auto 15px;
-            /* margin-top: auto pushes it to the bottom */
-        }
-
-        /* ===================================
-	    DESIGN & ARCHITECTURE STYLES
-	   =================================== */
-
-        .design {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .content-wrapper {
-            display: flex;
-            align-items: flex-start;
-            gap: 55px;
-        }
-
-        .side-box-design {
-            flex: 0 0 auto;
-        }
-
-        .side-box-design img {
-            max-width: 350px;
-            height: auto;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .design p {
-            color: var(--charcoal-mid);
-            text-align: justify;
-            flex: 1;
-            padding: 0;
-        }
-
-        .design h2 {
-            font-size: 1.5rem;
-            color: var(--charcoal-deep);
-            margin-left: 580px;
-        }
-
-        .about-text,
-        .design {
-            border-radius: var(--radius-lg);
-        }
-
-        .about-text p {
-            margin-top: 0;
-        }
-
-        .about-list {
-            padding-left: 1.1rem;
-            margin: 0.8rem 0 0;
-        }
-
-        .about-list li+li {
-            margin-top: 0.25rem;
-        }
-
-        /* ===================================
-	               GALLERY STYLES
-	   =================================== */
-        .gallery {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-
-        .gallery-carousel {
-            position: relative;
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-soft);
-            background-color: #000;
-        }
-
-        .carousel-row {
-            will-change: transform;
-        }
-
-        .carousel-row:has(img:hover) {
-            animation-play-state: paused;
-        }
-
-        .carousel-slide {
-            min-width: 100%;
-            position: relative;
-            color: var(--white);
-        }
-
-        .carousel-slide img {
             width: 100%;
-            height: 260px;
-            object-fit: cover;
         }
 
-        .carousel-caption {
-            position: absolute;
-            left: 0.85rem;
-            right: 0.85rem;
-            bottom: 0.7rem;
-            padding: 0.4rem 0.6rem;
-            font-size: 0.9rem;
-            border-radius: 999px;
-            background: rgba(0, 0, 0, 0.7);
+        /* --- CAROUSEL ANIMATIONS --- */
+        .carousel-row {
+            display: flex;
+            gap: 2rem;
+            width: max-content;
+            margin: 20px 0;
+        }
+
+        .carousel-row img {
+            width: 320px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+
+        .row-left {
+            animation: scrollLeft 60s linear infinite;
+        }
+
+        .row-right {
+            animation: scrollRight 60s linear infinite;
+        }
+
+        @keyframes scrollLeft {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        @keyframes scrollRight {
+            from { transform: translateX(-50%); }
+            to { transform: translateX(0); }
+        }
+
+        /* --- FAQ SECTION --- */
+        .faq-section {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            color: #444;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding-bottom: 20px;
+        }
+
+        /* --- GAME SECTION --- */
+        .game-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .game-media {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .game-screen {
+            overflow: hidden;
+            border-radius: 1rem;
+            position: relative;
+            width: 100%;
         }
 
         .carousel-btn {
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
+            z-index: 10;
+            background: rgba(0,0,0,0.6);
+            color: white;
             border: none;
+            padding: 10px;
+            border-radius: 50%;
             cursor: pointer;
-            background-color: rgba(255, 255, 255, 0.9);
-            color: var(--black);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
         }
 
-        .gallery-thumbs {
-            gap: 0.4rem;
-            margin: 50px;
+        .carousel-btn.left {
+            left: 10px;
         }
 
-        /* ===================================
-	               VISIT STYLES
-	   =================================== */
+        .carousel-btn.right {
+            right: 10px;
+        }
 
+        /* --- BLOG --- */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .blog-card {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            color: var(--red);
+        }
+
+        /* --- VISIT GRID --- */
         .visit-grid {
             max-width: 1100px;
             margin: 0 auto;
@@ -1049,508 +408,120 @@
         }
 
         .visit-card {
-            background: #ffffff;
-            border-radius: 18px;
+            background: white;
             padding: 2rem;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
-            transition: transform 0.2s ease;
-            transform: translateY(-5px);
+            border-radius: 18px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
 
         .visit-card h3 {
-            font-size: 1.4rem;
+            color: var(--red);
             margin-bottom: 1rem;
-            text-align: center;
-            font-size: 18px;
-            color: #90191B;
         }
 
-        .visit-main {
-            font-size: 1.05rem;
-            font-weight: 500;
-            margin-bottom: 0.8rem;
-        }
-
-        .visit-list {
-            list-style: none;
-            padding: 0;
-            margin: 1rem 0;
-        }
-
-        .visit-list li {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 0.6rem;
-            color: #444;
-        }
-
-        .small-note {
-            font-size: 0.85rem;
-            color: #777;
-            margin-top: 0.5rem;
-            line-height: 1.5;
-        }
-
-        @media (max-width: 900px) {
-            .visit-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .map-placeholder {
-            margin-top: 0.9rem;
-            border-radius: 0.9rem;
-            background-image: repeating-linear-gradient(45deg,
-                    rgba(214, 40, 40, 0.04),
-                    rgba(214, 40, 40, 0.04) 10px,
-                    rgba(0, 0, 0, 0.02) 10px,
-                    rgba(0, 0, 0, 0.02) 20px);
-            padding: 1.3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            color: var(--gray-mid);
-        }
-
-        /* ===================================
-	               GAME STYLES
-	   =================================== */
-               .play-grid {
-            width: 100%;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .game-card {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-            gap: 2.5rem;
-            align-items: center;
-            background-color: var(--white);
-            border-radius: var(--radius-lg);
-            padding: .5rem;
-            /* Removed margin-right: 10px; */
-            box-shadow: var(--shadow-soft);
-        }
-
-        .blog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .game-media {
-            position: relative;
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-
-        .game-screen {
-            overflow: hidden;
-            width: 100%;
-            border-radius: 1.2rem;
-        }
-
-        #game .track {
-            display: flex;
-            transition: transform 0.4s ease;
-        }
-
-        #game .card {
-            min-width: 130px;
-            overflow: hidden;
-            opacity: 1;
-            margin: 0 10px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        #game .card img {
-            width: 100%;
-            object-fit: cover;
-            border-radius: 12px;
-        }
-
-        .carousel-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            border: none;
-            font-size: 28px;
-            padding: 10px 14px;
-            cursor: pointer;
-            border-radius: 50%;
-            z-index: 10;
-        }
-
-        .carousel-btn.left {
-            left: -10px;
-        }
-
-        .carousel-btn.right {
-            right: -10px;
-        }
-
-        .carousel-btn:hover {
-            background: rgba(0, 0, 0, 0.8);
-        }
-
-        .game-caption {
-            position: absolute;
-            left: 1rem;
-            right: 1rem;
-            bottom: 0.7rem;
-            font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 0.35rem 0.65rem;
-            border-radius: 999px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
-        }
-
-        .game-info h3 {
-            margin-top: 0;
-            margin-bottom: 0.5rem;
-        }
-
-        .game-info p {
-            margin-top: 0;
-            margin-bottom: 0.65rem;
-        }
-
-        .game-list {
-            padding-left: 1rem;
-            margin-top: 0;
-            margin-bottom: 0.9rem;
-        }
-
-        /* ===================================
-	          BLOG SECTION
-	   =================================== */
-        .blog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        .blog-card {
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            padding-bottom: 5px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .blog-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            color: #90191B;
-        }
-
-        .blog-card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-
-        .blog-card h3 {
-            padding: 15px 15px 5px;
-        }
-
-        .blog-card p {
-            padding: 0 15px;
-        }
-
-        .blog-meta {
-            font-size: 0.85rem;
-            color: #777;
-        }
-
+        /* --- MODAL --- */
         .blog-modal {
             display: none;
             position: fixed;
+            z-index: 9999;
             inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 999;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
         }
 
         .blog-modal-content {
             background: white;
-            width: 100%;
-            max-width: 900px;
-            margin: 8% auto;
-            padding: 30px;
-            border-radius: 10px;
+            margin: 5% auto;
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            width: 80%;
+            max-width: 800px;
+            position: relative;
         }
 
         #closeBlog {
-            float: right;
+            position: absolute;
+            top: 15px;
+            right: 25px;
             font-size: 28px;
             cursor: pointer;
         }
 
-        .blog-tag {
-            align-self: flex-start;
-            padding: 0.2rem 0.55rem;
-            border-radius: 999px;
-            background-color: rgba(214, 40, 40, 0.1);
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-
-        .blog-tag--alt {
-            background-color: rgba(17, 138, 178, 0.14);
-        }
-
-        .blog-tag--soft {
-            background-color: rgba(176, 137, 255, 0.16);
-        }
-
-        .blog-meta {
-            font-size: 0.86rem;
-            color: var(--gray-mid);
-        }
-
-        .feedback-form {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 1.5rem;
-            background-color: var(--white);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-soft);
-        }
-
-        .form-row {
-            margin-bottom: 1.2rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .feedback-form label,
-        .form-row legend {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--black);
-            justify-content: center;
-        }
-
-        .feedback-form input,
-        .feedback-form select,
-        .feedback-form textarea {
-            width: 100%;
-            padding: 0.6rem 0.8rem;
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(0, 0, 0, 0.18);
-            font-size: 1rem;
-            font-family: inherit;
-            transition: border-color 0.3s, outline 0.3s;
-        }
-
-        .feedback-form input:focus,
-        .feedback-form select:focus,
-        .feedback-form textarea:focus {
-            outline: 2px solid var(--red);
-            outline-offset: 1px;
-            border-color: var(--red);
-        }
-
-        .star-rating {
-            font-size: 2rem;
-            display: flex;
-            flex-direction: row-reverse;
-            justify-content: center;
-            gap: 18px;
-        }
-
-        .star-rating input {
-            display: none;
-        }
-
-        .star-rating label {
-            cursor: pointer;
-            color: #ccc;
-            transition: color 0.2s;
-        }
-
-        .star-rating input:checked~label,
-        .star-rating label:hover,
-        .star-rating label:hover~label {
-            color: gold;
-        }
-
-        .feedback-form .btn-primary {
-            display: block;
-            width: 50%;
-            padding: 0.8rem;
-            border-radius: 8px;
-            background-color: #2d2d2d;
-            color: var(--white);
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-            text-align: center;
-            margin: 0 auto 0;
-        }
-
-        .feedback-form .btn-primary:hover {
-            background-color: #b71c1f;
-            transform: translateY(-1px);
-        }
-
-        .section {
-            padding: 3rem 1.5rem;
-        }
-
-        .feedback-side {
-            background-color: var(--white);
-            border-radius: var(--radius-lg);
-            padding: 2rem 2.2rem;
-            box-shadow: var(--shadow-soft);
-            max-width: 800px;
-            margin: 2rem auto;
-        }
-
-        .feedback-side details {
-            margin-bottom: 1rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-            padding-bottom: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .feedback-side summary {
-            font-weight: 600;
-            font-family: var(--font-display);
-            cursor: pointer;
-            position: relative;
-            padding-right: 2rem;
-            font-size: 1.2rem;
-            color: var(--black);
-            transition: color 0.3s ease;
-            list-style: none;
-        }
-
-        .feedback-side summary::-webkit-details-marker {
-            display: none;
-        }
-
-        .feedback-side summary:hover {
-            color: #90191B;
-        }
-
-        .feedback-side details[open] summary {
-            color: #90191B;
-        }
-
-        .feedback-side summary::after {
-            content: '+';
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.5rem;
-            color: #90191B;
-            transition: transform 0.3s ease;
-        }
-
-        .feedback-side details[open] summary::after {
-            content: '−';
-        }
-
-        .feedback-side details p,
-        .feedback-side details ul {
-            margin: 0;
-            animation: fadeIn 0.4s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-5px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ===================================
-	   FOOTER STYLES
-	   =================================== */
-
+        /* --- FOOTER --- */
         footer {
-            background-color: #1a1a1a;
-            border-top: 1px solid rgba(144, 25, 27, 0.2);
+            background: #1a1a1a;
             color: #B8B8B8;
-            font-family: 'Cormorant Garamond', serif;
+            padding: 4rem 0 2rem;
         }
 
         .footer-container {
-            max-width: 1800px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 0 1.5rem;
         }
 
-        @media (min-width: 1024px) {
-            .footer-container {
-                padding: 0 3rem;
-            }
-        }
-
-        /* ===================================
-        MAIN FOOTER
-        =================================== */
-
         .footer-main {
             display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 3rem;
-            padding: 4rem 0;
         }
 
-        @media (min-width: 768px) {
-            .footer-main {
-                grid-template-columns: repeat(2, 1fr);
+        .footer-logo-accent {
+            color: var(--red);
+            font-weight: bold;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .footer-social-link {
+            background: #2d2d2d;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #333;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            text-align: center;
+        }
+
+        /* --- MEDIA QUERIES --- */
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding-top: 6rem;
+            }
+            .hero-actions {
+                justify-content: center;
+            }
+            .hero-visual {
+                display: flex;
+                justify-content: center;
+            }
+            .about-grid {
+                grid-template-columns: 1fr;
             }
         }
 
-        @media (min-width: 1024px) {
-            .footer-main {
-                grid-template-columns: repeat(2, 1fr);
+        @media (max-width: 768px) {
+            .nav-toggle {
+                display: block;
+                order: -1;
             }
-        }
-
-		@media (max-width: 720px) {
-            .navbar {
-                padding-inline: 1.1rem;
+            .nav-container {
+                justify-content: space-between;
             }
-
-           .nav-toggle {
-        display: inline-flex;
-        order: -1;      /* Moves toggle to the left */
-        z-index: 1005;  /* Ensures clickability */
-    }
-    .nav-container {
-        justify-content: space-between; /* Keeps logo and toggle apart */
-    }
-    .nav-container img {
-        height: 45px;
-        position: relative;
-        left: -10px;    /* Visual adjustment to center the logo */
-    }
-
-            /* FIX: Anchored menu exactly at the bottom of header */
             .nav-links {
                 position: absolute;
                 top: 100%;
@@ -1558,590 +529,74 @@
                 right: 0;
                 background: var(--red);
                 flex-direction: column;
-                align-items: flex-start;
-                padding: 0 1.4rem;
                 max-height: 0;
                 overflow: hidden;
-                transition: max-height var(--transition-med), padding var(--transition-med);
-                box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+                transition: 0.3s;
             }
-
             .nav-links.open {
-                max-height: 260px;
-                padding: 1rem 1.4rem;
+                max-height: 300px;
+                padding: 1rem;
             }
-        }
-
-        .footer-brand h3 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            line-height: 2rem;
-            letter-spacing: 0.05em;
-            margin-bottom: 1rem;
-        }
-
-        @media (min-width: 1024px) {
-            .footer-brand h3 {
-                font-size: 1.875rem;
-                line-height: 2.25rem;
+            .visit-grid {
+                grid-template-columns: 1fr;
             }
-        }
-
-        .footer-column-contact {
-            margin-left: 2.3rem;
-        }
-
-        .footer-logo-light {
-            color: #F5F5F5;
-        }
-
-        .logo-light {
-            color: #111111;
-        }
-
-        .footer-logo-accent {
-            color: #90191B;
-        }
-
-        .footer-description {
-            max-width: 28rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.75;
-        }
-
-        .footer-social {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .footer-social-link {
-            padding: 0.75rem;
-            background-color: #2D2D2D;
-            color: #D4AF37;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .footer-social-link:hover {
-            background-color: #90191B;
-            color: #F5F5F5;
-        }
-
-        .footer-links-section h4 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.125rem;
-            line-height: 1 rem;
-            margin-bottom: 1.5rem;
-            letter-spacing: 0.05em;
-            color: #F5F5F5;
-        }
-
-        .footer-links {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .footer-links li {
-            margin-bottom: 8px;
-        }
-
-        .footer-links a {
-            text-decoration: none;
-            font-size: 17px;
-            transition: 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: #ffffff;
-            padding-left: 4px;
-        }
-
-        .footer-links-list a:hover {
-            color: #D4AF37;
-        }
-
-        .footer-column h3 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.125rem;
-            line-height: 1 rem;
-            margin-bottom: 1.5rem;
-            letter-spacing: 0.05em;
-            color: #F5F5F5;
-        }
-
-        .footer-newsletter {
-            padding: 3rem 0;
-            border-top: 1px solid rgba(144, 25, 27, 0.2);
-        }
-
-        .footer-newsletter-container {
-            max-width: 42rem;
-        }
-
-        .footer-newsletter h4 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.25rem;
-            line-height: 1.75rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .footer-newsletter p {
-            margin-bottom: 1.5rem;
-        }
-
-        .footer-newsletter-form {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        @media (min-width: 640px) {
-            .footer-newsletter-form {
-                flex-direction: row;
-            }
-        }
-
-        .footer-newsletter-input {
-            flex: 1;
-            padding: 0.75rem 1.5rem;
-            background-color: #2D2D2D;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            color: #F5F5F5;
-            outline: none;
-        }
-
-
-        .footer-newsletter-input::placeholder {
-            color: rgba(184, 184, 184, 0.5);
-        }
-
-        .footer-newsletter-input:focus {
-            border-color: #D4AF37;
-        }
-
-        .footer-newsletter-button {
-            padding: 0.75rem 2rem;
-            background-color: #90191B;
-            color: #F5F5F5;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            letter-spacing: 1.5px;
-            border: none;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-        }
-
-        .footer-newsletter-button:hover {
-            background-color: #D4AF37;
-            color: #1a1a1a;
-        }
-
-        .footer-bottom {
-            padding: 2rem 0;
-            border-top: 1px solid rgba(144, 25, 27, 0.2);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        @media (min-width: 768px) {
-            .footer-bottom {
-                flex-direction: row;
-            }
-        }
-
-        .footer {
-            background-color: #1c1c1c;
-            color: #ffffff;
-            padding-top: 4rem;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-main {
-            display: grid;
-            gap: 3rem;
-            padding-bottom: 3rem;
-        }
-
-        .footer-left h3 {
-            margin-bottom: 1rem;
-        }
-
-        .footer-left p {
-            line-height: 1.6;
-            opacity: 0.8;
-        }
-
-        .footer-right h4 {
-            margin-bottom: 1rem;
-        }
-
-        .footer-right ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-right ul li {
-            margin-bottom: 0.5rem;
-        }
-
-        .footer-right ul li a {
-            text-decoration: none;
-            color: #ffffff;
-            opacity: 0.8;
-            transition: 0.3s;
-        }
-
-        .footer-right ul li a:hover {
-            opacity: 1;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding: 1.5rem 0;
-            background-color: 1a1a1a;
-            font-size: 0.9rem;
-            opacity: 0.7;
-            margin-left: 400px;
-        }
-
-		/* --- NEW RESPONSIVENESS FIXES --- */
-
-/* For smaller laptops and tablets */
-@media (max-width: 1024px) {
-    .hero {
-        grid-template-columns: 1fr; /* Stacks the two sides vertically */
-        padding-top: 6rem;
-    }
-    .hero-visual .carousel {
-        width: 100%;
-        max-width: 700px;
-    }
-}
-
-/* For mobile phones */
-@media (max-width: 768px) {
-    .hero {
-        padding: 5rem 1rem 2rem;
-        gap: 2rem;
-    }
-    
-    /* Resizes the massive Landing Page Title */
-    .hero-content h3.footer-logo {
-        font-size: 28px !important; 
-    }
-    
-    .hero-tagline {
-        font-size: 15px;
-        line-height: 1.6;
-    }
-    
-    .hero-visual {
-        height: 300px;
-        justify-content: center;
-    }
-    
-    .hero-visual .carousel {
-        height: 300px;
-    }
-    
-    .hero-visual .card {
-        width: 240px;
-        height: 180px;
-    }
-    
-    /* Stacks the Game Section Image and Text */
-    .game-card {
-        grid-template-columns: 1fr; /* Image goes on top, text below */
-        gap: 1.5rem;
-    }
-    
-    .game-info {
-        padding: 0 1rem 1rem;
-    }
-}
-@media (max-width: 768px) {
-    .about-grid {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 2rem !important;
-    }
-    .about-text, .side-box {
-        width: 100% !important;
-    }
-}
-
-		@media (max-width: 768px) {
-    .game-card {
-        padding: 1.5rem 1rem;
-        overflow: hidden; /* Prevents card-level overflow */
-    }
-
-    .game-info p, 
-    .game-info h3, 
-    .game-info ul {
-        max-width: 100%;
-        word-wrap: break-word; /* Forces long text to wrap instead of overflow */
-    }
-			 .game-media {
-        position: relative;
-        overflow: visible; /* Show buttons even if they overlap edges */
-    }
-    .carousel-btn {
-        z-index: 10;
-        display: flex !important;
-    }
-    .carousel-btn.right {
-        right: -10px; /* Moves button slightly outside for better touch access */
-    }
-}
-
-               @media (max-width: 768px) {
-            
-            /* ... (hero media queries omitted for brevity) ... */
-
             .game-card {
                 grid-template-columns: 1fr;
-                gap: 1.5rem;
             }
-
-            .game-info {
-                padding: 0 1rem 1rem;
-            }
-
-            /* FIX: Expanding the Game Carousel Image size bounds */
-            #game .card {
-                min-width: 220px;
-                margin: 0 8px;
-            }
-
-            /* FIX: Safely pulling the overlay buttons inwards */
-            .carousel-btn.left {
-                left: 10px;
-            }
-
-            .carousel-btn.right {
-                right: 10px;
-            }
-        }
-
-        .blog-modal {
-            display: none;
-            position: fixed;
-            z-index: 9999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-        }
-
-        .blog-modal-content {
-            background-color: var(--white);
-            margin: 5% auto;
-            padding: 40px;
-            border-radius: var(--radius-lg);
-            width: 80%;
-            max-width: 800px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            position: relative;
-        }
-
-        #closeBlog {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            position: absolute;
-            top: 15px;
-            right: 25px;
-            transition: color 0.3s ease;
-        }
-
-        #closeBlog:hover,
-        #closeBlog:focus {
-            color: var(--text-dark);
-            text-decoration: none;
-        }
-
-        #blogContent {
-            color: var(--charcoal-mid);
-            line-height: 1.6;
-        }
-
-        #blogContent h2 {
-            color: var(--text-dark);
-            margin-bottom: 20px;
-            font-size: 2rem;
-            border-bottom: 2px solid var(--red-soft);
-            padding-bottom: 10px;
-            display: inline-block;
-        }
-
-        #blogContent p {
-            margin-bottom: 1.2rem;
-            text-align: justify;
-        }
-
-        @keyframes scrollLeft {
-            0% {
-                transform: translateX(0);
-            }
-
-            100% {
-                transform: translateX(-50%);
-            }
-        }
-
-        @keyframes scrollRight {
-            0% {
-                transform: translateX(-50%);
-            }
-
-            100% {
-                transform: translateX(0);
-            }
-        }
-
-        .marquee-container {
-            width: 100%;
-            overflow: hidden;
-            position: relative;
-            padding: 20px 0;
-            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-        }
-
-        .marquee-track {
-            display: flex;
-            gap: 25px;
-            width: max-content;
-        }
-
-        .marquee-track.left {
-            animation: scrollLeft 60s linear infinite;
-        }
-
-        .marquee-track.right {
-            animation: scrollRight 60s linear infinite;
-        }
-
-        .marquee-track:hover {
-            animation-play-state: paused;
-        }
-
-        .marquee-row {
-            margin-bottom: 25px;
-        }
-
-        .marquee-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .feedback-pill-marquee {
-            width: 400px;
-            flex-shrink: 0;
-        }
-
-        @media (max-width: 768px) {
-            .feedback-pill-marquee {
-                width: 320px;
-            }
-
-            .marquee-track.left {
-                animation-duration: 40s;
-            }
-
-            .marquee-track.right {
-                animation-duration: 40s;
+            .footer-main {
+                grid-template-columns: 1fr;
             }
         }
     </style>
-
 </head>
 
-	<div id="blogModal" class="blog-modal">
-    <div class="blog-modal-content">
-        <span id="closeBlog" onclick="closeModal('blogModal')">&times;</span>
-        <div id="blogContent"></div>
-    </div>
-</div>
-
 <body>
-	<!--<div id="login-wall">
-    <div class="login-content">
-        <div class="login-logo">
-            <img src="web-images/qqq.jpg" alt="Museum Logo">
-        </div>
-        <h1>Welcome to Museo ni Dr. Pío</h1>
-        <p>Please sign in with your Google account to continue using this website.</p>
-        <button class="google-btn" onclick="loginWithGoogle()">
-            <i class="fab fa-google"></i>
-            Sign in with Google
-        </button>
-        <div id="login-error" style="margin-top: 15px; color: #ff9494; font-size: 14px; background: rgba(255,0,0,0.1); padding: 10px; border-radius: 8px; display: none; line-height: 1.4;"></div>
-        <div class="site-footer">
-            &copy; 2026 Museo ni Dr. Pío Valenzuela.
+    <div id="blogModal" class="blog-modal">
+        <div class="blog-modal-content">
+            <span id="closeBlog" onclick="closeModal('blogModal')">&times;</span>
+            <div id="blogContent"></div>
         </div>
     </div>
-</div>-->
-    <header class="site-header">
-       <nav class="navbar" aria-label="Main">
-            <div class="nav-container">
-                <img src="web-images/qqq.jpg" alt="Dr. Pio Valenzuela Museum Logo" height="70"></img>
-                <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false">
-                <span></span>
-                <span></span>
-            </button>
 
-            <ul class="nav-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#gallery">Gallery</a></li>
-				<li><a href="#blog">Blog</a></li>
-                <li><a href="#game">Game</a></li>
-                <li><a href="#feedback">Feedback</a></li>
-            </ul>
+    <header class="site-header">
+        <nav class="navbar" aria-label="Main">
+            <div class="nav-container">
+                <img src="web-images/qqq.jpg" alt="Museum Logo" height="70">
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span><span></span><span></span>
+                </button>
+                <ul class="nav-links">
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#blog">Blog</a></li>
+                    <li><a href="#game">Game</a></li>
+                    <li><a href="#feedback">Feedback</a></li>
+                </ul>
+            </div>
         </nav>
+
         <div id="home" class="hero">
             <div class="hero-content">
-                <h3 class="footer-logo" style=" font-size: 35px;">
-                    <span class="logo-light">MUSEO NI</span><br>
+                <h1 style="font-size: 35px; margin: 0;">
+                    <span style="color:#111">MUSEO NI</span><br>
                     <span class="footer-logo-accent">DR. PIO VALENZUELA</span>
-                </h3>
+                </h1>
                 <p class="hero-tagline">
-                    Step into the home of Pío Valenzuela and discover the story of a doctor who played a vital role in
-                    the fight for Philippine freedom. The museum invites visitors to explore his life, his contributions
-                    to the Katipunan, and the legacy he left to what is now Valenzuela City.
+                    Step into the home of Pío Valenzuela and discover the story of a doctor who played a vital role in the fight for Philippine freedom.
                 </p>
                 <div class="hero-actions">
                     <a href="#visit" class="btn btn-primary">How To Visit</a>
                     <a href="#game" class="btn btn-ghost">About Game</a>
                 </div>
-
             </div>
-            <div class="hero-visual" aria-hidden="true">
+            <div class="hero-visual">
                 <div class="carousel">
                     <div class="track">
-                        <div class="card"><img src="web-images/gard.jpg"></div>
-                        <div class="card"><img src="web-images/night.jpg"></div>
-                        <div class="card"><img src="web-images/right.jpg"></div>
-                        <div class="card"><img src="web-images/gazebo.jpg"></div>
-                        <div class="card"><img src="web-images/front.jpg"></div>
+                        <div class="card"><img src="web-images/gard.jpg" alt="Garden"></div>
+                        <div class="card"><img src="web-images/night.jpg" alt="Museum Night"></div>
+                        <div class="card"><img src="web-images/right.jpg" alt="Museum Right"></div>
+                        <div class="card"><img src="web-images/gazebo.jpg" alt="Gazebo"></div>
+                        <div class="card"><img src="web-images/front.jpg" alt="Museum Front"></div>
                     </div>
                 </div>
             </div>
@@ -2151,392 +606,136 @@
     <main>
         <section id="about" class="section section--alt">
             <div class="about-grid">
-
-                <div class="about-text" style="text-align: justify;">
-                    <span style="font-size: 25px; line-height: 55px;"> ABOUT </span>
+                <div class="about-text">
+                    <h2>ABOUT</h2>
                     <p>
-                        Welcome to the Museo ni Dr. Pío Valenzuela, a sanctuary of history built upon the very ground
-                        where one of our nation's greatest healers and patriots once lived. Born in 1869 in the town of
-                        Polo, Dr. Valenzuela was a man of remarkable duality: a physician dedicated to saving lives and
-                        a revolutionary leader committed to the birth of a free Philippines. As a key member of the
-                        Katipunan and a trusted confidant of Andrés Bonifacio, his life was a whirlwind of secret
-                        missions, clandestine publications, and a relentless pursuit of sovereignty. When you walk
-                        through these halls, you aren't just looking at artifacts; you are tracing the footsteps of a
-                        man who transitioned from the frontlines of a revolution to the halls of public service as the
-                        first Mayor of Polo and Governor of Bulacan.
-                        <br>
-                        <br>
-                        This museum, officially opened in 2023, is the fulfillment of a long-held vision to preserve the
-                        'bahay na bato' (stone house) legacy of the Valenzuela family. Though the original structure was
-                        lost during the ravages of World War II, this meticulous reconstruction serves as a living
-                        tribute to his 86 years of selfless service. Accredited by the Department of Tourism, our
-                        mission is to ensure that the flame of Dr. Valenzuela’s heroism his 'buhay at paglilingkod'
-                        continues to inspire every Filipino who passes through our doors. We invite you to explore the
-                        corridors of the past and discover the heart of the man whose name our city proudly bears.
-
+                        Welcome to the Museo ni Dr. Pío Valenzuela, a sanctuary of history built upon the very ground where one of our nation's greatest leaders lived.
                     </p>
-                    </span>
-
+                    <p>
+                        Born in 1869, Dr. Valenzuela was a physician dedicated to saving lives and a revolutionary leader committed to the birth of a free Philippines.
+                    </p>
                 </div>
-
-
                 <div class="side-box">
                     <img src="web-images/pio-landscape.jpg" alt="Dr. Pío Valenzuela">
-                    <p class="caption" style="text-align: center; font-weight: bold; margin-top: 15px;">Dr. Pío
-                        Valenzuela (1869–1956)</p>
-                    <p style="text-align: justify;">
-                        Dr. Pío Valenzuela was born on July 11, 1869 in Polo, Bulacan (now Valenzuela City). He was a
-                        physician-patriot and one of the “Big Three” leaders of the Katipunan alongside Andrés Bonifacio
-                        and Emilio Jacinto. A medical student at the University of Santo Tomas, he joined the secret
-                        revolutionary movement, served in the Camara Negra (Black Chamber). His legacy is honored today
-                        as Polo was later renamed Valenzuela City after him.
-                    </p>
+                    <p class="caption"><strong>Dr. Pío Valenzuela (1869–1956)</strong></p>
+                    <p>Physician-patriot and one of the “Big Three” leaders of the Katipunan.</p>
                 </div>
-
             </div>
+        </section>
 
-            <section id="gallery" class="section" style="overflow: hidden; width: 100%;">
-                <div class="carousel-row row-left">
-                    <img src="web-images/second-floor.jpg" alt="Second-floor" onerror="this.src='web-images/second-floor.jpg'">
-                    <img src="web-images/study-table.jpg" alt="table" onerror="this.src='web-images/study-table.jpg'">
-                    <img src="web-images/study-table.jpg" alt="study-table" onerror="this.src='web-images/study-table.jpg'">
-                    <img src="web-images/museo-pic.jpg" alt="museo-pic" onerror="this.src='web-images/museo-pic.jpg'">
-                    <img src="web-images/front.jpg" alt="front" onerror="this.src='web-images/front.jpg'">
-                    <img src="web-images/right.jpg" alt="right" onerror="this.src='web-images/right.jpg'">
-                    <img src="web-images/fam.jpg" alt="fam" onerror="this.src='web-images/fam.jpg'">
-                    <img src="web-images/gazebo.jpg" alt="gazebo" onerror="this.src='web-images/gazebo.jpg'">
-                    
-                    <img src="web-images/second-floor.jpg" alt="Second-floor" onerror="this.src='web-images/second-floor.jpg'">
-                    <img src="web-images/study-table.jpg" alt="table" onerror="this.src='web-images/study-table.jpg'">
-                    <img src="web-images/study-table.jpg" alt="study-table" onerror="this.src='web-images/study-table.jpg'">
-                    <img src="web-images/museo-pic.jpg" alt="museo-pic" onerror="this.src='web-images/museo-pic.jpg'">
-                    <img src="web-images/front.jpg" alt="front" onerror="this.src='web-images/front.jpg'">
-                    <img src="web-images/right.jpg" alt="right" onerror="this.src='web-images/right.jpg'">
-                    <img src="web-images/fam.jpg" alt="fam" onerror="this.src='web-images/fam.jpg'">
-                    <img src="web-images/gazebo.jpg" alt="gazebo" onerror="this.src='web-images/gazebo.jpg'">
-                </div>
-
-                <div class="carousel-row row-right">
-                    <img src="web-images/bookshelf.jpg" alt="bookshelf" onerror="this.src='web-images/bookshelf.jpg'">
-                    <img src="web-images/dining.jpg" alt="dining" onerror="this.src='web-images/dining.jpg'">
-                    <img src="web-images/salaa.jpg" alt="salaa" onerror="this.src='web-images/salaa.jpg'">
-                    <img src="web-images/guhoat.jpg" alt="guhoat" onerror="this.src='web-images/guhoat.jpg'">
-                    <img src="web-images/dio.jpg" alt="dio" onerror="this.src='web-images/dio.jpg'">
-                    <img src="web-images/kitchen.jpg" alt="kitchen" onerror="this.src='web-images/kitchen.jpg'">
-                    <img src="web-images/clinica.jpg" alt="clinica" onerror="this.src='web-images/clinica.jpg'">
-                    <img src="web-images/dioramas.jpg" alt="dioramas" onerror="this.src='web-images/dioramas.jpg'">
-                    
-                    <img src="web-images/bookshelf.jpg" alt="bookshelf" onerror="this.src='web-images/bookshelf.jpg'">
-                    <img src="web-images/dining.jpg" alt="dining" onerror="this.src='web-images/dining.jpg'">
-                    <img src="web-images/salaa.jpg" alt="salaa" onerror="this.src='web-images/salaa.jpg'">
-                    <img src="web-images/guhoat.jpg" alt="guhoat" onerror="this.src='web-images/guhoat.jpg'">
-                    <img src="web-images/dio.jpg" alt="dio" onerror="this.src='web-images/dio.jpg'">
-                    <img src="web-images/kitchen.jpg" alt="kitchen" onerror="this.src='web-images/kitchen.jpg'">
-                    <img src="web-images/clinica.jpg" alt="clinica" onerror="this.src='web-images/clinica.jpg'">
-                    <img src="web-images/dioramas.jpg" alt="dioramas" onerror="this.src='web-images/dioramas.jpg'">
-                </div>
-            </section>
-
-            <div class="feedback-side faq-section" id="faq-section-container">
-                <h3>FAQ's</h3>
-                <p style="color: var(--text-muted); font-size: 14px; text-align: center;">Loading FAQs...</p>
+        <section id="gallery" class="section" style="overflow: hidden;">
+            <div class="carousel-row row-left">
+                <img src="web-images/second-floor.jpg" alt="Exhibition">
+                <img src="web-images/study-table.jpg" alt="Study Table">
+                <img src="web-images/museo-pic.jpg" alt="Museum View">
+                <img src="web-images/front.jpg" alt="Front View">
+                <img src="web-images/right.jpg" alt="Right View">
+                <img src="web-images/second-floor.jpg" alt="Exhibition">
+                <img src="web-images/study-table.jpg" alt="Study Table">
             </div>
+        </section>
 
-            <section id="blog" class="section">
-                <div class="section-header">
-                    <h2>Blog</h2>
-                    <p>Short reads about the Museo ni Dr. Pío Valenzuela.</p>
-                </div>
+        <div class="faq-section" id="faq-section-container">
+            <h3>FAQ's</h3>
+            <p>Loading FAQs...</p>
+        </div>
 
-                <div class="blog-grid">
-                    <!-- Blog cards are dynamically rendered here from feedback.js -->
-                </div>
-            </section>
-
-            <section id="game" class="section section--alt">
-                <div class="section-header">
-                    <h2>Pio Museo Quest</h2>
-                    <p>
-                        A quick peek of our digital web-based game before you visit the real gallery.
-                    </p>
-                </div>
-                <div class="play-grid">
-                    <article class="game-card">
-
-                        <div class="game-media">
-                            <button class="carousel-btn left">&#10094;</button>
-
-                            <div class="game-screen">
-                                <div class="track">
-                                    <div class="card"><img src="web-images/1.jpg"></div>
-                                    <div class="card"><img src="web-images/2.jpg"></div>
-                                    <div class="card"><img src="web-images/3.jpg"></div>
-                                    <div class="card"><img src="web-images/4.jpg"></div>
-                                    <div class="card"><img src="web-images/5.jpg"></div>
-                                    <div class="card"><img src="web-images/6.jpg"></div>
-                                    <div class="card"><img src="web-images/7.jpg"></div>
-                                    <div class="card"><img src="web-images/8.jpg"></div>
-                                    <div class="card"><img src="web-images/9.jpg"></div>
-                                    <div class="card"><img src="web-images/10.jpg"></div>
-                                </div>
-                            </div>
-
-                            <button class="carousel-btn right">&#10095;</button>
-                        </div>
-
-                        <div class="game-info">
-                            <h3>Play and Experience</h3>
-                            <p>
-                                Pio Museo Quest is an interactive museum game where learning meets adventure.
-                                Explore Dr. Pio Valenzuela’s Museo, solve challenges, and uncover the stories
-                                behind his life and legacy.
-                            </p>
-                            <ul class="game-list">
-                                <li>Combines tech with real exhibits for fast, fun learning</li>
-                                <li>Play the short missions and mini-games while exploring history</li>
-                                <li>Face interactive challenges at every station</li>
-                            </ul>
-                            <strong>
-                                <p>To play: Visit the Museo and scan the QR code at the entrance.</p>
-                            </strong>
-                        </div>
-                    </article>
-                </div>
-            </section>
-
-            <section id="visit" class="section">
-                <div class="section-header">
-                    <h2>Plan Your Visit</h2>
-                </div>
-				
-                <div class="visit-grid">
-                    <div class="visit-card">
-                        <h3>Address</h3>
-                        <p class="visit-main">
-                            Barangay Pariancillo Villa, <br>
-                            Valenzuela City, Philippines
-                        </p>
-
-                        <p class="small-note">
-                            Built the history at the site of Dr. Pío Valenzuela’s original residence and discover
-                            the
-                            stories that shaped Valenzuela City. <br></p>
-
-                        <ul class="visit-list">
-                            <li><strong>Opening Hours:</strong> Monday – Sunday</li>
-                            <li><strong>Time:</strong> 9:00 AM – 4:00 PM</li>
-                            <li><strong>Last Entry:</strong> 3:00 PM</li>
-                            <br>
-                            <li><strong>Note:</strong> Requests submitted after 5:00 PM are processed the next day
-                                at 8:00
-                                AM.</li>
-                        </ul>
-
-                        <a href="https://www.waze.com/live-map/directions/ph/ncr/valenzuela/dr.-pio-valenzuela-museum?to=place.ChIJ30T0JYOzlzMRIbWCPKJbUog"
-                            class="btn btn-secondary" target="_blank" rel="noopener">
-                            Get Directions
-                        </a>
-                    </div>
-
-                    <div class="visit-card">
-                        <h3>Photo Shoots</h3>
-                        <ul class="visit-list">
-                            <ul>
-                                <li>Do not block visitors; the museum remains open to the public.</li>
-                                <li>Adjust to visitor flow and coordinate with staff for tours.</li>
-                                <li>No props; do not move or alter exhibits.</li>
-                                <li>Dress, poses, and speech must respect the museum’s history.</li>
-                                <li>Do not use museum electricity.</li>
-                                <li>Register at the reception before entering.</li>
-                            </ul>
-                        </ul>
-
-                        </ul>
-                        <a href="https://forms.gle/3XDygMrpk5aspWxn6" class="btn btn-secondary" target="_blank"
-                            rel="noopener">
-                            Proceed &rarr;
-                        </a>
-                    </div>
-
-                    <div class="visit-card">
-                        <h3>Group Tours</h3>
-                        <ul class="visit-list">
-                            <li><strong>Walk-in Visitors (20+):</strong> Free entry. No reservation required.</li>
-                            <li>
-
-                                <ul>
-                                    <li>Reserve at least 3 days in advance.</li>
-                                    <li>Confirmation email will be sent once approved.</li>
-                                    <li>Missed schedules are forfeited.</li>
-                                    <li>Maximum 50 visitors per time slot.</li>
-                                    <li>Schedule changes must be made at least 1 day prior.</li>
-                                    <li>One representative registers for group visits.</li>
-
-                                    <a href=" https://forms.gle/s4FW1wRm64HCPsyC6" class="btn btn-secondary"
-                                        target="_blank" rel="noopener">
-                                        Procced &rarr;
-                                    </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
-            </section>
-
-            <!-- Feedback -->
-            <!-- <section id="feedback" class="section section--alt">
+        <section id="blog" class="section">
             <div class="section-header">
-                <h2>Share Us Your Thoughts</h2>
-                <p>
-                    Tell us what you enjoyed and what we can make even better next time.
-                </p>
+                <h2>Blog</h2>
+                <p>Short reads about the Museo ni Dr. Pío Valenzuela.</p>
             </div>
-            <div class="feedback-grid"
-                style="display: grid; grid-template-columns: 0.9fr 1.15fr; gap: 50px; max-width: 1600px; margin: 0 auto; align-items: start; padding: 0 40px;">
-                <form class="feedback-form" aria-label="Feedback form"
-                    style="background: white; padding: 40px; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%;">
-                    <div class="form-row">
-                        <label for="name">Name</label>
-                        <input id="name" name="name" type="text" placeholder="Enter your name" required />
-                    </div>
-                    <div class="form-row">
-                        <label for="email">Email</label>
-                        <input id="email" name="email" type="email" placeholder="Enter your email" required />
-                    </div>
-                    <div class="form-row">
-                        <label for="age-group">Age group</label>
-                        <select id="age-group" name="age-group" required>
-                            <option value="">Choose one</option>
-                            <option>Child (under 12)</option>
-                            <option>Teen (13–17)</option>
-                            <option>Adult (18–64)</option>
-                            <option>Senior (65+)</option>
-                        </select>
-                    </div>
-                    <div class="form-row">
-                        <label for="address">Address</label>
-                        <input id="address" name="address" type="text" placeholder="Enter your city" required />
-                    </div>
-                    <div class="form-row">
-                        <label for="message">Anything you’d like to tell us?</label>
-                        <textarea id="message" name="message" rows="4"
-                            placeholder="Share your thoughts, concerns, or recommendations with us."
-                            required></textarea>
-                    </div>
-                    <label>Rate Your Experience:</label>
-                    <div class="star-rating">
-                        <input type="radio" name="rating" id="star5" value="5">
-                        <label for="star5">★</label>
-
-                        <input type="radio" name="rating" id="star4" value="4">
-                        <label for="star4">★</label>
-
-                        <input type="radio" name="rating" id="star3" value="3">
-                        <label for="star3">★</label>
-
-                        <input type="radio" name="rating" id="star2" value="2">
-                        <label for="star2">★</label>
-
-                        <input type="radio" name="rating" id="star1" value="1">
-                        <label for="star1">★</label>
-                    </div>
-                    <button class="btn btn-primary" type="submit">
-                        Send feedback
-                    </button>
-                </form> -->
-
-            <section id="feedback" class="section section--alt">
-                <div class="approved-feedbacks" style="background: transparent; 
-            padding: 0 10px; 
-            height: 100%; max-width: 1400px;
-             margin: 0 auto;">
-                    <h3 style="margin-top: 0; 
-                    color: #90191B; 
-                    font-size: 28px; 
-                    font-family: 'Cinzel', serif; 
-                    margin-bottom: 25px; 
-                    text-align: center;">
-                        What our visitors say</h3>
-                    <div id="total-star-rating" style="margin-bottom: 35px; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; 
-                    gap: 15px; font-family: 'Inter',sans-serif; 
-                     min-height: 45px;">
-                    </div>
-                    <div id="approved-feedbacks-list" style="width: 100%; min-height: 200px;">
-                        <!-- Content will be dynamically inserted here by feedback.js -->
-                    </div>
+            <div class="blog-grid">
                 </div>
-            </section>
+        </section>
+
+        <section id="game" class="section section--alt">
+            <div class="section-header">
+                <h2>Pio Museo Quest</h2>
+                <p>Explore history through our interactive game.</p>
+            </div>
+            <div class="game-card">
+                <div class="game-media">
+                    <button class="carousel-btn left">&#10094;</button>
+                    <div class="game-screen">
+                        <div class="track">
+                            <div class="card"><img src="web-images/1.jpg" alt="Game Level 1"></div>
+                            <div class="card"><img src="web-images/2.jpg" alt="Game Level 2"></div>
+                            <div class="card"><img src="web-images/3.jpg" alt="Game Level 3"></div>
+                        </div>
+                    </div>
+                    <button class="carousel-btn right">&#10095;</button>
+                </div>
+                <div class="game-info">
+                    <h3>Play and Experience</h3>
+                    <p>Pio Museo Quest is an interactive museum game where learning meets adventure.</p>
+                    <strong><p>Visit the Museo and scan the QR code to begin.</p></strong>
+                </div>
+            </div>
+        </section>
+
+        <section id="visit" class="section">
+            <div class="section-header"><h2>Plan Your Visit</h2></div>
+            <div class="visit-grid">
+                <div class="visit-card">
+                    <h3>Address</h3>
+                    <p>Barangay Pariancillo Villa, Valenzuela City</p>
+                    <p>Open: Mon-Sun (9AM-4PM)</p>
+                    <a href="#" class="btn btn-secondary">Get Directions</a>
+                </div>
+                <div class="visit-card">
+                    <h3>Photo Shoots</h3>
+                    <p>Coordinate with staff. No props or blocked exits.</p>
+                    <a href="#" class="btn btn-secondary">Proceed</a>
+                </div>
+                <div class="visit-card">
+                    <h3>Group Tours</h3>
+                    <p>Reserve 3 days early for 20+ people.</p>
+                    <a href="#" class="btn btn-secondary">Proceed</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="feedback" class="section section--alt">
+            <div class="approved-feedbacks">
+                <h3 style="text-align: center;">What our visitors say</h3>
+                <div id="approved-feedbacks-list"></div>
+            </div>
+        </section>
     </main>
 
-    <footer id="footer-newsletter-container">
+    <footer>
         <div class="footer-container">
-
             <div class="footer-main">
-
                 <div class="footer-brand">
-                    <h3 class="footer-logo">
-                        <span class="footer-logo-light">MUSEO NI</span><br>
-                        <span class="footer-logo-accent">DR. PIO VALENZUELA</span>
-                    </h3>
-
-                    <p class="footer-description">
-                        The Museo ni Dr. Pio Valenzuela now represents the city's commitment to preserving its cultural,
-                        heritage, and historical roots.
-                    </p>
-
+                    <h3>MUSEO NI <span class="footer-logo-accent">DR. PIO VALENZUELA</span></h3>
+                    <p>Celebrating the history and heritage of Valenzuela City.</p>
                     <div class="footer-social">
-                        <a href="https://www.facebook.com/PioValMuseum/" class="footer-social-link"
-                            aria-label="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://www.instagram.com/piovalmuseum/" class="footer-social-link"
-                            aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://x.com/pio_valenzuela?lang=en" class="footer-social-link" aria-label="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="https://www.tiktok.com/@piovalmuseum" class="footer-social-link" aria-label="Tiktok">
-                            <i class="fab fa-tiktok"></i>
-                        </a>
+                        <a href="#" class="footer-social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="footer-social-link"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
-
                 <div class="footer-column">
-                    <div class="footer-column-contact">
-                        <h3>Contact</h3>
-
-                        <p>Email: piovalmuseum@gmail.com</p>
-                        <p>Phone: (02) 82945699</p>
-                    </div>
+                    <h3>Contact</h3>
+                    <p>Email: piovalmuseum@gmail.com</p>
+                    <p>Phone: (02) 82945699</p>
                 </div>
             </div>
-
             <div class="footer-bottom">
-                <div class="footer-copyright">
-                    <p>&copy; 2026 Museo ni Dr. Pio Valenzuela. All rights reserved.</p>
-                </div>
+                <p>&copy; 2026 Museo ni Dr. Pio Valenzuela. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="supabaseClient.js"></script>
     <script src="feedback.js"></script>
     <script src="pio_museo.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const navToggle = document.querySelector('.nav-toggle');
             const navLinks = document.querySelector('.nav-links');
-            
-            if (navToggle && navLinks) {
+            if (navToggle) {
                 navToggle.addEventListener('click', () => {
                     navLinks.classList.toggle('open');
-                    const isOpen = navLinks.classList.contains('open');
-                    navToggle.setAttribute('aria-expanded', isOpen);
                 });
             }
         });
