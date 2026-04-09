@@ -276,7 +276,7 @@
         }
 
         .faq-answer {
-            max-height: 0 !important;
+            max-height: 0;
             overflow: hidden !important;
             transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
             font-size: 15px !important;
@@ -1531,15 +1531,24 @@
             }
         }
 
-		             @media (max-width: 720px) {
+		@media (max-width: 720px) {
             .navbar {
                 padding-inline: 1.1rem;
             }
 
-            .nav-toggle {
-                display: inline-flex;
-                gap: 0.1rem;
-            }
+           .nav-toggle {
+        display: inline-flex;
+        order: -1;      /* Moves toggle to the left */
+        z-index: 1005;  /* Ensures clickability */
+    }
+    .nav-container {
+        justify-content: space-between; /* Keeps logo and toggle apart */
+    }
+    .nav-container img {
+        height: 45px;
+        position: relative;
+        left: -10px;    /* Visual adjustment to center the logo */
+    }
 
             /* FIX: Anchored menu exactly at the bottom of header */
             .nav-links {
@@ -1863,6 +1872,16 @@
         padding: 0 1rem 1rem;
     }
 }
+@media (max-width: 768px) {
+    .about-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2rem !important;
+    }
+    .about-text, .side-box {
+        width: 100% !important;
+    }
+}
 
 		@media (max-width: 768px) {
     .game-card {
@@ -1875,6 +1894,17 @@
     .game-info ul {
         max-width: 100%;
         word-wrap: break-word; /* Forces long text to wrap instead of overflow */
+    }
+			 .game-media {
+        position: relative;
+        overflow: visible; /* Show buttons even if they overlap edges */
+    }
+    .carousel-btn {
+        z-index: 10;
+        display: flex !important;
+    }
+    .carousel-btn.right {
+        right: -10px; /* Moves button slightly outside for better touch access */
     }
 }
 
