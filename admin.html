@@ -2349,16 +2349,19 @@
       if (table) table.closest('.table-container').scrollIntoView({ behavior: 'smooth' });
     }
 
-    fetch("/api/sendCertificate", {
+    async function sendCertificate(email, name) {
+  if (!confirm("Send certificate?")) return;
+
+    await fetch("/api/sendCertificate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        email: "[EMAIL_ADDRESS]",
-        name: "Juan Dela Cruz"
-      })
-    });
+      body: JSON.stringify({ email, name })
+      });
+    
+      alert("Certificate sent!");
+    }
   </script>
 </body>
 
