@@ -243,7 +243,7 @@ async function fetchApprovedFeedbacks() {
 
         container.innerHTML = '';
 
-        if (feedbacks.length > 6) {
+        if (feedbacks.length > 4) {
             // Carousel Mode (2 Rows)
             const mid = Math.ceil(feedbacks.length / 2);
             const row1 = feedbacks.slice(0, mid);
