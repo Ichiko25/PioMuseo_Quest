@@ -179,25 +179,39 @@ function escapeHtml(unsafe) {
 
 async function fetchApprovedFeedbacks() {
     try {
-        const { data: analyticsData } = await supabaseClient.from('analytics').select('approved_feedbacks').eq('id', 1).single();
-        let approvedIds = [];
-        if (analyticsData && analyticsData.approved_feedbacks) {
-            approvedIds = analyticsData.approved_feedbacks;
-        }
-        const localIds = JSON.parse(localStorage.getItem('approved_feedbacks') || '[]');
-        approvedIds = [...new Set([...approvedIds, ...localIds])];
+        // Step A: Try the new direct column approach
+        let { data: feedbacks, error } = await supabaseClient
+            .from('users')
+            .select('*')
+            .eq('is_approved', true)
+            .not('message', 'is', null)
+            .order('created_at', { ascending: false })
+            .limit(20);
 
-        let feedbacks = [];
-        if (approvedIds.length > 0) {
-            const { data, error } = await supabaseClient
-                .from('users')
-                .select('*')
-                .in('id', approvedIds)
-                .order('created_at', { ascending: false })
-                .limit(20);
+        // Step B: Fallback if the column doesn't exist or query fails
+        if (error) {
+            console.warn("is_approved column might be missing, falling back to analytics mapping...", error.message);
 
-            if (error) throw error;
-            feedbacks = data;
+            const { data: analyticsData } = await supabaseClient.from('analytics').select('approved_feedbacks').eq('id', 1).single();
+            let approvedIds = [];
+            if (analyticsData && analyticsData.approved_feedbacks) {
+                approvedIds = analyticsData.approved_feedbacks;
+            }
+            const localIds = JSON.parse(localStorage.getItem('approved_feedbacks') || '[]');
+            approvedIds = [...new Set([...approvedIds, ...localIds])];
+
+            if (approvedIds.length > 0) {
+                const { data: fallbackData, error: fallbackError } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .in('id', approvedIds)
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+                if (fallbackError) throw fallbackError;
+                feedbacks = fallbackData;
+            } else {
+                feedbacks = [];
+            }
         }
 
         const container = document.getElementById('approved-feedbacks-list');
@@ -243,7 +257,7 @@ async function fetchApprovedFeedbacks() {
 
         container.innerHTML = '';
 
-        if (feedbacks.length > 4) {
+        if (feedbacks.length >= 4) {
             // Carousel Mode (2 Rows)
             const mid = Math.ceil(feedbacks.length / 2);
             const row1 = feedbacks.slice(0, mid);
@@ -339,6 +353,138 @@ async function fetchApprovedFeedbacks() {
     }
 }
 
+const container = document.getElementById('approved-feedbacks-list');
+const totalContainer = document.getElementById('total-star-rating');
+
+if (!container) return;
+
+if (!feedbacks || feedbacks.length === 0) {
+    container.innerHTML = '<p style="color: rgba(255, 255, 255, 0.7); text-align: center; padding: 20px;">No feedbacks available yet.</p>';
+    if (totalContainer) totalContainer.innerHTML = '';
+    return;
+}
+
+if (totalContainer) {
+    let sum = 0;
+    let count = 0;
+    feedbacks.forEach(fb => {
+        if (fb.rating) {
+            sum += fb.rating;
+            count++;
+        }
+    });
+
+    if (count > 0) {
+        const avg = (sum / count).toFixed(1);
+        let avgStarsHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= Math.round(avg)) avgStarsHTML += '<i class="fas fa-star" style="color:#fbbf24; font-size: 20px;"></i>';
+            else avgStarsHTML += '<i class="far fa-star" style="color:#d1d5db; font-size: 20px;"></i>';
+        }
+
+        totalContainer.innerHTML = `
+                    <div style="font-size: 38px; font-weight: 700; color: #1e293b; line-height: 1; letter-spacing: -1px;">${avg}</div>
+                    <div style="display: flex; flex-direction: column; justify-content: center;">
+                        <div style="display: flex; gap: 4px; margin-bottom: 4px;">${avgStarsHTML}</div>
+                        <div style="font-size: 13px; color: #64748b; font-weight: 500;">Based on ${count} reviews</div>
+                    </div>
+                `;
+    } else {
+        totalContainer.innerHTML = '';
+    }
+}
+
+container.innerHTML = '';
+
+if (feedbacks.length >= 4) {
+    // Carousel Mode (2 Rows)
+    const mid = Math.ceil(feedbacks.length / 2);
+    const row1 = feedbacks.slice(0, mid);
+    const row2 = feedbacks.slice(mid);
+
+    function createPillHTML(fb) {
+        const dateStr = new Date(fb.created_at).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' });
+        let starsHTML = '';
+        const rating = fb.rating || 0;
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) starsHTML += '<i class="fas fa-star" style="color:#fbbf24; font-size: 14px;"></i>';
+            else starsHTML += '<i class="far fa-star" style="color:#d1d5db; font-size: 14px;"></i>';
+        }
+
+        return `
+                    <div class="feedback-pill feedback-pill-marquee">
+                        <div class="feedback-pill-header">
+                            <div class="feedback-pill-header-left">
+                                <div class="feedback-pill-avatar">${fb.name ? fb.name.substring(0, 1).toUpperCase() : '?'}</div>
+                                <div class="feedback-pill-info">
+                                    <span class="feedback-pill-name">${obfuscateName(fb.name)}</span>
+                                    <span class="feedback-pill-subtitle">${dateStr}</span>
+                                    <div class="feedback-pill-stars">
+                                        ${starsHTML} <span class="feedback-pill-rating-num">${rating.toFixed(1)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="feedback-pill-quote"><i class="fas fa-quote-right"></i></div>
+                        </div>
+                        <div class="feedback-pill-message">${fb.message || ''}</div>
+                    </div>
+                `;
+    }
+
+    const row1Content = row1.map(fb => createPillHTML(fb)).join('');
+    const row2Content = row2.map(fb => createPillHTML(fb)).join('');
+
+    container.innerHTML = `
+                <div class="marquee-container">
+                    <div class="marquee-row">
+                        <div class="marquee-track left">
+                            ${row1Content} ${row1Content}
+                        </div>
+                    </div>
+                    <div class="marquee-row">
+                        <div class="marquee-track right">
+                            ${row2Content} ${row2Content}
+                        </div>
+                    </div>
+                </div>
+            `;
+} else {
+    // Grid Mode (Static 3-column)
+    container.style.display = 'grid';
+    container.style.gridTemplateColumns = 'repeat(3, minmax(0, 1fr))';
+    container.style.gap = '25px';
+
+    feedbacks.forEach(fb => {
+        const dateStr = new Date(fb.created_at).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' });
+        let starsHTML = '';
+        const rating = fb.rating || 0;
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) starsHTML += '<i class="fas fa-star" style="color:#fbbf24; font-size: 14px;"></i>';
+            else starsHTML += '<i class="far fa-star" style="color:#d1d5db; font-size: 14px;"></i>';
+        }
+
+        container.innerHTML += `
+                    <div class="feedback-pill" style="opacity: 1; transform: translateY(0); animation: none;">
+                        <div class="feedback-pill-header">
+                            <div class="feedback-pill-header-left">
+                                <div class="feedback-pill-avatar">${fb.name ? fb.name.substring(0, 1).toUpperCase() : '?'}</div>
+                                <div class="feedback-pill-info">
+                                    <span class="feedback-pill-name">${obfuscateName(fb.name)}</span>
+                                    <span class="feedback-pill-subtitle">${dateStr}</span>
+                                    <div class="feedback-pill-stars">
+                                        ${starsHTML} <span class="feedback-pill-rating-num">${rating.toFixed(1)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="feedback-pill-quote"><i class="fas fa-quote-right"></i></div>
+                        </div>
+                        <div class="feedback-pill-message">${fb.message || ''}</div>
+                    </div>
+                `;
+    });
+}
+
+
 // --- PUBLIC CONTENT FETCHING (Gallery & Blogs) ---
 async function fetchPublicContent() {
     try {
@@ -357,7 +503,7 @@ async function fetchPublicContent() {
         // Render FAQs
         const faqContainer = document.getElementById('faq-section-container');
         if (faqContainer && faqs.length > 0) {
-            faqContainer.innerHTML = "<h3>FAQ's</h3>";
+            faqContainer.innerHTML = '<h3>FAQ\'s</h3>';
             faqs.forEach(faq => {
                 const item = document.createElement('div');
                 item.className = 'faq-item';
@@ -369,30 +515,10 @@ async function fetchPublicContent() {
                         ${faq.description}
                     </div>
                 `;
-                
-                // Add click listener to increment views
-                const questionDiv = item.querySelector('.faq-question');
-                if (questionDiv) {
-                    questionDiv.addEventListener('click', async () => {
-                        // Prevent multiple increments per session for the same FAQ
-                        if (!item.dataset.viewed) {
-                            item.dataset.viewed = "true";
-                            try {
-                                const { data, error } = await supabaseClient.from('content').select('views').eq('id', faq.id).single();
-                                if (data) {
-                                    await supabaseClient.from('content').update({ views: (data.views || 0) + 1 }).eq('id', faq.id);
-                                }
-                            } catch (err) {
-                                console.error("FAQ view error:", err);
-                            }
-                        }
-                    });
-                }
-
                 faqContainer.appendChild(item);
             });
         } else if (faqContainer) {
-            faqContainer.innerHTML = "<h3>FAQ's</h3><p style=\"color: var(--text-muted); font-size: 14px; text-align: center;\">No FAQs available at the moment.</p>";
+            faqContainer.innerHTML = '<h3>FAQ\'s</h3><p style="color: var(--text-muted); font-size: 14px; text-align: center;">No FAQs available at the moment.</p>';
         }
 
         // Render Blogs
@@ -447,7 +573,7 @@ async function fetchPublicContent() {
                     if (img.startsWith('images/')) {
                         img = img.replace('images/', 'web-images/').replace(/\.(jpeg|png)$/i, '.jpg').toLowerCase();
                     }
-                    const imgTag = `<div class="card"><img src="${img}" alt="${gal.title}" onerror="this.src='web-images/qqq.jpg'"></div>`;
+                    const imgTag = `<img src="${img}" alt="${gal.title}" onerror="this.src='web-images/qqq.jpg'">`;
                     if (index % 2 === 0) leftRow.innerHTML += imgTag;
                     else rightRow.innerHTML += imgTag;
                 });
@@ -524,15 +650,4 @@ async function autoSeedContent() {
     } catch (e) {
         console.error("Auto seed failed", e);
     }
-}
-
-async function fetchFAQs() {
-    console.log("faq: fetchFAQs started");
-    try {
-        const { data: faqs, error } = await supabaseClient
-            .from('content').select('*').eq('type', 'faq')
-            .eq('status', 'published');
-        console.log("faq: received data", faqs);
-        // ... update UI
-    } catch (err) { console.error("faq: failed", err); }
 }
