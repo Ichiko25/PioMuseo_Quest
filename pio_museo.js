@@ -1,31 +1,16 @@
 /* PIO MUSEO CORE JAVASCRIPT */
 /* SUPABASE INITIALIZATION MOVED TO supabaseClient.js TO AVOID CONFLICTS */
 
-// Navbar toggle logic (Global Event Delegation)
-document.addEventListener('click', (e) => {
-    const navToggle = e.target.closest('.nav-toggle');
-    if (navToggle) {
-        e.preventDefault();
-        const navLinks = document.querySelector(".nav-links");
-        if (navLinks) {
-            const isOpen = navLinks.classList.toggle("open");
-            navToggle.setAttribute("aria-expanded", String(isOpen));
-            console.log("Navbar toggle clicked, state:", isOpen);
-        } else {
-            console.error("Navbar toggle clicked, but .nav-links not found!");
-        }
-    }
+// Navbar toggle
+const navToggle = document.querySelector(".nav-toggle");
+const navLinks = document.querySelector(".nav-links");
 
-    // Close menu when a navigation link is clicked
-    const isOpen = document.querySelector(".nav-links")?.classList.contains('open');
-    if (isOpen && e.target.closest('.nav-links a')) {
-        const navLinks = document.querySelector(".nav-links");
-        navLinks.classList.remove('open');
-        const toggle = document.querySelector('.nav-toggle');
-        if (toggle) toggle.setAttribute('aria-expanded', 'false');
-        console.log("Nav link clicked, menu closed auto");
-    }
-});
+if (navToggle && navLinks) {
+    navToggle.addEventListener("click", () => {
+        const isOpen = navLinks.classList.toggle("open");
+        navToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+}
 
 // Hero Carousel Initialization
 function initHeroCarousel() {
