@@ -15,6 +15,16 @@ document.addEventListener('click', (e) => {
             console.error("Navbar toggle clicked, but .nav-links not found!");
         }
     }
+
+    // Close menu when a navigation link is clicked
+    const isOpen = document.querySelector(".nav-links")?.classList.contains('open');
+    if (isOpen && e.target.closest('.nav-links a')) {
+        const navLinks = document.querySelector(".nav-links");
+        navLinks.classList.remove('open');
+        const toggle = document.querySelector('.nav-toggle');
+        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+        console.log("Nav link clicked, menu closed auto");
+    }
 });
 
 // Hero Carousel Initialization
