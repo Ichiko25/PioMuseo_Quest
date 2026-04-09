@@ -1619,19 +1619,45 @@
 
         .footer-main {
             display: grid;
+            grid-template-columns: 1fr;
             gap: 3rem;
             padding: 4rem 0;
+            text-align: center;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer-social {
+            justify-content: center;
+        }
+
+        .footer-column-contact {
+            text-align: center;
         }
 
         @media (min-width: 768px) {
             .footer-main {
                 grid-template-columns: repeat(2, 1fr);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
+                text-align: left;
+            }
+
+            .footer-brand {
+                align-items: flex-start;
+            }
+
+            .footer-social {
+                justify-content: flex-start;
+            }
+
+            .footer-column-contact {
+                text-align: left;
             }
         }
+
 
         @media (min-width: 1024px) {
             .footer-main {
