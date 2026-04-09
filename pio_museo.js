@@ -1,22 +1,21 @@
 /* PIO MUSEO CORE JAVASCRIPT */
 /* SUPABASE INITIALIZATION MOVED TO supabaseClient.js TO AVOID CONFLICTS */
 
-// Navbar toggle initialization
-function initNavbar() {
-    const navToggle = document.querySelector(".nav-toggle");
-    const navLinks = document.querySelector(".nav-links");
-
-    if (navToggle && navLinks) {
-        navToggle.addEventListener("click", (e) => {
-            e.preventDefault();
-            console.log("Navbar toggle clicked");
+// Navbar toggle logic (Global Event Delegation)
+document.addEventListener('click', (e) => {
+    const navToggle = e.target.closest('.nav-toggle');
+    if (navToggle) {
+        e.preventDefault();
+        const navLinks = document.querySelector(".nav-links");
+        if (navLinks) {
             const isOpen = navLinks.classList.toggle("open");
             navToggle.setAttribute("aria-expanded", String(isOpen));
-        });
+            console.log("Navbar toggle clicked, state:", isOpen);
+        } else {
+            console.error("Navbar toggle clicked, but .nav-links not found!");
+        }
     }
-}
-
-document.addEventListener('DOMContentLoaded', initNavbar);
+});
 
 // Hero Carousel Initialization
 function initHeroCarousel() {
