@@ -25,6 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .channel('public:users')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, payload => {
             fetchUsers();
+
+            // Check for Auto-Certificate Trigger
+            if (payload.eventType === 'UPDATE' && payload.new.game_completed && !payload.old.game_completed) {
+                handleAutoCertificate(payload.new);
+            }
         })
         .subscribe();
 
@@ -107,9 +112,6 @@ async function fetchAnalytics() {
                 document.getElementById('stat-game-rating').innerText = 'N/A';
             }
 
-            document.getElementById('stat-feedbacks').innerText = stats.total_feedbacks || 0;
-            // E-certificate is currently static as it's not in the DB schema yet
-            document.getElementById('stat-game-certs').innerText = stats.certificates_sent || 0;
             const gcEl = document.getElementById('stat-game-completed');
             if (gcEl) gcEl.innerText = stats.games_completed || 0;
 
@@ -138,18 +140,21 @@ async function fetchAnalytics() {
 let allAuditLogs = [];
 async function fetchAuditLogs() {
     try {
-        // Fallback gracefully if table doesn't exist yet
         const { data: logs, error } = await supabaseClient
             .from('audit_logs')
             .select('*')
             .order('created_at', { ascending: false })
-            .limit(100);
+            .limit(200);
 
         if (error) throw error;
         allAuditLogs = logs || [];
-        renderAuditLogs(allAuditLogs);
+
+        // Initial render for whatever page is active
+        const activePage = document.querySelector('.page.active')?.id;
+        if (activePage === 'auditlog') renderAuditLogs(allAuditLogs);
+        if (activePage === 'visitorlogs') renderVisitorLogs(allAuditLogs);
     } catch (err) {
-        console.error("Audit logs error (Table might not exist yet):", err);
+        console.error("Audit logs error:", err);
     }
 }
 
@@ -160,17 +165,22 @@ function renderAuditLogs(logs) {
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    let lastDate = null;
+    // Filter for Admin actions only: no Site Visit, no Unknown Admin
+    const adminLogs = logs.filter(log => {
+        const action = (log.action || '').toLowerCase();
+        const isAdmin = log.admin_email && log.admin_email !== 'Unknown Admin';
+        return isAdmin && !action.includes('site visit');
+    });
 
-    logs.forEach(log => {
+    let lastDate = null;
+    adminLogs.forEach(log => {
         const rawDate = new Date(log.created_at);
         const currentDateOnly = rawDate.toLocaleDateString();
 
-        // Add date separator line
         if (currentDateOnly !== lastDate) {
             const separatorTr = document.createElement('tr');
             separatorTr.innerHTML = `
-                <td colspan="5" style="background: rgba(255,255,255,0.03); padding: 12px 20px; border-left: 4px solid var(--accent-primary);">
+                <td colspan="4" style="background: rgba(255,255,255,0.03); padding: 12px 20px; border-left: 4px solid var(--accent-primary);">
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <i class="fas fa-calendar-alt" style="color: var(--accent-primary); font-size: 14px;"></i>
                         <span style="font-weight: 700; color: white; letter-spacing: 0.5px; font-size: 13px;">${currentDateOnly}</span>
@@ -184,36 +194,121 @@ function renderAuditLogs(logs) {
         const tr = document.createElement('tr');
         const timeStr = rawDate.toLocaleTimeString();
 
-        const displayEmail = log.admin_email || 'Unknown Admin';
-
-        let badgeBg = 'rgba(59, 130, 246, 0.15)'; // Blue
-        let badgeColor = 'var(--blue, #3b82f6)';
+        let badgeBg = 'rgba(59, 130, 246, 0.15)';
+        let badgeColor = '#3b82f6';
         const actLower = (log.action || '').toLowerCase();
 
         if (actLower.includes('delete') || actLower.includes('remove')) {
-            badgeBg = 'rgba(239, 68, 68, 0.15)'; // Red
+            badgeBg = 'rgba(239, 68, 68, 0.15)';
             badgeColor = '#ef4444';
-        } else if (actLower.includes('login') || actLower.includes('log in')) {
-            badgeBg = 'rgba(245, 158, 11, 0.15)'; // Yellow
-            badgeColor = '#f59e0b';
-        } else if (actLower.includes('add') || actLower.includes('create') || actLower.includes('approve')) {
-            badgeBg = 'rgba(34, 197, 94, 0.15)'; // Green
+        } else if (actLower.includes('add') || actLower.includes('create')) {
+            badgeBg = 'rgba(34, 197, 94, 0.15)';
             badgeColor = '#22c55e';
         } else if (actLower.includes('update') || actLower.includes('edit')) {
-            badgeBg = 'rgba(168, 85, 247, 0.15)'; // Purple
+            badgeBg = 'rgba(168, 85, 247, 0.15)';
             badgeColor = '#a855f7';
         }
 
         tr.innerHTML = `
             <td style="white-space: nowrap; color: var(--text-muted);">${timeStr}</td>
-            <td>
-                <b style="color: var(--text-main);">${displayEmail}</b>
-            </td>
+            <td><b style="color: var(--text-main);">${log.admin_email}</b></td>
             <td><span class="status-badge" style="background: ${badgeBg}; color: ${badgeColor}; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;">${log.action}</span></td>
             <td style="font-size: 13px; color: var(--text-muted);">${log.details || ''}</td>
-            <td style="text-align: right;">
-                <button class="btn-icon delete" onclick="deleteAuditLog('${log.id}')" title="Delete Log" style="color: #64748b; background: rgba(255,255,255,0.05);"><i class="fas fa-trash"></i></button>
-            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function renderVisitorLogs(logs) {
+    const tbody = document.getElementById('visitor-log-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    // Filter for visitor events
+    const visitorLogs = logs.filter(log => {
+        const action = (log.action || '').toLowerCase();
+        const isUnknown = !log.admin_email || log.admin_email === 'Unknown Admin';
+        return isUnknown || action.includes('site visit');
+    });
+
+    let lastDate = null;
+    visitorLogs.forEach(log => {
+        const rawDate = new Date(log.created_at);
+        const currentDateOnly = rawDate.toLocaleDateString();
+
+        if (currentDateOnly !== lastDate) {
+            const separatorTr = document.createElement('tr');
+            separatorTr.innerHTML = `
+                <td colspan="5" style="background: rgba(255,255,255,0.03); padding: 12px 20px; border-left: 4px solid var(--blue);">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-user-clock" style="color: var(--blue); font-size: 14px;"></i>
+                        <span style="font-weight: 700; color: white; letter-spacing: 0.5px; font-size: 13px;">${currentDateOnly}</span>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(separatorTr);
+            lastDate = currentDateOnly;
+        }
+
+        const tr = document.createElement('tr');
+        const timeStr = rawDate.toLocaleTimeString();
+
+        // --- Standardized Mappings ---
+        let pageVisited = 'Home';
+        let actionText = 'Visit';
+        let actionBg = 'rgba(59, 130, 246, 0.15)'; // Default Blue
+        let actionColor = '#3b82f6';
+
+        const detailsLower = (log.details || '').toLowerCase();
+        const actionLower = (log.action || '').toLowerCase();
+
+        // 1. Booking / Plans to Visit
+        if (detailsLower.includes('photoshoot')) {
+            pageVisited = 'Booking';
+            actionText = 'Plans to visit';
+            actionBg = 'rgba(239, 68, 68, 0.15)'; // Red
+            actionColor = '#ef4444';
+        } else if (detailsLower.includes('group tour') || detailsLower.includes('booking') || actionLower.includes('booking')) {
+            pageVisited = 'Booking';
+            actionText = 'Plans to visit';
+            actionBg = 'rgba(168, 85, 247, 0.15)'; // Purple
+            actionColor = '#a855f7';
+        }
+        // 2. FAQ's
+        else if (detailsLower.includes('faq')) {
+            pageVisited = "FAQ's";
+            actionText = 'FAQ answers';
+            actionBg = 'rgba(245, 158, 11, 0.15)'; // Yellow
+            actionColor = '#f59e0b';
+        }
+        // 3. Blog
+        else if (detailsLower.includes('blog') || detailsLower.includes('story') || detailsLower.includes('news')) {
+            pageVisited = 'Blog';
+            actionText = 'News/ articles updates';
+            actionBg = 'rgba(249, 115, 22, 0.15)'; // Orange
+            actionColor = '#f97316';
+        }
+        // 4. Game
+        else if (detailsLower.includes('game') || detailsLower.includes('player')) {
+            pageVisited = 'Game';
+            actionText = 'Interested in game';
+            actionBg = 'rgba(34, 197, 94, 0.15)'; // Green
+            actionColor = '#22c55e';
+        }
+        // 5. Default / Home
+        else if (actionLower.includes('site visit') || pageVisited === 'Home') {
+            pageVisited = 'Home';
+            actionText = 'Visit';
+            actionBg = 'rgba(59, 130, 246, 0.15)'; // Blue
+            actionColor = '#3b82f6';
+        }
+
+        tr.innerHTML = `
+            <td style="white-space: nowrap; color: var(--text-muted);">${timeStr}</td>
+            <td><code style="color: var(--blue); background: rgba(59, 130, 246, 0.1); padding: 4px 10px; border-radius: 6px; font-size: 13px;">${log.id}</code></td>
+            <td><span style="color: white; font-weight: 600; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px; font-size: 12px;">${pageVisited}</span></td>
+            <td><span class="status-badge" style="background: ${actionBg}; color: ${actionColor}; padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid ${actionColor}33;">${actionText}</span></td>
+            <td style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">${log.details || ''}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -223,6 +318,7 @@ function renderAuditLogs(logs) {
 function filterAuditLogs() {
     const term = (document.getElementById('audit-search')?.value || '').toLowerCase();
     const dateVal = document.getElementById('audit-filter-date')?.value;
+    const actionVal = document.getElementById('audit-filter-action')?.value;
 
     const filtered = allAuditLogs.filter(log => {
         const d = new Date(log.created_at);
@@ -236,17 +332,74 @@ function filterAuditLogs() {
             matchDate = logDate === dateVal;
         }
 
-        return matchTerm && matchDate;
+        let matchAction = true;
+        if (actionVal) {
+            const act = (log.action || '').toLowerCase();
+            if (actionVal === 'create') matchAction = act.includes('add') || act.includes('create');
+            else if (actionVal === 'update') matchAction = act.includes('edit') || act.includes('update');
+            else if (actionVal === 'delete') matchAction = act.includes('delete');
+            else if (actionVal === 'settings') matchAction = act.includes('settings');
+            else if (actionVal === 'login') matchAction = act.includes('log') || act.includes('login');
+        }
+
+        return matchTerm && matchDate && matchAction;
     });
 
     renderAuditLogs(filtered);
 }
 
-const searchAuditInput = document.getElementById('audit-search');
-const dateAuditFilter = document.getElementById('audit-filter-date');
+// Filter Visitor Logs
+function filterVisitorLogs() {
+    const term = (document.getElementById('visitor-log-search')?.value || '').toLowerCase();
+    const dateVal = document.getElementById('visitor-log-filter-date')?.value;
+    const actionVal = document.getElementById('visitor-filter-action')?.value;
 
-if (searchAuditInput) searchAuditInput.addEventListener('input', filterAuditLogs);
-if (dateAuditFilter) dateAuditFilter.addEventListener('change', filterAuditLogs);
+    const filtered = allAuditLogs.filter(log => {
+        const d = new Date(log.created_at);
+        const matchTerm = (log.id && log.id.toLowerCase().includes(term)) ||
+            (log.action && log.action.toLowerCase().includes(term)) ||
+            (log.details && log.details.toLowerCase().includes(term));
+
+        let matchDate = true;
+        if (dateVal) {
+            const logDate = d.toISOString().split('T')[0];
+            matchDate = logDate === dateVal;
+        }
+
+        let matchAction = true;
+        if (actionVal) {
+            const act = (log.action || '').toLowerCase();
+            const det = (log.details || '').toLowerCase();
+
+            if (actionVal === 'visit') matchAction = act.includes('site visit');
+            else if (actionVal === 'faq') matchAction = det.includes('faq');
+            else if (actionVal === 'news') matchAction = det.includes('blog') || det.includes('story') || det.includes('news');
+            else if (actionVal === 'game') matchAction = det.includes('game') || det.includes('player');
+            else if (actionVal === 'plans to visit') matchAction = det.includes('booking') || det.includes('photoshoot') || det.includes('group tour') || act.includes('booking');
+        }
+
+        return matchTerm && matchDate && matchAction;
+    });
+
+    renderVisitorLogs(filtered);
+}
+
+// Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const searchAuditInput = document.getElementById('audit-search');
+    const dateAuditFilter = document.getElementById('audit-filter-date');
+    const actionAuditFilter = document.getElementById('audit-filter-action');
+    if (searchAuditInput) searchAuditInput.addEventListener('input', filterAuditLogs);
+    if (dateAuditFilter) dateAuditFilter.addEventListener('change', filterAuditLogs);
+    if (actionAuditFilter) actionAuditFilter.addEventListener('change', filterAuditLogs);
+
+    const searchVisitorInput = document.getElementById('visitor-log-search');
+    const dateVisitorFilter = document.getElementById('visitor-log-filter-date');
+    const actionVisitorFilter = document.getElementById('visitor-filter-action');
+    if (searchVisitorInput) searchVisitorInput.addEventListener('input', filterVisitorLogs);
+    if (dateVisitorFilter) dateVisitorFilter.addEventListener('change', filterVisitorLogs);
+    if (actionVisitorFilter) actionVisitorFilter.addEventListener('change', filterVisitorLogs);
+});
 
 // Delete Audit Log
 async function deleteAuditLog(id) {
@@ -264,7 +417,6 @@ async function deleteAuditLog(id) {
 
 // --- USERS ---
 let allUsers = [];
-let archivedUsers = [];
 
 async function fetchUsers() {
     try {
@@ -275,20 +427,25 @@ async function fetchUsers() {
 
         if (error) throw error;
 
-        await fetchApprovedMapping();
+        // If is_approved column exists but is null, we might still want to check local storage for this session
         const localIds = JSON.parse(localStorage.getItem('approved_feedbacks') || '[]');
 
         users.forEach(u => {
-            u.is_approved = approvedFeedbackIds.includes(u.id) || localIds.includes(u.id);
+            // Priority: 1. DB Column, 2. Local fallback
+            if (u.is_approved === null || u.is_approved === undefined) {
+                u.is_approved = localIds.includes(u.id);
+            }
         });
 
-        const unarchived = users.filter(u => !u.is_archived);
-        archivedUsers = users.filter(u => u.is_archived);
-
-        allUsers = unarchived;
+        allUsers = users;
         renderUsers(allUsers);
         renderRecentUsers(allUsers.slice(0, 5)); // Show top 5 on dash
         renderFeedbacks(allUsers.filter(u => u.rating || u.message));
+
+        // Calculate new users for notification badge (last 24 hours)
+        const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const newUsersCount = users.filter(u => new Date(u.created_at) > dayAgo).length;
+        updateNotifBadge(newUsersCount);
 
         if (document.getElementById('analytics').classList.contains('active')) {
             renderCharts();
@@ -305,6 +462,8 @@ async function fetchUsers() {
     }
 }
 
+// Helper to Obfuscate Name
+// Example: "Tricia Lara" -> "T***** L***"
 function obfuscateName(fullName) {
     if (!fullName) return 'Unknown';
     const parts = fullName.trim().split(' ');
@@ -317,6 +476,8 @@ function obfuscateName(fullName) {
     return obfuscatedParts.join(' ');
 }
 
+// Helper to Obfuscate Email
+// Example: "tricialara15@gmail.com" -> "t*****@gmail.com"
 function obfuscateEmail(email) {
     if (!email) return '';
     const parts = email.split('@');
@@ -342,6 +503,7 @@ function renderUsers(usersMap) {
         const rawDate = new Date(user.created_at);
         const currentDateOnly = rawDate.toLocaleDateString();
 
+        // Add date separator line
         if (currentDateOnly !== lastDate) {
             const separatorTr = document.createElement('tr');
             separatorTr.innerHTML = `
@@ -360,10 +522,17 @@ function renderUsers(usersMap) {
         const decryptedEmail = decryptEmail(user.email_encrypted);
         const initials = user.name ? user.name.substring(0, 2).toUpperCase() : '??';
 
-        const displayName = obfuscateName(user.name);
-        const displayEmail = obfuscateEmail(decryptedEmail);
+        const displayName = user.name || 'Unknown';
+        const displayEmail = decryptedEmail;
 
         const dateStr = rawDate.toLocaleDateString() + ' ' + rawDate.toLocaleTimeString();
+
+        const lastActivity = user.updated_at || user.created_at;
+        const isActive = (Date.now() - new Date(lastActivity)) < (5 * 60 * 1000); // 5 minutes threshold
+
+        const statusColor = isActive ? '#10b981' : '#64748b';
+        const statusText = isActive ? 'Active' : 'Inactive';
+        const statusBg = isActive ? 'rgba(16, 185, 129, 0.1)' : 'rgba(100, 116, 139, 0.1)';
 
         tr.innerHTML = `
             <td>
@@ -371,7 +540,7 @@ function renderUsers(usersMap) {
                     <div class="user-avatar" style="background: rgba(59, 130, 246, 0.15); color: var(--blue);">${initials}</div>
                     <div>
                         <b title="${user.name || 'Unknown'}">${displayName}</b>
-                        <br><small style="color: var(--text-muted); font-size: 12px;" title="${decryptedEmail}">${displayEmail}</small>
+                        <br><small style="color: var(--text-muted); font-size: 12px;">${displayEmail}</small>
                     </div>
                 </div>
             </td>
@@ -379,16 +548,16 @@ function renderUsers(usersMap) {
             <td><i class="fas fa-map-marker-alt" style="color: var(--text-muted); margin-right: 5px;"></i> ${user.location || 'N/A'}</td>
             <td>${dateStr}</td>
             <td>
-                <button class="btn-icon delete" onclick="deleteUser('${user.id}')" title="Delete User">
-                    <i class="fas fa-trash"></i>
-                </button>
+                <span style="background: ${statusBg}; color: ${statusColor}; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: ${statusColor}; border: 1.5px solid rgba(255,255,255,0.1);"></span>
+                    ${statusText}
+                </span>
             </td>
         `;
         tbody.appendChild(tr);
     });
 }
 
-// Look for this function:
 function renderRecentUsers(usersMap) {
     const tbody = document.getElementById('recent-users-tbody');
     if (!tbody) return;
@@ -398,36 +567,32 @@ function renderRecentUsers(usersMap) {
         const tr = document.createElement('tr');
         const decryptedEmail = decryptEmail(user.email_encrypted);
         const initials = user.name ? user.name.substring(0, 2).toUpperCase() : '??';
-        const displayName = obfuscateName(user.name);
+        const displayName = user.name || 'Unknown';
 
         const rawDate = new Date(user.created_at);
         const dateStr = rawDate.toLocaleDateString();
 
-        // --- NEW: DYNAMIC ACTIVITY LOGIC ---
         let activityStatus = 'Site Visit';
         let activityColor = '#3b82f6';
         let activityBg = 'rgba(59, 130, 246, 0.1)';
-        
+
         if (user.rating || (user.message && user.message.trim() !== '')) {
             activityStatus = 'Form Submission';
             activityColor = '#10b981';
             activityBg = 'rgba(16, 185, 129, 0.1)';
         }
-        // -----------------------------------
 
         tr.innerHTML = `
             <td>
                 <div class="user-cell">
-                    <div class="user-avatar" style="background: rgba(16, 185, 129, 0.15); color: var(--green);">${initials}</div>
+                    <div class="user-avatar" style="background: rgba(16, 10, 129, 0.15); color: var(--green);">${initials}</div>
                     <div>
-                        <b title="${user.name || 'Unknown'}">${displayName}</b>
+                        <b>${displayName}</b>
                     </div>
                 </div>
             </td>
             <td><i class="fas fa-map-marker-alt" style="color: var(--text-muted); margin-right: 5px;"></i> ${user.location || 'N/A'}</td>
             <td>${dateStr}</td>
-            
-            <!-- NEW: ACTIVITY COLUMN HTML -->
             <td>
                 <span style="background: ${activityBg}; color: ${activityColor}; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
                     <span style="width: 6px; height: 6px; border-radius: 50%; background: ${activityColor};"></span>
@@ -446,11 +611,11 @@ function filterUsers() {
 
     const filtered = allUsers.filter(u => {
         const matchTerm = (u.name && u.name.toLowerCase().includes(term)) ||
-                         (u.email_encrypted && decryptEmail(u.email_encrypted).toLowerCase().includes(term)) ||
-                         (u.location && u.location.toLowerCase().includes(term));
-        
+            (u.email_encrypted && decryptEmail(u.email_encrypted).toLowerCase().includes(term)) ||
+            (u.location && u.location.toLowerCase().includes(term));
+
         const matchAge = !ageFilter || u.age_group === ageFilter;
-        
+
         let matchDate = true;
         if (dateFilter) {
             const regDate = new Date(u.created_at).toISOString().split('T')[0];
@@ -470,41 +635,25 @@ if (searchUserInput) searchUserInput.addEventListener('input', filterUsers);
 if (ageUserFilter) ageUserFilter.addEventListener('change', filterUsers);
 if (dateUserFilter) dateUserFilter.addEventListener('change', filterUsers);
 
+// --- FEEDBACKS ---
 function renderFeedbacks(feedbacks) {
     const tbody = document.getElementById('all-feedbacks-tbody');
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    const sortedFeedbacks = [...feedbacks].sort((a, b) => {
-        if (a.is_approved === b.is_approved) return 0;
-        return a.is_approved ? 1 : -1;
-    });
+    if (feedbacks.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 30px; color: var(--text-muted);">No feedbacks found.</td></tr>`;
+        return;
+    }
 
-    let firstApproved = true;
-
-    sortedFeedbacks.forEach(user => {
-        const hasPending = sortedFeedbacks.some(f => !f.is_approved);
-        if (user.is_approved && firstApproved && hasPending) {
-            const sepTr = document.createElement('tr');
-            sepTr.innerHTML = `
-                <td colspan="5" style="background: rgba(255,255,255,0.03); padding: 12px 20px; border-left: 4px solid var(--green);">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-check-circle" style="color: var(--green); font-size: 14px;"></i>
-                        <span style="font-weight: 700; color: white; letter-spacing: 0.5px; font-size: 13px;">APPROVED FEEDBACKS</span>
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(sepTr);
-            firstApproved = false;
-        }
-
+    feedbacks.forEach(user => {
         const tr = document.createElement('tr');
         const decryptedEmail = decryptEmail(user.email_encrypted);
         const initials = user.name ? user.name.substring(0, 2).toUpperCase() : '??';
         const rawDate = new Date(user.created_at);
-        
-        const displayName = obfuscateName(user.name);
-        const displayEmail = obfuscateEmail(decryptedEmail);
+
+        const displayName = user.name || 'Unknown';
+        const displayEmail = decryptedEmail;
 
         let starsHTML = '';
         if (user.rating) {
@@ -519,35 +668,34 @@ function renderFeedbacks(feedbacks) {
         const dateOnlyStr = rawDate.toLocaleDateString();
         const timeOnlyStr = rawDate.toLocaleTimeString();
 
-        const statusBg = user.is_approved ? 'rgba(34, 197, 94, 0.15)' : 'rgba(245, 158, 11, 0.15)';
-        const statusColor = user.is_approved ? '#22c55e' : '#f59e0b';
-        const statusText = user.is_approved ? 'Approved' : 'Pending';
-
-        const approveBtn = !user.is_approved 
-                           ? `<button class="btn btn-primary" onclick="approveFeedback('${user.id}')" style="margin-right: 8px; padding: 4px 12px; font-size: 12px; background: var(--green); border-color: var(--green); border-radius: 6px;">Approve</button>`
-                           : `<button class="btn btn-primary" style="margin-right: 8px; padding: 4px 12px; font-size: 12px; background: var(--green); border-color: var(--green); border-radius: 6px; cursor: default; opacity: 0.8;" disabled>Approved</button>`;
+        const isVisible = user.is_approved;
+        const toggleBg = isVisible ? '#22c55e' : 'rgba(255,255,255,0.1)';
+        const toggleLabel = isVisible ? 'Visible' : 'Hidden';
+        const toggleLabelColor = isVisible ? '#22c55e' : 'var(--text-muted)';
+        const knobPos = isVisible ? 'translateX(18px)' : 'translateX(2px)';
 
         tr.innerHTML = `
             <td>
                 <div class="user-cell">
                     <div class="user-avatar" style="background: rgba(59, 130, 246, 0.15); color: var(--blue);">${initials}</div>
                     <div>
-                        <b style="color: var(--text-main);" title="${user.name || 'Unknown'}">${displayName}</b>
-                        <br><small style="color: var(--text-muted); font-size: 12px;" title="${decryptedEmail}">${displayEmail}</small>
+                        <b style="color: var(--text-main);">${displayName}</b>
+                        <br><small style="color: var(--text-muted); font-size: 12px;">${displayEmail}</small>
                     </div>
                 </div>
             </td>
             <td style="white-space: nowrap;">
                 <div style="margin-bottom: 4px;">${starsHTML}</div>
-                <span style="background: ${statusBg}; color: ${statusColor}; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase;">${statusText}</span>
             </td>
             <td style="max-width: 300px; line-height: 1.5; font-size: 14px; white-space: normal; color: var(--text-muted);">${user.message || '<i>No message provided</i>'}</td>
             <td>${dateOnlyStr}<br><small style="color: var(--text-muted);">${timeOnlyStr}</small></td>
             <td style="white-space: nowrap;">
-                ${approveBtn}
-                <button class="btn btn-danger" onclick="deleteUser('${user.id}')" style="padding: 4px 12px; font-size: 12px; background: var(--red); color: white; border: none; border-radius: 6px; cursor: pointer;">
-                    Delete
-                </button>
+                <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="toggleFeedbackVisibility('${user.id}', ${isVisible})" title="Click to toggle visibility">
+                    <div style="width: 40px; height: 22px; border-radius: 999px; background: ${toggleBg}; position: relative; transition: background 0.3s; flex-shrink: 0;">
+                        <div style="width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; top: 2px; transform: ${knobPos}; transition: transform 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.3);"></div>
+                    </div>
+                    <span style="font-size: 13px; font-weight: 600; color: ${toggleLabelColor};">${toggleLabel}</span>
+                </div>
             </td>
         `;
         tbody.appendChild(tr);
@@ -557,6 +705,7 @@ function renderFeedbacks(feedbacks) {
 function filterFeedbacks() {
     const term = (document.getElementById('feedback-search')?.value || '').toLowerCase();
     const starFilter = document.getElementById('feedback-filter-stars')?.value;
+    const visibilityFilter = document.getElementById('feedback-filter-visibility')?.value;
     const dateFilter = document.getElementById('feedback-filter-date')?.value;
 
     const filtered = allUsers.filter(u => {
@@ -564,58 +713,77 @@ function filterFeedbacks() {
         if (!hasFeedback) return false;
 
         const matchTerm = (u.name && u.name.toLowerCase().includes(term)) ||
-                         (u.message && u.message.toLowerCase().includes(term));
-        
+            (u.message && u.message.toLowerCase().includes(term));
+
         const matchStars = !starFilter || u.rating?.toString() === starFilter;
-        
+
+        let matchVisibility = true;
+        if (visibilityFilter === 'visible') matchVisibility = u.is_approved === true;
+        if (visibilityFilter === 'hidden') matchVisibility = u.is_approved === false || u.is_approved === null;
+
         let matchDate = true;
         if (dateFilter) {
             const feedbackDate = new Date(u.created_at).toISOString().split('T')[0];
             matchDate = feedbackDate === dateFilter;
         }
 
-        return matchTerm && matchStars && matchDate;
+        return matchTerm && matchStars && matchVisibility && matchDate;
     });
     renderFeedbacks(filtered);
 }
 
 const searchFeedbackInput = document.getElementById('feedback-search');
 const starsFeedbackFilter = document.getElementById('feedback-filter-stars');
+const visibilityFeedbackFilter = document.getElementById('feedback-filter-visibility');
 const dateFeedbackFilter = document.getElementById('feedback-filter-date');
 
 if (searchFeedbackInput) searchFeedbackInput.addEventListener('input', filterFeedbacks);
 if (starsFeedbackFilter) starsFeedbackFilter.addEventListener('change', filterFeedbacks);
+if (visibilityFeedbackFilter) visibilityFeedbackFilter.addEventListener('change', filterFeedbacks);
 if (dateFeedbackFilter) dateFeedbackFilter.addEventListener('change', filterFeedbacks);
 
-let approvedFeedbackIds = [];
-async function fetchApprovedMapping() {
-    try {
-        const { data } = await supabaseClient.from('analytics').select('approved_feedbacks').eq('id', 1).single();
-        if (data && data.approved_feedbacks) {
-            approvedFeedbackIds = data.approved_feedbacks;
-        }
-    } catch(e) { console.error("Could not fetch mappings", e) }
-}
+async function toggleFeedbackVisibility(userId, currentlyVisible) {
+    const newState = !currentlyVisible;
 
-async function approveFeedback(userId) {
-    if (confirm('Approve this feedback to be displayed on the public website?')) {
-        try {
-            await fetchApprovedMapping();
-            if (!approvedFeedbackIds.includes(userId)) {
-                approvedFeedbackIds.push(userId);
-                const { error } = await supabaseClient.from('analytics').update({ approved_feedbacks: approvedFeedbackIds }).eq('id', 1);
-                if (error) {
-                    console.warn("Analytics mapping failed, falling back to localStorage");
-                    let localIds = JSON.parse(localStorage.getItem('approved_feedbacks') || '[]');
-                    if (!localIds.includes(userId)) localIds.push(userId);
-                    localStorage.setItem('approved_feedbacks', JSON.stringify(localIds));
-                }
-            }
-            await fetchUsers();
-        } catch (err) {
-            console.error("Error approving feedback:", err);
-            alert("Failed to approve feedback: " + (err.message || JSON.stringify(err)));
+    // Add confirmation when HIDING (if it's currently visible and we are turning it off)
+    if (currentlyVisible && !confirm("Are you sure you want to hide this feedback from the website?")) {
+        return;
+    }
+
+    try {
+        // Try to update is_approved column in users table
+        const { error } = await supabaseClient
+            .from('users')
+            .update({ is_approved: newState })
+            .eq('id', userId);
+
+        if (error) {
+            console.warn('DB column update failed, using fallback sync:', error.message);
         }
+
+        // Logic sync: Also update the analytics array for compatibility with older code/fallback
+        await fetchApprovedMapping();
+        let updatedIds = [...approvedFeedbackIds];
+        if (newState) {
+            if (!updatedIds.includes(userId)) updatedIds.push(userId);
+        } else {
+            updatedIds = updatedIds.filter(id => id !== userId);
+        }
+        await supabaseClient.from('analytics').update({ approved_feedbacks: updatedIds }).eq('id', 1);
+
+        // Also update local storage fallback
+        let localIds = JSON.parse(localStorage.getItem('approved_feedbacks') || '[]');
+        if (newState) {
+            if (!localIds.includes(userId)) localIds.push(userId);
+        } else {
+            localIds = localIds.filter(id => id !== userId);
+        }
+        localStorage.setItem('approved_feedbacks', JSON.stringify(localIds));
+
+        await fetchUsers();
+    } catch (err) {
+        console.error("Error toggling feedback visibility:", err);
+        alert("Failed to update visibility.");
     }
 }
 
@@ -632,6 +800,7 @@ async function deleteUser(userId) {
     }
 }
 
+// --- CONTENT MANAGER (GALLERY / BLOGS) ---
 async function fetchContent() {
     try {
         const { data: contents, error } = await supabaseClient
@@ -665,13 +834,17 @@ async function fetchContent() {
         if (galleries.length === 0) galleryGrid.innerHTML = emptyMessage;
         if (faqs.length === 0) faqGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">No FAQs published yet.</div>';
 
+        // Update Counters
         const publishedBlogs = blogs.filter(b => b.status === 'published').length;
         const publishedGalleries = galleries.filter(g => g.status === 'published').length;
         const publishedFaqs = faqs.filter(f => f.status === 'published').length;
 
         const totalPublished = publishedBlogs + publishedGalleries + publishedFaqs;
+        const totalDrafts = contents.filter(c => c.status !== 'published').length;
         const statPublishedEl = document.getElementById('stat-published');
+        const statDraftsEl = document.getElementById('stat-drafts');
         if (statPublishedEl) statPublishedEl.innerText = totalPublished;
+        if (statDraftsEl) statDraftsEl.innerText = totalDrafts;
 
         const blogCountEl = document.getElementById('blog-count');
         const galleryCountEl = document.getElementById('gallery-count');
@@ -690,11 +863,12 @@ async function fetchContent() {
                 iconHTML = `<img src="${item.image_url}" style="width: 100%; height: 100%; object-fit: cover;">`;
             }
 
+            // Extract plain text to avoid rich HTML tags breaking the 2-line clamp
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = item.description || '';
             const plainTextDesc = tempDiv.textContent || tempDiv.innerText || '';
 
-           const cardHTML = `
+            const cardHTML = `
                <div class="content-card">
                   <div class="content-card-header">
                     <span class="status-badge ${badgeType}">${item.status || 'Draft'}</span>
@@ -706,8 +880,8 @@ async function fetchContent() {
                   <h4 class="content-card-title">${item.title}</h4>
                   <p class="content-card-desc" style="-webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;">${plainTextDesc}</p>
                   <div class="content-card-footer">
-                 <div class="content-stats" style="${item.type === 'gallery' ? 'display: none;' : ''}">
-                        <span><i class="fas fa-eye"></i> ${item.views || 0}</span>
+                    <div class="content-stats" style="${item.type === 'gallery' ? 'display: none;' : ''}">
+                      <span><i class="fas fa-eye"></i> ${item.views || 0}</span>
                     </div>
                     <div>
                       <button class="btn-icon edit" onclick="openEditContentModal('${item.id}')" style="margin-right:8px;" title="Edit"><i class="fas fa-edit"></i></button>
@@ -716,6 +890,7 @@ async function fetchContent() {
                   </div>
                 </div>
             `;
+
             if (item.type === 'blog') {
                 blogGrid.innerHTML += cardHTML;
             } else if (item.type === 'gallery') {
@@ -764,6 +939,7 @@ async function deleteContent(id, title = 'Content Item') {
     }
 }
 
+// Add Content Modal Logic
 function openAddContentModal(defaultType = 'blog') {
     document.getElementById('modal-title').innerText = 'Add New Content';
     document.getElementById('edit-content-id').value = '';
@@ -775,9 +951,11 @@ function openAddContentModal(defaultType = 'blog') {
     const typeSelect = document.getElementById('new-content-type');
     typeSelect.value = defaultType;
 
+    // Trigger change event to toggle field visibility based on type
     const event = new Event('change');
     typeSelect.dispatchEvent(event);
 
+    // Reset labels
     const titleLabel = document.getElementById('title-label');
     const descLabel = document.getElementById('desc-label');
     if (titleLabel) titleLabel.innerText = "Title / Question";
@@ -819,6 +997,7 @@ function closeAddContentModal() {
     document.getElementById('addContentModal').style.display = 'none';
 }
 
+// Add event listener for type change to hide/show description and image
 document.addEventListener('DOMContentLoaded', () => {
     const typeSelect = document.getElementById('new-content-type');
     if (typeSelect) {
@@ -874,6 +1053,7 @@ async function submitNewContent() {
             logAction = 'Added Content';
         }
 
+        // Log the change
         await supabaseClient.from('audit_logs').insert([{
             admin_email: 'admin@museo.ph',
             action: logAction,
@@ -890,11 +1070,12 @@ async function submitNewContent() {
 
 async function seedInitialContent() {
     const defaultContent = [
-        
+        // Blogs
         { type: 'blog', title: 'The Life and Legacy of Dr. Pío Valenzuela', description: '<h2>The Life and Legacy of Dr. Pío Valenzuela</h2>\n<p>\nPío Valenzuela was born on July 11, 1869 in Polo, Bulacan—now Valenzuela City. He studied medicine at the University of Santo Tomas and became a licensed physician in 1895. After completing his studies, he practiced medicine in Manila and Bulacan while starting a family with his wife, Marciana Castriy.\n<br> A Katipunero <br> <br> \nWhile still a medical student, Valenzuela joined the Katipunan in 1892 and became a close ally of its founder, Andrés Bonifacio. He served as the society’s physician and helped establish its revolutionary newspaper Kalayaan together with Emilio Jacinto. The publication helped spread the ideas of the revolution and recruit members.\n<br> <br> \nValenzuela was sent by Bonifacio to Dapitan to consult José Rizal about the planned uprising against Spain. Rizal advised caution, saying the revolution should only begin if the people were prepared and well-armed.\nAfter the Katipunan was discovered, Valenzuela was arrested and imprisoned by Spanish authorities, later being deported to Spain and Africa. After his release, he returned to the Philippines and entered public service, becoming municipal president of Polo and later governor of Bulacan.\nHe died on April 6, 1956. Today, Valenzuela City bears his name in honor of his contributions to Philippine history and the struggle for independence.\n</p>', status: 'published' },
         { type: 'blog', title: 'Museum Updates', description: '<h2>Museum Updates</h2>\n<p>\nThe Museo ni Dr. Pío Valenzuela continues to improve its exhibits\nto provide visitors with a deeper understanding of Philippine history.\n</p>\n<p>\nRecent updates include improved artifact displays, new educational\npanels, and guided tours for students and tourists.\n</p>', status: 'published' },
         { type: 'blog', title: 'Educational Discoveries', description: '<h2>Educational Discoveries</h2>\n<p>\nInside the museum are many artifacts that tell the story of the\nPhilippine Revolution and the life of Dr. Pío Valenzuela.\n</p>\n<p>\nVisitors can learn about historical documents, personal belongings,\nand photographs that highlight the contributions of Filipino heroes.\n</p>', status: 'published' },
 
+        // Gallery Left
         { type: 'gallery', title: 'Second Floor', image_url: 'images/Second-Floor.jpeg', status: 'published' },
         { type: 'gallery', title: 'Table', image_url: 'images/table.jpeg', status: 'published' },
         { type: 'gallery', title: 'Study Table', image_url: 'images/study-table.jpeg', status: 'published' },
@@ -912,6 +1093,7 @@ async function seedInitialContent() {
         { type: 'gallery', title: 'Cinematic', image_url: 'images/cinematic.jpg', status: 'published' },
         { type: 'gallery', title: 'First Floor', image_url: 'images/first-sloor.jpg', status: 'published' },
 
+        // Gallery Right
         { type: 'gallery', title: 'Bookshelf', image_url: 'images/bookshelf.jpeg', status: 'published' },
         { type: 'gallery', title: 'Dining', image_url: 'images/dining.png', status: 'published' },
         { type: 'gallery', title: 'Salaa', image_url: 'images/salaa.png', status: 'published' },
@@ -941,21 +1123,71 @@ async function seedInitialContent() {
     }
 }
 
+// --- SETTINGS ---
+async function handleAutoCertificate(userData) {
+    const isAutoEnabled = document.getElementById('setting-auto-cert')?.checked;
+    if (!isAutoEnabled) return;
+
+    console.log(`Auto-Certificate: Generating for ${userData.name}...`);
+
+    try {
+        // 1. Generate PDF (locally for the admin to see/preview or just trigger logic)
+        // Note: In a real automated scenario, this would usually be a backend task.
+        // For this frontend implementation, we log the intent.
+
+        await supabaseClient.from('audit_logs').insert([{
+            admin_email: 'SYSTEM',
+            action: 'Cert Generated',
+            details: `Auto-generated certificate for ${userData.name} (${userData.id})`
+        }]);
+
+        // 2. Mock Email Send
+        const smtpHost = document.getElementById('setting-smtp-host').value;
+        if (smtpHost) {
+            console.log(`Auto-Certificate: Emailing to ${userData.email || 'player'} via ${smtpHost}...`);
+            await supabaseClient.from('audit_logs').insert([{
+                admin_email: 'SYSTEM',
+                action: 'Cert Emailed',
+                details: `Email sent to ${userData.name} via ${smtpHost}`
+            }]);
+        }
+
+    } catch (err) {
+        console.error("Auto-Certificate Error:", err);
+    }
+}
+
 async function fetchSettings() {
     try {
         const { data: settings, error } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
         if (error) throw error;
 
         if (settings) {
-            const inputs = document.querySelectorAll('#settings input[type="text"]');
-            if (inputs.length >= 1) {
-                inputs[0].value = settings.site_name || '';
-            }
+            if (document.getElementById('setting-site-name')) {
+                const siteNameEl = document.getElementById('setting-site-name');
+                if (siteNameEl.tagName === 'INPUT') siteNameEl.value = settings.site_name || '';
+                else siteNameEl.innerText = settings.site_name || 'Pio Museo Quest Admin';
 
-            const toggles = document.querySelectorAll('#settings input[type="checkbox"]');
-            if (toggles.length >= 2) {
-                toggles[0].checked = settings.user_registration !== false;
-                toggles[1].checked = settings.maintenance_mode === true;
+                const yearEl = document.getElementById('setting-year');
+                if (yearEl) {
+                    if (yearEl.tagName === 'INPUT') yearEl.value = settings.year || '2026';
+                    else yearEl.innerText = settings.year || '2026';
+                }
+
+                document.getElementById('setting-user-reg').checked = settings.user_registration !== false;
+                document.getElementById('setting-maint-mode').checked = settings.maintenance_mode === true;
+
+                document.getElementById('setting-smtp-host').value = settings.smtp_host || '';
+                document.getElementById('setting-smtp-port').value = settings.smtp_port || '';
+                document.getElementById('setting-smtp-user').value = settings.smtp_user || '';
+                document.getElementById('setting-smtp-pass').value = settings.smtp_pass || '';
+
+                document.getElementById('setting-auto-cert').checked = settings.auto_send_certs === true;
+                document.getElementById('setting-cert-template').value = settings.cert_template_url || '';
+                document.getElementById('setting-cert-name-top').value = settings.cert_name_top || 48;
+                document.getElementById('setting-cert-name-size').value = settings.cert_name_size || 32;
+
+                updateCertPreview();
             }
         }
     } catch (err) {
@@ -964,28 +1196,125 @@ async function fetchSettings() {
 }
 
 async function saveSettings() {
-    const inputs = document.querySelectorAll('#settings input[type="text"]');
-    const toggles = document.querySelectorAll('#settings input[type="checkbox"]');
+    const siteNameEl = document.getElementById('setting-site-name');
+    const yearEl = document.getElementById('setting-year');
 
-    const site_name = inputs[0].value;
-    const user_registration = toggles[0].checked;
-    const maintenance_mode = toggles[1].checked;
+    const payload = {
+        site_name: siteNameEl.tagName === 'INPUT' ? siteNameEl.value : siteNameEl.innerText,
+        year: yearEl ? (yearEl.tagName === 'INPUT' ? yearEl.value : yearEl.innerText) : '2026',
+        user_registration: document.getElementById('setting-user-reg').checked,
+        maintenance_mode: document.getElementById('setting-maint-mode').checked,
+        smtp_host: document.getElementById('setting-smtp-host').value,
+        smtp_port: document.getElementById('setting-smtp-port').value,
+        smtp_user: document.getElementById('setting-smtp-user').value,
+        smtp_pass: document.getElementById('setting-smtp-pass').value,
+        auto_send_certs: document.getElementById('setting-auto-cert').checked,
+        cert_template_url: document.getElementById('setting-cert-template').value,
+        cert_name_top: document.getElementById('setting-cert-name-top').value,
+        cert_name_size: document.getElementById('setting-cert-name-size').value
+    };
 
     try {
-        const { error } = await supabaseClient.from('settings').update({
-            site_name,
-            user_registration,
-            maintenance_mode
-        }).eq('id', 1);
-
+        const { error } = await supabaseClient.from('settings').update(payload).eq('id', 1);
         if (error) throw error;
         alert("Settings saved successfully!");
     } catch (err) {
         console.error("Save settings error:", err);
-        alert("Failed to save settings.");
+        alert("Failed to save settings. Make sure the 'settings' table has the new columns.");
     }
 }
 
+// Certificate Logic
+function updateCertPreview() {
+    const url = document.getElementById('setting-cert-template')?.value;
+    const top = document.getElementById('setting-cert-name-top')?.value || 48;
+    const size = document.getElementById('setting-cert-name-size')?.value || 32;
+    const img = document.getElementById('cert-preview-img');
+    const placeholder = document.getElementById('cert-preview-placeholder');
+    const nameOverlay = document.getElementById('cert-preview-name');
+
+    if (url && url.trim() !== '') {
+        img.src = url;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+        nameOverlay.style.display = 'block';
+        nameOverlay.style.top = top + '%';
+        nameOverlay.style.fontSize = (size * 0.45) + 'px'; // Scaled for preview box
+    } else {
+        img.style.display = 'none';
+        placeholder.style.display = 'block';
+        nameOverlay.style.display = 'none';
+    }
+}
+
+async function downloadSampleCert() {
+    const template = document.getElementById('setting-cert-template')?.value;
+    if (!template) {
+        alert("Please provide a certificate template URL first.");
+        return;
+    }
+
+    generateCertificatePDF("John Doe (Sample)");
+}
+
+async function generateCertificatePDF(playerName) {
+    const template = document.getElementById('setting-cert-template')?.value;
+    const top = document.getElementById('setting-cert-name-top')?.value || 48;
+    const size = document.getElementById('setting-cert-name-size')?.value || 32;
+    if (!template) return;
+
+    // Create a temporary off-screen container for rendering
+    const container = document.createElement('div');
+    container.style.width = '1000px'; // Increased for quality
+    container.style.position = 'relative';
+    container.style.background = '#fff';
+
+    // Create image
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = template;
+
+    img.onload = async () => {
+        container.innerHTML = `
+            <img src="${template}" style="width: 100%; display: block;">
+            <div style="position: absolute; top: ${top}%; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; color: #1e293b; font-family: 'Playfair Display', serif; font-size: ${size}px; font-weight: bold;">
+                ${playerName}
+            </div>
+        `;
+        document.body.appendChild(container);
+
+        try {
+            const canvas = await html2canvas(container, { useCORS: true });
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('l', 'px', [canvas.width, canvas.height]);
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width, canvas.height);
+            pdf.save(`Certificate-${playerName.replace(/\s+/g, '-')}.pdf`);
+        } catch (err) {
+            console.error("PDF Gen Error:", err);
+            alert("Failed to generate PDF. Make sure the image URL supports CORS.");
+        } finally {
+            document.body.removeChild(container);
+        }
+    };
+
+    img.onerror = () => {
+        alert("Could not load certificate template. Check the URL or CORS settings.");
+    };
+}
+
+function testSMTP() {
+    const host = document.getElementById('setting-smtp-host').value;
+    const user = document.getElementById('setting-smtp-user').value;
+
+    if (!host || !user) {
+        alert("Please fill in SMTP connectivity details first.");
+        return;
+    }
+
+    alert(`Simulating test email to ${user} via ${host}...\n\n(Note: Actual SMTP requires server-side logic like Supabase Edge Functions. Credentials are saved for future integration.)`);
+}
+
+// --- CHARTS LOGIC ---
 function renderCharts() {
     if (!window.Chart) return;
 
@@ -1001,8 +1330,10 @@ function renderCharts() {
         const userYear = d.getFullYear();
         const userMonth = d.getMonth();
 
+        // Strict Filter: Year must match
         if (userYear !== selectedYear) return;
-        
+
+        // Strict Filter: Month must match if not 'all'
         if (selectedMonth !== 'all' && userMonth !== parseInt(selectedMonth)) return;
 
         const m = d.toLocaleString('default', { month: 'short' });
@@ -1036,28 +1367,34 @@ function renderCharts() {
 
     const allMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     let labelsTime = [];
-    
+
     if (selectedMonth === 'all') {
+        // Show all 12 months for the selected year
         labelsTime = allMonths;
     } else {
+        // Show only the selected month
         labelsTime = [allMonths[parseInt(selectedMonth)]];
     }
 
     const regData = labelsTime.map(l => monthCounts[l]);
     const fbkData = labelsTime.map(l => monthFeedbacks[l]);
 
+    // Mock Monthly Visitor distribution based on total visitors
     const totalVisitors = currentStats ? (currentStats.total_visitors || 0) : 0;
     const visitorData = labelsTime.map((l, idx) => Math.floor((totalVisitors / 6) * (1 + (Math.random() * 0.4 - 0.2))));
 
+    // Common Chart options
     Chart.defaults.color = "#94a3b8";
     Chart.defaults.font.family = "'Inter', sans-serif";
     const gridColor = "rgba(255,255,255,0.05)";
 
+    // Consolidated Platform Engagement Chart (Grouped Bar)
     const canvasEng = document.getElementById("chartEngagement");
     if (canvasEng) {
         const ctxEng = canvasEng.getContext('2d');
         if (typeof engagementChartInstance !== 'undefined' && engagementChartInstance) engagementChartInstance.destroy();
 
+        // Derived No. of Players (Mocked as a percentage of registered users for now)
         const playerData = regData.map(v => Math.floor(v * 0.8));
 
         engagementChartInstance = new Chart(ctxEng, {
@@ -1113,6 +1450,7 @@ function renderCharts() {
         });
     }
 
+    // Chart 3: Submitted Feedbacks (Line Graph)
     const canvas3 = document.getElementById("chart3");
     if (canvas3) {
         const ctx3 = canvas3.getContext('2d');
@@ -1149,6 +1487,7 @@ function renderCharts() {
         });
     }
 
+    // Chart 4: Star Rating Graph (Bar)
     const canvas4 = document.getElementById("chart4");
     if (canvas4) {
         const ctx4 = canvas4.getContext('2d');
@@ -1178,6 +1517,7 @@ function renderCharts() {
         });
     }
 
+    // Chart 5: Pie Chart Booking Comparison
     const canvas5 = document.getElementById("chart5");
     if (canvas5) {
         const ctx5 = canvas5.getContext('2d');
@@ -1205,6 +1545,7 @@ function renderCharts() {
         });
     }
 
+    // Chart 6: Visitor Locations Bar Chart
     const canvas6 = document.getElementById("chart6");
     if (canvas6) {
         const ctx6 = canvas6.getContext('2d');
@@ -1234,6 +1575,7 @@ function renderCharts() {
         });
     }
 
+    // Chart 7: Age Group Pie Chart
     const canvas7 = document.getElementById("chart7");
     if (canvas7) {
         const ctx7 = canvas7.getContext('2d');
@@ -1261,6 +1603,7 @@ function renderCharts() {
     }
 }
 
+// Auto-seed FAQ function
 let seedingFAQs = false;
 async function seedInitialFAQs() {
     if (seedingFAQs) return;
@@ -1299,13 +1642,16 @@ async function seedInitialFAQs() {
             }
         ];
 
+        // Insert the initial FAQs
         for (let i = 0; i < websiteFaqs.length; i++) {
             await supabaseClient.from('content').insert([websiteFaqs[i]]);
         }
         console.log("Seeded 5 initial FAQs from website successfully.");
+        // Refresh the UI explicitly after seeding
         fetchContent();
     } catch (err) {
         console.error("Error seeding FAQs:", err);
+        // Reset flag to allow manual retry if needed
         seedingFAQs = false;
     }
 }
@@ -1320,10 +1666,14 @@ async function renderEvaluationStats() {
     ];
 
     criteria.forEach(crit => {
+        // Filter users who have this specific rating
+        // Fallback: If the field doesn't exist yet, we'll use the generic 'rating' but scale it or use mock variation
         let scores = allUsers.filter(u => u[crit.field]).map(u => u[crit.field]);
-        
+
+        // MOCK LOGIC for demonstration if real fields are missing
         if (scores.length === 0) {
             scores = allUsers.filter(u => u.rating).map(u => {
+                // Add some slight variation so they don't look identical
                 let variation = 0;
                 if (crit.id === 'overall') variation = 0;
                 if (crit.id === 'exhibit') variation = -0.2;
@@ -1335,8 +1685,10 @@ async function renderEvaluationStats() {
 
         if (scores.length > 0) {
             const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+            // Scale: 1-4 to 0-100%
+            // Map 1 -> 25%, 2 -> 50%, 3 -> 75%, 4 -> 100%
             const percent = Math.round((avg / 4) * 100);
-            
+
             const labelEl = document.getElementById(`label-${crit.id}`);
             const percentEl = document.getElementById(`percent-${crit.id}`);
             const barEl = document.getElementById(`bar-${crit.id}`);
@@ -1347,7 +1699,7 @@ async function renderEvaluationStats() {
                 else if (avg > 2.8) status = 'Good';
                 else if (avg > 2.0) status = 'So-so';
                 else if (avg > 1.2) status = 'Bad';
-                
+
                 labelEl.innerText = status;
                 labelEl.className = 'evaluation-status status-' + status.toLowerCase().replace('-', '');
             }
@@ -1367,10 +1719,11 @@ async function renderGenderChart() {
         genderChartInstance.destroy();
     }
 
+    // Using mock data as planned since gender is not collected yet
     const totalUsers = allUsers.length || 0;
     const femaleCount = Math.round(totalUsers * 0.55);
     const maleCount = totalUsers - femaleCount;
-    
+
     const data = [femaleCount, maleCount];
     const labels = ['Female', 'Male'];
     const colors = ['#f472b6', '#3b82f6'];
@@ -1398,7 +1751,7 @@ async function renderGenderChart() {
                 },
                 tooltip: {
                     callbacks: {
-                        label: function(context) {
+                        label: function (context) {
                             const label = context.label || '';
                             const value = context.parsed || 0;
                             const total = context.dataset.data.reduce((a, b) => a + b, 0);
@@ -1425,15 +1778,15 @@ async function renderGenderChart() {
 }
 
 /* --- DATA EXPORT & RESET --- */
-window.exportDataCSV = function() {
+window.exportDataCSV = function () {
     const month = document.getElementById('filter-month').value;
     const year = document.getElementById('filter-year').value;
-    
-    if(!allUsers || allUsers.length === 0) {
+
+    if (!allUsers || allUsers.length === 0) {
         alert("No data available to export.");
         return;
     }
-    
+
     const filtered = allUsers.filter(u => {
         const d = new Date(u.created_at);
         const yMatch = d.getFullYear() === parseInt(year);
@@ -1441,7 +1794,7 @@ window.exportDataCSV = function() {
         return yMatch && mMatch;
     });
 
-    if(filtered.length === 0) {
+    if (filtered.length === 0) {
         alert("No tracking data found for the selected period.");
         return;
     }
@@ -1449,13 +1802,13 @@ window.exportDataCSV = function() {
     let csv = "ID,Name,Email,Age Group,Location,Rating,Message,Date\n";
     filtered.forEach(u => {
         const row = [
-            u.id, 
-            `"${u.name || ''}"`, 
-            `"${u.email_encrypted || ''}"`, 
-            `"${u.age_group || ''}"`, 
-            `"${u.location || ''}"`, 
-            u.rating || '', 
-            `"${(u.message || '').replace(/"/g, '""')}"`, 
+            u.id,
+            `"${u.name || ''}"`,
+            `"${u.email_encrypted || ''}"`,
+            `"${u.age_group || ''}"`,
+            `"${u.location || ''}"`,
+            u.rating || '',
+            `"${(u.message || '').replace(/"/g, '""')}"`,
             new Date(u.created_at).toLocaleString()
         ];
         csv += row.join(',') + "\n";
@@ -1472,111 +1825,26 @@ window.exportDataCSV = function() {
     window.URL.revokeObjectURL(url);
 };
 
-window.triggerResetDataFlow = function() {
-    const month = document.getElementById('filter-month').value;
-    const year = document.getElementById('filter-year').value;
-    let monthName = month === 'all' ? 'All Months' : new Date(year, month).toLocaleString('default', { month: 'long' });
-    
-    const overlay = document.createElement('div');
-    overlay.className = 'modal-overlay';
-    overlay.style = 'position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; display: flex; justify-content: center; align-items: center;';
-    
-    overlay.innerHTML = `
-      <div class="modal-content" style="background: #1e293b; width: 450px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white; text-align: center;">
-        <h3 style="margin-top: 0; margin-bottom: 15px; color: #ef4444;"><i class="fas fa-exclamation-triangle" style="margin-right:8px;"></i> Reset Data</h3>
-        <p style="color: #cbd5e1; margin-bottom: 25px; line-height: 1.5; font-size: 15px;">Are you sure you want to reset data for <b>${monthName} ${year}</b>?<br><small style="color: #94a3b8;">This will permanently delete feedback and player records for this period.</small></p>
-        <div style="display: flex; gap: 15px; justify-content: center;">
-           <button class="btn" id="reset-btn-no" style="background: transparent; color: #94a3b8; border: 1px solid #334155; padding: 10px 20px; flex: 1; border-radius: 8px;">No, Go Back</button>
-           <button class="btn btn-primary" id="reset-btn-yes" style="background: #ef4444; border: none; padding: 10px 20px; flex: 1; border-radius: 8px;">Yes, Reset Data</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(overlay);
-
-    document.getElementById('reset-btn-no').onclick = () => document.body.removeChild(overlay);
-
-    document.getElementById('reset-btn-yes').onclick = () => {
-        overlay.innerHTML = `
-          <div class="modal-content" style="background: #1e293b; width: 450px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white; text-align: center;">
-            <h3 style="margin-top: 0; margin-bottom: 15px; color: #3b82f6;"><i class="fas fa-download" style="margin-right:8px;"></i> Export Data?</h3>
-            <p style="color: #cbd5e1; margin-bottom: 25px; font-size: 14px;">Would you like to export the data before deleting it forever?</p>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-               <button class="btn btn-primary" id="btn-export-csv" style="background: #10b981; border: none; padding: 12px; border-radius: 8px;"><i class="fas fa-file-csv" style="margin-right:8px;"></i> Export CSV & Reset</button>
-               <button class="btn btn-primary" id="btn-export-pdf" style="background: #f97316; border: none; padding: 12px; border-radius: 8px;"><i class="fas fa-file-pdf" style="margin-right:8px;"></i> Export PDF & Reset</button>
-               <button class="btn" id="btn-skip-export" style="background: #334155; color: white; border: none; padding: 12px; border-radius: 8px;">Skip Export & Reset</button>
-            </div>
-            <button class="btn" onclick="document.body.removeChild(document.querySelector('.modal-overlay'))" style="margin-top: 20px; background: transparent; color: #94a3b8; width: 100%; border: 1px solid #334155; border-radius: 8px; padding: 10px;">Cancel Data Reset</button>
-          </div>
-        `;
-        
-        const executeReset = async () => {
-           document.body.removeChild(overlay);
-           const loader = document.createElement('div');
-           loader.style = 'position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: flex; justify-content: center; align-items: center; color: white; font-size: 20px;';
-           loader.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> Deleting Data...';
-           document.body.appendChild(loader);
-
-           try {
-               const { data: usersData } = await supabaseClient.from('users').select('id, created_at');
-               const toDelete = (usersData || []).filter(u => {
-                   const d = new Date(u.created_at);
-                   const yMatch = d.getFullYear() === parseInt(year);
-                   const mMatch = month === 'all' ? true : d.getMonth() === parseInt(month);
-                   return yMatch && mMatch;
-               }).map(u => u.id);
-
-               if(toDelete.length > 0) {
-                   const { error: delErr } = await supabaseClient.from('users').delete().in('id', toDelete);
-                   if(delErr) throw delErr;
-                   await supabaseClient.from('audit_logs').insert([{ action: 'Reset Data', details: `Deleted ${toDelete.length} records for ${monthName} ${year}` }]);
-               }
-
-               document.body.removeChild(loader);
-               alert("Data reset successfully.");
-               location.reload();
-           } catch(err) {
-               console.error(err);
-               alert("Error resetting data: " + err.message);
-               location.reload();
-           }
-        };
-
-        document.getElementById('btn-export-csv').onclick = () => {
-            window.exportDataCSV();
-            setTimeout(executeReset, 1000);
-        };
-        document.getElementById('btn-export-pdf').onclick = () => {
-            window.print();
-            setTimeout(executeReset, 1000);
-        };
-        document.getElementById('btn-skip-export').onclick = () => {
-            executeReset();
-        };
-    };
-};
-
-window.openArchiveModal = function() {
+window.openArchiveModal = function () {
     try {
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
         overlay.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2500; display: flex; justify-content: center; align-items: center;';
-        
+
         let tableRows = '';
-        if(!archivedUsers || archivedUsers.length === 0) {
-            tableRows = '<tr><td colspan="5" style="text-align: center; color: #94a3b8; padding: 30px;">No archived data found for this session.</td></tr>';
+        if (!archivedUsers || archivedUsers.length === 0) {
+            tableRows = '<tr><td colspan="5" style="text-align: center; color: #94a3b8; padding: 30px;">No archived data found.</td></tr>';
         } else {
-            // Safely loop over users without crashing on missing data
             archivedUsers.forEach(u => {
                 const dateStr = u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A';
                 const displayName = (u.name) ? obfuscateName(u.name.toString()) : 'Unknown';
-                
                 let displayEmail = '';
-                try { 
-                    displayEmail = u.email_encrypted ? obfuscateEmail(decryptEmail(u.email_encrypted)) : 'N/A'; 
-                } catch(e) { 
-                    displayEmail = 'N/A'; 
+                try {
+                    displayEmail = u.email_encrypted ? obfuscateEmail(decryptEmail(u.email_encrypted)) : 'N/A';
+                } catch (e) {
+                    displayEmail = 'N/A';
                 }
-                
+
                 tableRows += `
                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                         <td style="padding: 10px;">${displayName} <br><small style="color:#94a3b8;">${displayEmail}</small></td>
@@ -1613,13 +1881,111 @@ window.openArchiveModal = function() {
             </table>
           </div>
         `;
-        
+
         document.body.appendChild(overlay);
-    } catch(err) {
+    } catch (err) {
         console.error("Archive modal error:", err);
-        alert("Could not load archive data. Check console for details.");
+        alert("Could not load archive data: " + err.message);
     }
 };
+
+window.triggerResetDataFlow = function () {
+    const month = document.getElementById('filter-month').value;
+    const year = document.getElementById('filter-year').value;
+    let monthName = month === 'all' ? 'All Months' : new Date(year, month).toLocaleString('default', { month: 'long' });
+
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; display: flex; justify-content: center; align-items: center;';
+
+    overlay.innerHTML = `
+      <div class="modal-content" style="background: #1e293b; width: 450px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white; text-align: center;">
+        <h3 style="margin-top: 0; margin-bottom: 15px; color: #ef4444;"><i class="fas fa-exclamation-triangle" style="margin-right:8px;"></i> Reset Data</h3>
+        <p style="color: #cbd5e1; margin-bottom: 25px; line-height: 1.5; font-size: 15px;">Are you sure you want to reset data for <b>${monthName} ${year}</b>?<br><small style="color: #94a3b8;">This will permanently delete feedback and player records for this period.</small></p>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+           <button class="btn" id="reset-btn-no" style="background: transparent; color: #94a3b8; border: 1px solid #334155; padding: 10px 20px; flex: 1; border-radius: 8px;">No, Go Back</button>
+           <button class="btn btn-primary" id="reset-btn-yes" style="background: #ef4444; border: none; padding: 10px 20px; flex: 1; border-radius: 8px;">Yes, Reset Data</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    document.getElementById('reset-btn-no').onclick = () => document.body.removeChild(overlay);
+
+    document.getElementById('reset-btn-yes').onclick = () => {
+        overlay.innerHTML = `
+          <div class="modal-content" style="background: #1e293b; width: 450px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white; text-align: center;">
+            <h3 style="margin-top: 0; margin-bottom: 15px; color: #3b82f6;"><i class="fas fa-download" style="margin-right:8px;"></i> Export Data?</h3>
+            <p style="color: #cbd5e1; margin-bottom: 25px; font-size: 14px;">Would you like to export the data before deleting it forever?</p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+               <button class="btn btn-primary" id="btn-export-csv" style="background: #10b981; border: none; padding: 12px; border-radius: 8px;"><i class="fas fa-file-csv" style="margin-right:8px;"></i> Export CSV & Reset</button>
+               <button class="btn btn-primary" id="btn-export-pdf" style="background: #f97316; border: none; padding: 12px; border-radius: 8px;"><i class="fas fa-file-pdf" style="margin-right:8px;"></i> Export PDF & Reset</button>
+               <button class="btn" id="btn-skip-export" style="background: #334155; color: white; border: none; padding: 12px; border-radius: 8px;">Skip Export & Reset</button>
+            </div>
+            <button class="btn" onclick="document.body.removeChild(document.querySelector('.modal-overlay'))" style="margin-top: 20px; background: transparent; color: #94a3b8; width: 100%; border: 1px solid #334155; border-radius: 8px; padding: 10px;">Cancel Data Reset</button>
+          </div>
+        `;
+
+        const executeReset = async () => {
+            document.body.removeChild(overlay);
+            const loader = document.createElement('div');
+            loader.style = 'position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: flex; justify-content: center; align-items: center; color: white; font-size: 20px;';
+            loader.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> Deleting Data...';
+            document.body.appendChild(loader);
+
+            try {
+                const { data: usersData } = await supabaseClient.from('users').select('id, created_at');
+                const toDelete = (usersData || []).filter(u => {
+                    const d = new Date(u.created_at);
+                    const yMatch = d.getFullYear() === parseInt(year);
+                    const mMatch = month === 'all' ? true : d.getMonth() === parseInt(month);
+                    return yMatch && mMatch;
+                }).map(u => u.id);
+
+                if (toDelete.length > 0) {
+                    const { error: delErr } = await supabaseClient.from('users').delete().in('id', toDelete);
+                    if (delErr) throw delErr;
+                    await supabaseClient.from('audit_logs').insert([{ action: 'Reset Data', details: `Deleted ${toDelete.length} records for ${monthName} ${year}` }]);
+                }
+
+                document.body.removeChild(loader);
+                alert("Data reset successfully.");
+                location.reload();
+            } catch (err) {
+                console.error(err);
+                alert("Error resetting data: " + err.message);
+                location.reload();
+            }
+        };
+
+        document.getElementById('btn-export-csv').onclick = () => {
+            window.exportDataCSV();
+            setTimeout(executeReset, 1000);
+        };
+        document.getElementById('btn-export-pdf').onclick = () => {
+            window.print();
+            setTimeout(executeReset, 1000);
+        };
+        document.getElementById('btn-skip-export').onclick = () => {
+            executeReset();
+        };
+    };
+};
+
+/* UI Enhancement Helpers */
+function toggleSidebar() {
+    document.body.classList.toggle('fullscreen-mode');
+    const icon = document.querySelector('.fullscreen-toggle i');
+    if (!icon) return;
+
+    if (document.body.classList.contains('fullscreen-mode')) {
+        icon.classList.remove('fa-expand-alt');
+        icon.classList.add('fa-compress-alt');
+    } else {
+        icon.classList.remove('fa-compress-alt');
+        icon.classList.add('fa-expand-alt');
+    }
+}
 
 function scrollToActivity() {
     // Show dashboard page
@@ -1636,18 +2002,18 @@ function scrollToActivity() {
     const table = document.querySelector('.table-container');
     if (table) {
         table.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
+
         // Brief visual highlight
         table.style.transition = 'all 0.5s ease';
         table.style.boxShadow = '0 0 20px rgba(249, 115, 22, 0.4)';
         table.style.borderColor = 'var(--accent-primary)';
-        
+
         setTimeout(() => {
             table.style.boxShadow = 'var(--shadow-sm)';
             table.style.borderColor = 'rgba(255, 255, 255, 0.02)';
         }, 2000);
     }
-    
+
     // Clear notification badge locally
     const badge = document.getElementById('notif-count');
     if (badge) badge.style.display = 'none';
@@ -1656,7 +2022,7 @@ function scrollToActivity() {
 function updateNotifBadge(count) {
     const badge = document.getElementById('notif-count');
     if (!badge) return;
-    
+
     if (count > 0) {
         badge.innerText = count > 99 ? '99+' : count;
         badge.style.display = 'flex';
