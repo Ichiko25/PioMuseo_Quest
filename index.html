@@ -1207,13 +1207,13 @@
         }
 
         .game-card {
-            display: grid;
+            /*   display: grid; */
             gap: 2.5rem;
             align-items: center;
             background-color: var(--white);
             border-radius: var(--radius-lg);
             padding: .5rem;
-            margin-right: 10px;
+            /* margin-right: 10px;*/
             box-shadow: var(--shadow-soft);
         }
 
@@ -1222,6 +1222,10 @@
             display: flex;
             align-items: center;
             width: 100%;
+        }
+
+        .game-info {
+            padding: 10px;
         }
 
         .game-screen {
@@ -1658,13 +1662,6 @@
             }
         }
 
-
-        @media (min-width: 1024px) {
-            .footer-main {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
         .footer-brand h3 {
             font-family: 'Cinzel', serif;
             font-size: 1.5rem;
@@ -1906,19 +1903,9 @@
             width: 100%;
         }
 
-        @media (max-width: 768px) {
-            .footer-main {
-                text-align: center;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-
-            .design h2 {
-                margin-left: 0 !important;
-                text-align: center;
-            }
+        .design h2 {
+            margin-left: 0 !important;
+            text-align: center;
         }
 
         @media (max-width: 720px) {
@@ -2240,27 +2227,6 @@
             #game .card {
                 width: 220px;
             }
-        }
-
-        /* Footer Centering */
-        .footer-main {
-            display: flex;
-            align-items: center;
-            text-align: center;
-        }
-
-        .footer-brand {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .footer-social {
-            justify-content: center;
-        }
-
-        .footer-column-contact {
-            text-align: center;
         }
     </style>
 
