@@ -419,12 +419,24 @@
             gap: 1rem;
         }
         
-        /* Inside your mobile media query */
-        @media (max-width: 720px) {
-            .nav-container {
-                padding-inline: 1.1rem;
-            }
-        }
+    @media (max-width: 720px) {
+    .nav-toggle {
+        display: inline-flex;
+        gap: 0.1rem;
+        order: -1; /* Moves hamburger to the left */
+    }
+
+    .nav-container {
+        padding-inline: 1.1rem;
+        justify-content: flex-start; /* Aligns toggle and logo to the left */
+        gap: 1.5rem;
+    }
+
+    .nav-container img {
+        height: 50px; /* Scaled down for mobile */
+        width: auto;
+    }
+}
 
         .logo {
             display: flex;
@@ -848,15 +860,18 @@
             color: var(--gray-mid);
         }
 
-        @media (max-width:768px) {
-            .about-grid {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 768px) {
+    .game-screen {
+        overflow: hidden; /* Clips the sliding track */
+        width: 100%;
+        margin: 0 auto;
+    }
 
-            .side-box {
-                order: -1;
-            }
-        }
+    #game .track {
+        display: flex;
+        flex-wrap: nowrap; /* Keeps items in a single line for carousel */
+    }
+}
 
         .read-btn {
             margin-top: 15px;
@@ -1846,6 +1861,20 @@
     
     .game-info {
         padding: 0 1rem 1rem;
+    }
+}
+
+		@media (max-width: 768px) {
+    .game-card {
+        padding: 1.5rem 1rem;
+        overflow: hidden; /* Prevents card-level overflow */
+    }
+
+    .game-info p, 
+    .game-info h3, 
+    .game-info ul {
+        max-width: 100%;
+        word-wrap: break-word; /* Forces long text to wrap instead of overflow */
     }
 }
 
