@@ -1949,23 +1949,40 @@
 
             .nav-links {
                 position: absolute;
-                top: 100%;
+                top: 70px;
+                /* Below the 70px header */
                 left: 0;
                 right: 0;
                 background: darkred;
+                display: flex;
                 flex-direction: column;
-                align-items: flex-start;
-                padding: 0 1.4rem;
+                align-items: center;
+                padding: 0;
                 max-height: 0;
                 overflow: hidden;
-                transition: max-height var(--transition-med), padding var(--transition-med);
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-                z-index: 1000;
+                transition: all 0.4s ease-in-out;
+                z-index: 9999;
+                list-style: none;
+                margin: 0;
             }
 
             .nav-links.open {
-                max-height: 400px;
-                padding: 1.5rem 1.4rem;
+                max-height: 500px;
+                padding: 2rem 0;
+            }
+
+            .nav-links li {
+                width: 100%;
+                text-align: center;
+                padding: 10px 0;
+            }
+
+            .nav-links li a {
+                color: white;
+                text-decoration: none;
+                font-size: 1.2rem;
+                display: block;
+                width: 100%;
             }
         }
 
@@ -2229,17 +2246,15 @@
             }
         }
     </style>
-
 </head>
 
-<div id="blogModal" class="blog-modal">
-    <div class="blog-modal-content">
-        <span id="closeBlog" onclick="closeModal('blogModal')">&times;</span>
-        <div id="blogContent"></div>
-    </div>
-</div>
-
 <body>
+    <div id="blogModal" class="blog-modal">
+        <div class="blog-modal-content">
+            <span id="closeBlog" onclick="closeModal('blogModal')">&times;</span>
+            <div id="blogContent"></div>
+        </div>
+    </div>
     <header class="site-header">
         <nav class="navbar" aria-label="Main">
             <img src="web-images/qqq.jpg" alt="Dr. Pio Valenzuela Museum Logo" height="70"></img>
@@ -2316,7 +2331,6 @@
                         corridors of the past and discover the heart of the man whose name our city proudly bears.
 
                     </p>
-                    </span>
 
                 </div>
 
@@ -2675,21 +2689,7 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="supabaseClient.js"></script>
     <script src="feedback.js"></script>
-    <script src="pio_museo.js?v=3" defer></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const navToggle = document.querySelector('.nav-toggle');
-            const navLinks = document.querySelector('.nav-links');
-
-            if (navToggle && navLinks) {
-                navToggle.addEventListener('click', () => {
-                    navLinks.classList.toggle('open');
-                    const isOpen = navLinks.classList.contains('open');
-                    navToggle.setAttribute('aria-expanded', isOpen);
-                });
-            }
-        });
-    </script>
+    <script src="pio_museo.js" defer></script>
 </body>
 
 </html>
