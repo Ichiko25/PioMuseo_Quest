@@ -1509,7 +1509,7 @@
             }
         }
 
-        /* ===================================
+/* ===================================
         MAIN FOOTER
         =================================== */
 
@@ -1528,47 +1528,6 @@
         @media (min-width: 1024px) {
             .footer-main {
                 grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-		@media (max-width: 720px) {
-            .navbar {
-                padding-inline: 1.1rem;
-            }
-
-           .nav-toggle {
-        display: inline-flex;
-        order: -1;      /* Moves toggle to the left */
-        z-index: 1005;  /* Ensures clickability */
-    }
-    .nav-container {
-        justify-content: space-between; /* Keeps logo and toggle apart */
-    }
-    .nav-container img {
-        height: 45px;
-        position: relative;
-        left: -10px;    /* Visual adjustment to center the logo */
-    }
-
-            /* FIX: Anchored menu exactly at the bottom of header */
-            .nav-links {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: var(--red);
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 0 1.4rem;
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height var(--transition-med), padding var(--transition-med);
-                box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            }
-
-            .nav-links.open {
-                max-height: 260px;
-                padding: 1rem 1.4rem;
             }
         }
 
@@ -1814,129 +1773,53 @@
             background-color: 1a1a1a;
             font-size: 0.9rem;
             opacity: 0.7;
-            margin-left: 400px;
+            width: 100%;
         }
 
-		/* --- NEW RESPONSIVENESS FIXES --- */
-
-/* For smaller laptops and tablets */
-@media (max-width: 1024px) {
-    .hero {
-        grid-template-columns: 1fr; /* Stacks the two sides vertically */
-        padding-top: 6rem;
-    }
-    .hero-visual .carousel {
-        width: 100%;
-        max-width: 700px;
-    }
-}
-
-/* For mobile phones */
-@media (max-width: 768px) {
-    .hero {
-        padding: 5rem 1rem 2rem;
-        gap: 2rem;
-    }
-    
-    /* Resizes the massive Landing Page Title */
-    .hero-content h3.footer-logo {
-        font-size: 28px !important; 
-    }
-    
-    .hero-tagline {
-        font-size: 15px;
-        line-height: 1.6;
-    }
-    
-    .hero-visual {
-        height: 300px;
-        justify-content: center;
-    }
-    
-    .hero-visual .carousel {
-        height: 300px;
-    }
-    
-    .hero-visual .card {
-        width: 240px;
-        height: 180px;
-    }
-    
-    /* Stacks the Game Section Image and Text */
-    .game-card {
-        grid-template-columns: 1fr; /* Image goes on top, text below */
-        gap: 1.5rem;
-    }
-    
-    .game-info {
-        padding: 0 1rem 1rem;
-    }
-}
-@media (max-width: 768px) {
-    .about-grid {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 2rem !important;
-    }
-    .about-text, .side-box {
-        width: 100% !important;
-    }
-}
-
-		@media (max-width: 768px) {
-    .game-card {
-        padding: 1.5rem 1rem;
-        overflow: hidden; /* Prevents card-level overflow */
-    }
-
-    .game-info p, 
-    .game-info h3, 
-    .game-info ul {
-        max-width: 100%;
-        word-wrap: break-word; /* Forces long text to wrap instead of overflow */
-    }
-			 .game-media {
-        position: relative;
-        overflow: visible; /* Show buttons even if they overlap edges */
-    }
-    .carousel-btn {
-        z-index: 10;
-        display: flex !important;
-    }
-    .carousel-btn.right {
-        right: -10px; /* Moves button slightly outside for better touch access */
-    }
-}
-
-               @media (max-width: 768px) {
-            
-            /* ... (hero media queries omitted for brevity) ... */
-
-            .game-card {
+        @media (max-width: 768px) {
+            .footer-main {
                 grid-template-columns: 1fr;
-                gap: 1.5rem;
+                text-align: center;
             }
 
-            .game-info {
-                padding: 0 1rem 1rem;
-            }
-
-            /* FIX: Expanding the Game Carousel Image size bounds */
-            #game .card {
-                min-width: 220px;
-                margin: 0 8px;
-            }
-
-            /* FIX: Safely pulling the overlay buttons inwards */
-            .carousel-btn.left {
-                left: 10px;
-            }
-
-            .carousel-btn.right {
-                right: 10px;
+            .design h2 {
+                margin-left: 0 !important;
+                text-align: center;
             }
         }
 
+        @media (max-width: 720px) {
+            .navbar {
+                padding-inline: 1.1rem;
+            }
+
+            .nav-toggle {
+                display: inline-flex;
+                gap: 0.1rem;
+            }
+
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--red);
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 0 1.4rem;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height var(--transition-med), padding var(--transition-med);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            }
+
+            .nav-links.open {
+                max-height: 260px;
+                padding: 1rem 1.4rem;
+            }
+        }
+
+        /* Modal Styles */
         .blog-modal {
             display: none;
             position: fixed;
@@ -2058,6 +1941,7 @@
             flex-shrink: 0;
         }
 
+        /* Responsive adjustments */
         @media (max-width: 768px) {
             .feedback-pill-marquee {
                 width: 320px;
@@ -2069,6 +1953,70 @@
 
             .marquee-track.right {
                 animation-duration: 40s;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding-top: 6rem;
+            }
+
+            .hero-visual .carousel {
+                width: 100%;
+                max-width: 700px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 5rem 1rem 2rem;
+                gap: 2rem;
+            }
+
+            .hero-content h3.footer-logo {
+                font-size: 28px !important;
+            }
+
+            .hero-tagline {
+                font-size: 15px;
+                line-height: 1.6;
+            }
+
+            .hero-visual {
+                height: 300px;
+                justify-content: center;
+            }
+
+            .hero-visual .carousel {
+                height: 300px;
+            }
+
+            .hero-visual .card {
+                width: 240px;
+                height: 180px;
+            }
+
+            .game-card {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .game-info {
+                padding: 0 1rem 1rem;
+            }
+
+            #game .card {
+                min-width: 220px;
+                margin: 0 8px;
+            }
+
+            .carousel-btn.left {
+                left: 10px;
+            }
+
+            .carousel-btn.right {
+                right: 10px;
             }
         }
     </style>
