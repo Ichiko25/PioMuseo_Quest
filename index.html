@@ -5,19 +5,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Dr. Pio valenzuela Museum — Historical Art Museum</title>
-	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabaseClient.js"></script>
-   <!--<script>
-        (async function() {
-            document.documentElement.style.visibility = 'hidden';
-            const { data: { session } } = await window.supabaseClient.auth.getSession();
-            if (!session) {
-                window.location.href = 'login.html';
-            } else {
-                document.documentElement.style.visibility = 'visible';
-            }
-        })();
-    </script>-->
+
     <link rel="icon" type="images/jpg" href="web-images/qqq.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,6 +20,7 @@
     <link rel="stylesheet" href="styles.css" />
 
     <style>
+        /* Modern Feedback Card */
         .feedback-pill {
             display: flex;
             flex-direction: column;
@@ -87,6 +78,7 @@
             }
         }
 
+        /* Create sequence delay effect for lists */
         .feedback-pill:nth-child(1) {
             animation-delay: 0.1s;
         }
@@ -205,6 +197,7 @@
             text-overflow: ellipsis;
         }
 
+        /* FAQ Section Container (The Card) */
         .faq-section {
             background: #ffffff !important;
             border-radius: 24px !important;
@@ -215,34 +208,41 @@
             border: 1px solid rgba(0, 0, 0, 0.03) !important;
         }
 
+        .faq-section h3 {
+            font-family: 'Cinzel', serif !important;
+            color: #1e293b !important;
+            font-size: 26px !important;
+            margin-bottom: 30px !important;
+            text-align: left !important;
+        }
+
         .faq-item {
-            background: transparent;
-            border-bottom: 1px solid #edf2f7;
-            margin-bottom: 0;
-            padding: 0;
-            transition: all 0.3s ease;
+            background: transparent !important;
+            border-bottom: 1px solid #edf2f7 !important;
+            margin-bottom: 0 !important;
+            padding: 0 !important;
+            transition: all 0.3s ease !important;
         }
 
         .faq-item:last-child {
-            border-bottom: none;
+            border-bottom: none !important;
         }
 
-
         .faq-question {
-           width: 100% !important;
-		    padding: 13px 0 !important;
-		    display: flex !important;
-		    align-items: center !important;
-		    cursor: pointer !important;
-		    background: none !important;
-		    border: none !important;
-		    text-align: left !important;
-		    font-weight: 600 !important;
-		    color: #1e293b !important;
-		    transition: all 0.3s ease !important;
-		    position: relative !important;
-		}
-		
+            width: 100% !important;
+            padding: 13px 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            cursor: pointer !important;
+            background: none !important;
+            border: none !important;
+            text-align: left !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            position: relative !important;
+        }
+
+        /* Triangle Icon (Left) */
         .faq-question::before {
             content: '▶' !important;
             font-size: 14px !important;
@@ -252,15 +252,18 @@
             flex-shrink: 0 !important;
         }
 
-        .faq-question:hover, .faq-item.active .faq-question {
-            color: #90191B; 
+        .faq-question:hover,
+        .faq-item.active .faq-question {
+            color: #90191B !important;
+            /* Museum Red */
         }
 
         .faq-item.active .faq-question::before {
-            content: '▼';
-            color: #90191B;
+            content: '▼' !important;
+            color: #90191B !important;
         }
 
+        /* Toggle Icon (Plus/Minus on Right) */
         .faq-question::after {
             content: '+' !important;
             margin-left: auto !important;
@@ -271,12 +274,12 @@
         }
 
         .faq-item.active .faq-question::after {
-            content: '−';
-            color: #90191B;
+            content: '−' !important;
+            color: #90191B !important;
         }
 
         .faq-answer {
-            max-height: 0;
+            max-height: 0 !important;
             overflow: hidden !important;
             transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
             font-size: 15px !important;
@@ -286,11 +289,10 @@
         }
 
         .faq-item.active .faq-answer {
-            max-height: 800px;
-            padding-bottom: 25px;
+            max-height: 800px !important;
+            padding-bottom: 25px !important;
         }
-		
-        /* Adjusting right container to match pill styling container */
+
         .approved-feedbacks {
             background: transparent !important;
             box-shadow: none !important;
@@ -331,7 +333,7 @@
             box-sizing: border-box;
         }
 
-          body {
+        body {
             margin: 0;
             padding: 0;
             width: 100%;
@@ -344,6 +346,103 @@
         html {
             scroll-behavior: smooth;
             overflow-x: hidden;
+        }
+
+        #login-wall {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #420303 0%, #000000 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            display: none;
+        }
+
+        .login-content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-logo img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .login-content h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #ffd700;
+            line-height: normal;
+        }
+
+        .login-content p {
+            font-family: 'Inter', sans-serif;
+            color: #d1d5db;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .google-btn {
+            background: white;
+            color: #374151;
+            border: none;
+            padding: 0.85rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .google-btn:hover {
+            background: #f9fafb;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .google-btn i {
+            font-size: 1.25rem;
+            color: #4285F4;
+        }
+
+        .site-footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.3);
         }
 
         h1 {
@@ -400,6 +499,13 @@
 
         .navbar {
             box-sizing: border-box;
+            max-width: none;
+            margin: 0 auto;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
             background-color: darkred;
             position: fixed;
             top: 0;
@@ -407,36 +513,6 @@
             right: 0;
             z-index: 1000;
         }
-
-        .nav-container {
-            width: 100%;
-            max-width: 1100px; /* Aligns with your visit-grid bounds */
-            margin: 0 auto;
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-        
-    @media (max-width: 720px) {
-    .nav-toggle {
-        display: inline-flex;
-        gap: 0.1rem;
-        order: -1; /* Moves hamburger to the left */
-    }
-
-    .nav-container {
-        padding-inline: 1.1rem;
-        justify-content: flex-start; /* Aligns toggle and logo to the left */
-        gap: 1.5rem;
-    }
-
-    .nav-container img {
-        height: 50px; /* Scaled down for mobile */
-        width: auto;
-    }
-}
 
         .logo {
             display: flex;
@@ -542,13 +618,13 @@
         }
 
         .hero {
-            max-width: 1120px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 7.4rem .5rem 2.75rem;
+            padding: 8rem 1.5rem 3rem;
             display: grid;
-  		    grid-template-columns: 1fr 700px; 
-  		    max-width: 1200px;
-            gap: 3rem;
+            grid-template-columns: 1fr 700px;
+            gap: 1rem;
+            align-items: center;
         }
 
         .hero-content h1 {
@@ -644,18 +720,17 @@
             justify-content: flex-end;
             align-items: center;
         }
-        
-        .hero-visual .carousel {
-		    width: 700px; 
-		    height: 400px;
-		    overflow: hidden;
-		    position: relative;
-		    display: flex;
-		    align-items: center;
-		    flex-shrink: 0; 
-		}
 
-        
+        .hero-visual .carousel {
+            width: 700px;
+            height: 400px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
         .hero-visual .track {
             display: flex !important;
             flex-direction: row !important;
@@ -664,30 +739,34 @@
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             align-items: center;
         }
-        
-		.hero-visual .card {
-		    width: 320px;
-		    height: 240px;
-		    flex-shrink: 0;
-		    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-		    opacity: 0.4;
-		    transform: scale(0.85); 
-		    filter: grayscale(40%);
-		}
-		.hero-visual .card.active {
-		    opacity: 1;
-		    transform: scale(1.15); 
-		    z-index: 10;           
-		    filter: grayscale(0%);
-		    box-shadow: 0 20px 40px rgba(144, 25, 27, 0.25);
-		}
-		.hero-visual .card.prev,
-		.hero-visual .card.next {
-		    opacity: 0.7;
-		    transform: scale(0.95); 
-		    z-index: 5;
-		}
-        
+
+        .hero-visual .card {
+            width: 320px;
+            height: 240px;
+            flex-shrink: 0;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.4;
+            transform: scale(0.85);
+            filter: grayscale(40%);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .hero-visual .card.active {
+            opacity: 1;
+            transform: scale(1.15);
+            z-index: 10;
+            filter: grayscale(0%);
+            box-shadow: 0 20px 40px rgba(144, 25, 27, 0.25);
+        }
+
+        .hero-visual .card.prev,
+        .hero-visual .card.next {
+            opacity: 0.7;
+            transform: scale(0.95);
+            z-index: 5;
+        }
+
         .hero-visual .card img {
             width: 100%;
             height: 100%;
@@ -761,21 +840,21 @@
         }
 
         .carousel-row img {
-		    width: 320px !important;
-		    height: 200px !important;
-		    object-fit: cover !important;
-		    border-radius: 4px !important;
-		    flex-shrink: 0;
-		    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-		    cursor: pointer;
-		}
-		
-		.carousel-row img:hover {
-		    transform: scale(1.08); 
-		    z-index: 10;
-		    position: relative;
-		    box-shadow: 0 12px 24px rgba(0,0,0,0.25);
-		}
+            width: 320px !important;
+            height: 200px !important;
+            object-fit: cover !important;
+            border-radius: 4px !important;
+            flex-shrink: 0;
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            cursor: pointer;
+        }
+
+        .carousel-row img:hover {
+            transform: scale(1.08);
+            z-index: 10;
+            position: relative;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+        }
 
         .row-left {
             animation: scrollLeft 75s linear infinite;
@@ -860,18 +939,15 @@
             color: var(--gray-mid);
         }
 
-        @media (max-width: 768px) {
-    .game-screen {
-        overflow: hidden; /* Clips the sliding track */
-        width: 100%;
-        margin: 0 auto;
-    }
+        @media (max-width:768px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
 
-    #game .track {
-        display: flex;
-        flex-wrap: nowrap; /* Keeps items in a single line for carousel */
-    }
-}
+            .side-box {
+                order: -1;
+            }
+        }
 
         .read-btn {
             margin-top: 15px;
@@ -879,6 +955,7 @@
             font-size: 15px;
             font-weight: 600;
             border: 2px solid #8b0000;
+            /* deep red accent */
             background-color: transparent;
             color: #8b0000;
             border-radius: 6px;
@@ -886,12 +963,14 @@
             transition: all 0.3s ease;
         }
 
+        /* Hover effect */
         .read-btn:hover {
             background-color: #8b0000;
             color: #ffffff;
             transform: translateY(-2px);
         }
 
+        /* Click effect */
         .read-btn:active {
             transform: translateY(0);
         }
@@ -1116,10 +1195,8 @@
         /* ===================================
 	               GAME STYLES
 	   =================================== */
-               .play-grid {
+        .play-grid {
             width: 100%;
-            max-width: 1100px;
-            margin: 0 auto;
         }
 
         .game-card {
@@ -1130,16 +1207,8 @@
             background-color: var(--white);
             border-radius: var(--radius-lg);
             padding: .5rem;
-            /* Removed margin-right: 10px; */
+            margin-right: 10px;
             box-shadow: var(--shadow-soft);
-        }
-
-        .blog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            max-width: 1100px;
-            margin: 0 auto;
         }
 
         .game-media {
@@ -1298,6 +1367,16 @@
             cursor: pointer;
         }
 
+        /* .link-button {
+            margin-left: 15px;
+            margin-top: 10px;
+            background: none;
+            border: none;
+            color: #90191B;
+            font-weight: 600;
+            cursor: pointer;
+        }*/
+
         .blog-tag {
             align-self: flex-start;
             padding: 0.2rem 0.55rem;
@@ -1320,6 +1399,25 @@
             font-size: 0.86rem;
             color: var(--gray-mid);
         }
+
+        /*.link-button {
+            margin-top: 0.3rem;
+            align-self: flex-start;
+            border: none;
+            background: none;
+            padding: 0;
+            color: var(--black);
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .link-button::after {
+            content: "→";
+            font-size: 0.9rem;
+        }*/
 
         .feedback-form {
             max-width: 500px;
@@ -1509,7 +1607,7 @@
             }
         }
 
-/* ===================================
+        /* ===================================
         MAIN FOOTER
         =================================== */
 
@@ -2023,7 +2121,7 @@
 
 </head>
 
-	<div id="blogModal" class="blog-modal">
+<div id="blogModal" class="blog-modal">
     <div class="blog-modal-content">
         <span id="closeBlog" onclick="closeModal('blogModal')">&times;</span>
         <div id="blogContent"></div>
@@ -2031,28 +2129,10 @@
 </div>
 
 <body>
-	<!--<div id="login-wall">
-    <div class="login-content">
-        <div class="login-logo">
-            <img src="web-images/qqq.jpg" alt="Museum Logo">
-        </div>
-        <h1>Welcome to Museo ni Dr. Pío</h1>
-        <p>Please sign in with your Google account to continue using this website.</p>
-        <button class="google-btn" onclick="loginWithGoogle()">
-            <i class="fab fa-google"></i>
-            Sign in with Google
-        </button>
-        <div id="login-error" style="margin-top: 15px; color: #ff9494; font-size: 14px; background: rgba(255,0,0,0.1); padding: 10px; border-radius: 8px; display: none; line-height: 1.4;"></div>
-        <div class="site-footer">
-            &copy; 2026 Museo ni Dr. Pío Valenzuela.
-        </div>
-    </div>
-</div>-->
     <header class="site-header">
-       <nav class="navbar" aria-label="Main">
-            <div class="nav-container">
-                <img src="web-images/qqq.jpg" alt="Dr. Pio Valenzuela Museum Logo" height="70"></img>
-                <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false">
+        <nav class="navbar" aria-label="Main">
+            <img src="web-images/qqq.jpg" alt="Dr. Pio Valenzuela Museum Logo" height="70"></img>
+            <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false">
                 <span></span>
                 <span></span>
             </button>
@@ -2060,7 +2140,7 @@
             <ul class="nav-links">
                 <li><a href="#about">About</a></li>
                 <li><a href="#gallery">Gallery</a></li>
-				<li><a href="#blog">Blog</a></li>
+                <li><a href="#blog">Blog</a></li>
                 <li><a href="#game">Game</a></li>
                 <li><a href="#feedback">Feedback</a></li>
             </ul>
@@ -2097,6 +2177,7 @@
     </header>
 
     <main>
+        <!-- ABOUT -->
         <section id="about" class="section section--alt">
             <div class="about-grid">
 
@@ -2145,18 +2226,22 @@
 
             <section id="gallery" class="section" style="overflow: hidden; width: 100%;">
                 <div class="carousel-row row-left">
-                    <img src="web-images/second-floor.jpg" alt="Second-floor" onerror="this.src='web-images/second-floor.jpg'">
+                    <img src="web-images/second-floor.jpg" alt="Second-floor"
+                        onerror="this.src='web-images/second-floor.jpg'">
                     <img src="web-images/study-table.jpg" alt="table" onerror="this.src='web-images/study-table.jpg'">
-                    <img src="web-images/study-table.jpg" alt="study-table" onerror="this.src='web-images/study-table.jpg'">
+                    <img src="web-images/study-table.jpg" alt="study-table"
+                        onerror="this.src='web-images/study-table.jpg'">
                     <img src="web-images/museo-pic.jpg" alt="museo-pic" onerror="this.src='web-images/museo-pic.jpg'">
                     <img src="web-images/front.jpg" alt="front" onerror="this.src='web-images/front.jpg'">
                     <img src="web-images/right.jpg" alt="right" onerror="this.src='web-images/right.jpg'">
                     <img src="web-images/fam.jpg" alt="fam" onerror="this.src='web-images/fam.jpg'">
                     <img src="web-images/gazebo.jpg" alt="gazebo" onerror="this.src='web-images/gazebo.jpg'">
-                    
-                    <img src="web-images/second-floor.jpg" alt="Second-floor" onerror="this.src='web-images/second-floor.jpg'">
+
+                    <img src="web-images/second-floor.jpg" alt="Second-floor"
+                        onerror="this.src='web-images/second-floor.jpg'">
                     <img src="web-images/study-table.jpg" alt="table" onerror="this.src='web-images/study-table.jpg'">
-                    <img src="web-images/study-table.jpg" alt="study-table" onerror="this.src='web-images/study-table.jpg'">
+                    <img src="web-images/study-table.jpg" alt="study-table"
+                        onerror="this.src='web-images/study-table.jpg'">
                     <img src="web-images/museo-pic.jpg" alt="museo-pic" onerror="this.src='web-images/museo-pic.jpg'">
                     <img src="web-images/front.jpg" alt="front" onerror="this.src='web-images/front.jpg'">
                     <img src="web-images/right.jpg" alt="right" onerror="this.src='web-images/right.jpg'">
@@ -2173,7 +2258,7 @@
                     <img src="web-images/kitchen.jpg" alt="kitchen" onerror="this.src='web-images/kitchen.jpg'">
                     <img src="web-images/clinica.jpg" alt="clinica" onerror="this.src='web-images/clinica.jpg'">
                     <img src="web-images/dioramas.jpg" alt="dioramas" onerror="this.src='web-images/dioramas.jpg'">
-                    
+
                     <img src="web-images/bookshelf.jpg" alt="bookshelf" onerror="this.src='web-images/bookshelf.jpg'">
                     <img src="web-images/dining.jpg" alt="dining" onerror="this.src='web-images/dining.jpg'">
                     <img src="web-images/salaa.jpg" alt="salaa" onerror="this.src='web-images/salaa.jpg'">
@@ -2190,6 +2275,7 @@
                 <p style="color: var(--text-muted); font-size: 14px; text-align: center;">Loading FAQs...</p>
             </div>
 
+            <!-- Blog / News -->
             <section id="blog" class="section">
                 <div class="section-header">
                     <h2>Blog</h2>
@@ -2201,6 +2287,7 @@
                 </div>
             </section>
 
+            <!-- Play & Explore -->
             <section id="game" class="section section--alt">
                 <div class="section-header">
                     <h2>Pio Museo Quest</h2>
@@ -2252,12 +2339,13 @@
                 </div>
             </section>
 
+            <!-- Visit Info -->
             <section id="visit" class="section">
                 <div class="section-header">
                     <h2>Plan Your Visit</h2>
                 </div>
-				
                 <div class="visit-grid">
+                    <!-- Location -->
                     <div class="visit-card">
                         <h3>Address</h3>
                         <p class="visit-main">
@@ -2285,7 +2373,7 @@
                             Get Directions
                         </a>
                     </div>
-
+                    <!-- Photo Shoots -->
                     <div class="visit-card">
                         <h3>Photo Shoots</h3>
                         <ul class="visit-list">
@@ -2306,6 +2394,7 @@
                         </a>
                     </div>
 
+                    <!-- Admission -->
                     <div class="visit-card">
                         <h3>Group Tours</h3>
                         <ul class="visit-list">
@@ -2474,12 +2563,12 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="supabaseClient.js"></script>
     <script src="feedback.js"></script>
-    <script src="pio_museo.js" defer></script>
+    <script src="pio_museo.js?v=3" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const navToggle = document.querySelector('.nav-toggle');
             const navLinks = document.querySelector('.nav-links');
-            
+
             if (navToggle && navLinks) {
                 navToggle.addEventListener('click', () => {
                     navLinks.classList.toggle('open');
