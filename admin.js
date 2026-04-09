@@ -101,15 +101,22 @@ async function fetchAnalytics() {
             document.getElementById('stat-tours').innerText = stats.tour_bookings || 0;
 
             // Game Dashboard
-            document.getElementById('stat-game-players').innerText = totalUsers;
+            const playersEl = document.getElementById('stat-game-players');
+            if (playersEl) playersEl.innerText = stats.total_players || 0;
+
+            // Feedbacks = users who submitted a rating or message
+            const feedbackUsers = allUsers.filter(u => u.rating || u.message);
+            document.getElementById('stat-feedbacks').innerText = feedbackUsers.length;
 
             // Calculate Average Game Rating
             const ratedUsers = allUsers.filter(u => u.rating);
             if (ratedUsers.length > 0) {
                 const avg = (ratedUsers.reduce((sum, u) => sum + u.rating, 0) / ratedUsers.length).toFixed(1);
-                document.getElementById('stat-game-rating').innerText = avg;
+                const starEl = document.getElementById('stat-game-star-ratings');
+                if (starEl) starEl.innerText = avg;
             } else {
-                document.getElementById('stat-game-rating').innerText = 'N/A';
+                const starEl = document.getElementById('stat-game-star-ratings');
+                if (starEl) starEl.innerText = 'N/A';
             }
 
             const gcEl = document.getElementById('stat-game-completed');
@@ -417,6 +424,7 @@ async function deleteAuditLog(id) {
 
 // --- USERS ---
 let allUsers = [];
+let archivedUsers = [];
 
 async function fetchUsers() {
     try {
@@ -437,15 +445,13 @@ async function fetchUsers() {
             }
         });
 
-        allUsers = users;
+        const unarchived = users.filter(u => !u.is_archived);
+        archivedUsers = users.filter(u => u.is_archived);
+
+        allUsers = unarchived;
         renderUsers(allUsers);
         renderRecentUsers(allUsers.slice(0, 5)); // Show top 5 on dash
         renderFeedbacks(allUsers.filter(u => u.rating || u.message));
-
-        // Calculate new users for notification badge (last 24 hours)
-        const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        const newUsersCount = users.filter(u => new Date(u.created_at) > dayAgo).length;
-        updateNotifBadge(newUsersCount);
 
         if (document.getElementById('analytics').classList.contains('active')) {
             renderCharts();
@@ -635,7 +641,6 @@ if (searchUserInput) searchUserInput.addEventListener('input', filterUsers);
 if (ageUserFilter) ageUserFilter.addEventListener('change', filterUsers);
 if (dateUserFilter) dateUserFilter.addEventListener('change', filterUsers);
 
-// --- FEEDBACKS ---
 function renderFeedbacks(feedbacks) {
     const tbody = document.getElementById('all-feedbacks-tbody');
     if (!tbody) return;
@@ -705,8 +710,8 @@ function renderFeedbacks(feedbacks) {
 function filterFeedbacks() {
     const term = (document.getElementById('feedback-search')?.value || '').toLowerCase();
     const starFilter = document.getElementById('feedback-filter-stars')?.value;
-    const visibilityFilter = document.getElementById('feedback-filter-visibility')?.value;
     const dateFilter = document.getElementById('feedback-filter-date')?.value;
+    const visibilityFilter = document.getElementById('feedback-filter-visibility')?.value;
 
     const filtered = allUsers.filter(u => {
         const hasFeedback = u.rating || u.message;
@@ -717,35 +722,46 @@ function filterFeedbacks() {
 
         const matchStars = !starFilter || u.rating?.toString() === starFilter;
 
-        let matchVisibility = true;
-        if (visibilityFilter === 'visible') matchVisibility = u.is_approved === true;
-        if (visibilityFilter === 'hidden') matchVisibility = u.is_approved === false || u.is_approved === null;
-
         let matchDate = true;
         if (dateFilter) {
             const feedbackDate = new Date(u.created_at).toISOString().split('T')[0];
             matchDate = feedbackDate === dateFilter;
         }
 
-        return matchTerm && matchStars && matchVisibility && matchDate;
+        let matchVisibility = true;
+        if (visibilityFilter === 'visible') matchVisibility = !!u.is_approved;
+        else if (visibilityFilter === 'hidden') matchVisibility = !u.is_approved;
+
+        return matchTerm && matchStars && matchDate && matchVisibility;
     });
     renderFeedbacks(filtered);
 }
 
 const searchFeedbackInput = document.getElementById('feedback-search');
 const starsFeedbackFilter = document.getElementById('feedback-filter-stars');
-const visibilityFeedbackFilter = document.getElementById('feedback-filter-visibility');
 const dateFeedbackFilter = document.getElementById('feedback-filter-date');
+const visibilityFeedbackFilter = document.getElementById('feedback-filter-visibility');
 
 if (searchFeedbackInput) searchFeedbackInput.addEventListener('input', filterFeedbacks);
 if (starsFeedbackFilter) starsFeedbackFilter.addEventListener('change', filterFeedbacks);
-if (visibilityFeedbackFilter) visibilityFeedbackFilter.addEventListener('change', filterFeedbacks);
 if (dateFeedbackFilter) dateFeedbackFilter.addEventListener('change', filterFeedbacks);
+if (visibilityFeedbackFilter) visibilityFeedbackFilter.addEventListener('change', filterFeedbacks);
+
+// Load Approved IDs mapped to users
+let approvedFeedbackIds = [];
+async function fetchApprovedMapping() {
+    try {
+        const { data } = await supabaseClient.from('analytics').select('approved_feedbacks').eq('id', 1).single();
+        if (data && data.approved_feedbacks) {
+            approvedFeedbackIds = data.approved_feedbacks;
+        }
+    } catch (e) { console.error("Could not fetch mappings", e) }
+}
 
 async function toggleFeedbackVisibility(userId, currentlyVisible) {
     const newState = !currentlyVisible;
 
-    // Add confirmation when HIDING (if it's currently visible and we are turning it off)
+    // Confirmation when HIDING
     if (currentlyVisible && !confirm("Are you sure you want to hide this feedback from the website?")) {
         return;
     }
@@ -780,9 +796,13 @@ async function toggleFeedbackVisibility(userId, currentlyVisible) {
         }
         localStorage.setItem('approved_feedbacks', JSON.stringify(localIds));
 
-        await fetchUsers();
+        // Update local data immediately for instant UI feedback
+        const userIndex = allUsers.findIndex(u => u.id === userId);
+        if (userIndex !== -1) allUsers[userIndex].is_approved = newState;
+
+        filterFeedbacks(); // Re-render with current filters
     } catch (err) {
-        console.error("Error toggling feedback visibility:", err);
+        console.error('Error toggling feedback visibility:', err);
         alert("Failed to update visibility.");
     }
 }
@@ -1825,6 +1845,89 @@ window.exportDataCSV = function () {
     window.URL.revokeObjectURL(url);
 };
 
+window.triggerResetDataFlow = function () {
+    const month = document.getElementById('filter-month').value;
+    const year = document.getElementById('filter-year').value;
+    let monthName = month === 'all' ? 'All Months' : new Date(year, month).toLocaleString('default', { month: 'long' });
+
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.style = 'position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; display: flex; justify-content: center; align-items: center;';
+
+    overlay.innerHTML = `
+      <div class="modal-content" style="background: #1e293b; width: 450px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white; text-align: center;">
+        <h3 style="margin-top: 0; margin-bottom: 15px; color: #ef4444;"><i class="fas fa-exclamation-triangle" style="margin-right:8px;"></i> Reset Data</h3>
+        <p style="color: #cbd5e1; margin-bottom: 25px; line-height: 1.5; font-size: 15px;">Are you sure you want to reset data for <b>${monthName} ${year}</b>?<br><small style="color: #94a3b8;">This will permanently delete feedback and player records for this period.</small></p>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+           <button class="btn" id="reset-btn-no" style="background: transparent; color: #94a3b8; border: 1px solid #334155; padding: 10px 20px; flex: 1; border-radius: 8px;">No, Go Back</button>
+           <button class="btn btn-primary" id="reset-btn-yes" style="background: #ef4444; border: none; padding: 10px 20px; flex: 1; border-radius: 8px;">Yes, Reset Data</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    document.getElementById('reset-btn-no').onclick = () => document.body.removeChild(overlay);
+
+    document.getElementById('reset-btn-yes').onclick = () => {
+        overlay.innerHTML = `
+          <div class="modal-content" style="background: #1e293b; width: 450px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white; text-align: center;">
+            <h3 style="margin-top: 0; margin-bottom: 15px; color: #3b82f6;"><i class="fas fa-download" style="margin-right:8px;"></i> Export Data?</h3>
+            <p style="color: #cbd5e1; margin-bottom: 25px; font-size: 14px;">Would you like to export the data before deleting it forever?</p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+               <button class="btn btn-primary" id="btn-export-csv" style="background: #10b981; border: none; padding: 12px; border-radius: 8px;"><i class="fas fa-file-csv" style="margin-right:8px;"></i> Export CSV & Reset</button>
+               <button class="btn btn-primary" id="btn-export-pdf" style="background: #f97316; border: none; padding: 12px; border-radius: 8px;"><i class="fas fa-file-pdf" style="margin-right:8px;"></i> Export PDF & Reset</button>
+               <button class="btn" id="btn-skip-export" style="background: #334155; color: white; border: none; padding: 12px; border-radius: 8px;">Skip Export & Reset</button>
+            </div>
+            <button class="btn" onclick="document.body.removeChild(document.querySelector('.modal-overlay'))" style="margin-top: 20px; background: transparent; color: #94a3b8; width: 100%; border: 1px solid #334155; border-radius: 8px; padding: 10px;">Cancel Data Reset</button>
+          </div>
+        `;
+
+        const executeReset = async () => {
+            document.body.removeChild(overlay);
+            const loader = document.createElement('div');
+            loader.style = 'position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: flex; justify-content: center; align-items: center; color: white; font-size: 20px;';
+            loader.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> Deleting Data...';
+            document.body.appendChild(loader);
+
+            try {
+                const { data: usersData } = await supabaseClient.from('users').select('id, created_at');
+                const toDelete = (usersData || []).filter(u => {
+                    const d = new Date(u.created_at);
+                    const yMatch = d.getFullYear() === parseInt(year);
+                    const mMatch = month === 'all' ? true : d.getMonth() === parseInt(month);
+                    return yMatch && mMatch;
+                }).map(u => u.id);
+
+                if (toDelete.length > 0) {
+                    const { error: delErr } = await supabaseClient.from('users').update({ is_archived: true }).in('id', toDelete);
+                    if (delErr) throw delErr;
+                    await supabaseClient.from('audit_logs').insert([{ action: 'Archived Data', details: `Archived ${toDelete.length} records for ${monthName} ${year}` }]);
+                }
+
+                document.body.removeChild(loader);
+                alert("Data archived successfully.");
+                location.reload();
+            } catch (err) {
+                console.error(err);
+                alert("Error resetting data: " + err.message);
+                location.reload();
+            }
+        };
+
+        document.getElementById('btn-export-csv').onclick = () => {
+            window.exportDataCSV();
+            setTimeout(executeReset, 1000);
+        };
+        document.getElementById('btn-export-pdf').onclick = () => {
+            window.print();
+            setTimeout(executeReset, 1000);
+        };
+        document.getElementById('btn-skip-export').onclick = () => {
+            executeReset();
+        };
+    };
+};
+
 window.openArchiveModal = function () {
     try {
         const overlay = document.createElement('div');
@@ -1887,89 +1990,6 @@ window.openArchiveModal = function () {
         console.error("Archive modal error:", err);
         alert("Could not load archive data: " + err.message);
     }
-};
-
-window.triggerResetDataFlow = function () {
-    const month = document.getElementById('filter-month').value;
-    const year = document.getElementById('filter-year').value;
-    let monthName = month === 'all' ? 'All Months' : new Date(year, month).toLocaleString('default', { month: 'long' });
-
-    const overlay = document.createElement('div');
-    overlay.className = 'modal-overlay';
-    overlay.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; display: flex; justify-content: center; align-items: center;';
-
-    overlay.innerHTML = `
-      <div class="modal-content" style="background: #1e293b; width: 450px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white; text-align: center;">
-        <h3 style="margin-top: 0; margin-bottom: 15px; color: #ef4444;"><i class="fas fa-exclamation-triangle" style="margin-right:8px;"></i> Reset Data</h3>
-        <p style="color: #cbd5e1; margin-bottom: 25px; line-height: 1.5; font-size: 15px;">Are you sure you want to reset data for <b>${monthName} ${year}</b>?<br><small style="color: #94a3b8;">This will permanently delete feedback and player records for this period.</small></p>
-        <div style="display: flex; gap: 15px; justify-content: center;">
-           <button class="btn" id="reset-btn-no" style="background: transparent; color: #94a3b8; border: 1px solid #334155; padding: 10px 20px; flex: 1; border-radius: 8px;">No, Go Back</button>
-           <button class="btn btn-primary" id="reset-btn-yes" style="background: #ef4444; border: none; padding: 10px 20px; flex: 1; border-radius: 8px;">Yes, Reset Data</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(overlay);
-
-    document.getElementById('reset-btn-no').onclick = () => document.body.removeChild(overlay);
-
-    document.getElementById('reset-btn-yes').onclick = () => {
-        overlay.innerHTML = `
-          <div class="modal-content" style="background: #1e293b; width: 450px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white; text-align: center;">
-            <h3 style="margin-top: 0; margin-bottom: 15px; color: #3b82f6;"><i class="fas fa-download" style="margin-right:8px;"></i> Export Data?</h3>
-            <p style="color: #cbd5e1; margin-bottom: 25px; font-size: 14px;">Would you like to export the data before deleting it forever?</p>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-               <button class="btn btn-primary" id="btn-export-csv" style="background: #10b981; border: none; padding: 12px; border-radius: 8px;"><i class="fas fa-file-csv" style="margin-right:8px;"></i> Export CSV & Reset</button>
-               <button class="btn btn-primary" id="btn-export-pdf" style="background: #f97316; border: none; padding: 12px; border-radius: 8px;"><i class="fas fa-file-pdf" style="margin-right:8px;"></i> Export PDF & Reset</button>
-               <button class="btn" id="btn-skip-export" style="background: #334155; color: white; border: none; padding: 12px; border-radius: 8px;">Skip Export & Reset</button>
-            </div>
-            <button class="btn" onclick="document.body.removeChild(document.querySelector('.modal-overlay'))" style="margin-top: 20px; background: transparent; color: #94a3b8; width: 100%; border: 1px solid #334155; border-radius: 8px; padding: 10px;">Cancel Data Reset</button>
-          </div>
-        `;
-
-        const executeReset = async () => {
-            document.body.removeChild(overlay);
-            const loader = document.createElement('div');
-            loader.style = 'position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: flex; justify-content: center; align-items: center; color: white; font-size: 20px;';
-            loader.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> Deleting Data...';
-            document.body.appendChild(loader);
-
-            try {
-                const { data: usersData } = await supabaseClient.from('users').select('id, created_at');
-                const toDelete = (usersData || []).filter(u => {
-                    const d = new Date(u.created_at);
-                    const yMatch = d.getFullYear() === parseInt(year);
-                    const mMatch = month === 'all' ? true : d.getMonth() === parseInt(month);
-                    return yMatch && mMatch;
-                }).map(u => u.id);
-
-                if (toDelete.length > 0) {
-                    const { error: delErr } = await supabaseClient.from('users').delete().in('id', toDelete);
-                    if (delErr) throw delErr;
-                    await supabaseClient.from('audit_logs').insert([{ action: 'Reset Data', details: `Deleted ${toDelete.length} records for ${monthName} ${year}` }]);
-                }
-
-                document.body.removeChild(loader);
-                alert("Data reset successfully.");
-                location.reload();
-            } catch (err) {
-                console.error(err);
-                alert("Error resetting data: " + err.message);
-                location.reload();
-            }
-        };
-
-        document.getElementById('btn-export-csv').onclick = () => {
-            window.exportDataCSV();
-            setTimeout(executeReset, 1000);
-        };
-        document.getElementById('btn-export-pdf').onclick = () => {
-            window.print();
-            setTimeout(executeReset, 1000);
-        };
-        document.getElementById('btn-skip-export').onclick = () => {
-            executeReset();
-        };
-    };
 };
 
 /* UI Enhancement Helpers */
